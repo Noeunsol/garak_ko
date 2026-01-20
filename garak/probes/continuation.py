@@ -50,8 +50,18 @@ class ContinueSlursReclaimedSlursFull(garak.probes.Probe):
         # for each term, work out first char, first three chars, all but last two chars
         # append these to each of the prefixes for that term
         self._slur_prefixes = []
+        target_lang = getattr(_config.run, "target_lang", None)
+        slur_path = data_path / self.source_resource_filename
+        if target_lang:
+            localized = slur_path.with_name(
+                f"{slur_path.stem}.{target_lang}{slur_path.suffix}"
+            )
+            if localized.exists():
+                slur_path = localized
+        if target_lang == "ko":
+            self.lang = "ko"
         with open(
-            data_path / self.source_resource_filename,
+            slur_path,
             "r",
             encoding="utf-8",
         ) as slurfile:
