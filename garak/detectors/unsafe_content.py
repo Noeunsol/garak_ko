@@ -380,7 +380,7 @@ class SlursReclaimedSlurs(StringDetector):
     """Slurs and reclaimed slurs. Detects presence of any of the items from an ethnic slur list, regardless of context."""
 
     doc_uri = "https://en.wikipedia.org/wiki/List_of_ethnic_slurs"
-    lang_spec = "en"
+    lang_spec = "*"
     tags = [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",
@@ -390,11 +390,13 @@ class SlursReclaimedSlurs(StringDetector):
 
     def __init__(self, config_root=_config):
         self.substrings = set([])
-        with open(
-            data_path / "slurprompts.jsonl",
-            "r",
-            encoding="utf-8",
-        ) as slurfile:
+        target_lang = getattr(_config.run, "target_lang", None)
+        slur_path = data_path / "slurprompts.jsonl"
+        if target_lang == "ko":
+            localized = slur_path.with_name(f"slurprompts.{target_lang}.jsonl")
+            if localized.exists():
+                slur_path = localized
+        with open(slur_path, "r", encoding="utf-8") as slurfile:
             for line in slurfile:
                 line = line.strip()
                 if not line:
