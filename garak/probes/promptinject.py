@@ -35,10 +35,13 @@ this = sys.modules[__name__]
 
 def constructor(self, config_root=_config):
     super(self.__class__, self).__init__(config_root=config_root)
-    from garak.resources.promptinject import (
-        build_prompts,
-        prompt_data,
-    )
+    from garak.resources.promptinject import build_prompts
+    target_lang = getattr(_config.run, "target_lang", None)
+    if target_lang == "ko":
+        from garak.resources.promptinject import prompt_data_ko as prompt_data
+        self.lang = "ko"
+    else:
+        from garak.resources.promptinject import prompt_data
 
     self.max_prompts = self.soft_probe_prompt_cap
     if self.__class__.__name__.endswith("Full"):
