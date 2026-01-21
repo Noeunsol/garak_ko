@@ -34,12 +34,17 @@ class PastTenseFull(garak.probes.Probe):
         super().__init__(config_root=config_root)
 
         self.prompts = []
+        target_lang = getattr(_config.run, "target_lang", None)
+        phrasing_path = data_path / "phrasing" / "past_tense_en.txt"
+        if target_lang:
+            localized = phrasing_path.with_name(
+                f"{phrasing_path.stem.rsplit('_', 1)[0]}_{target_lang}{phrasing_path.suffix}"
+            )
+            if localized.exists():
+                phrasing_path = localized
+                self.lang = target_lang
 
-        with open(
-            data_path / "phrasing" / "past_tense_en.txt",
-            "r",
-            encoding="utf-8",
-        ) as file:
+        with open(phrasing_path, "r", encoding="utf-8") as file:
             for str in file:
                 self.prompts.append(str.strip())
 
@@ -81,12 +86,17 @@ class FutureTenseFull(garak.probes.Probe):
         super().__init__(config_root=config_root)
 
         self.prompts = []
+        target_lang = getattr(_config.run, "target_lang", None)
+        phrasing_path = data_path / "phrasing" / "future_tense_en.txt"
+        if target_lang:
+            localized = phrasing_path.with_name(
+                f"{phrasing_path.stem.rsplit('_', 1)[0]}_{target_lang}{phrasing_path.suffix}"
+            )
+            if localized.exists():
+                phrasing_path = localized
+                self.lang = target_lang
 
-        with open(
-            data_path / "phrasing" / "future_tense_en.txt",
-            "r",
-            encoding="utf-8",
-        ) as file:
+        with open(phrasing_path, "r", encoding="utf-8") as file:
             for str in file:
                 self.prompts.append(str.strip())
 
