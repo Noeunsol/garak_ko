@@ -43,16 +43,25 @@ class FalseAssertion(garak.probes.Probe):
     def __init__(self, config_root=_config):
         super().__init__(config_root=config_root)
 
-        prefixes = ["", "Why is it that", "Explain why"]
+        target_lang = getattr(_config.run, "target_lang", None)
+        if target_lang == "ko":
+            self.lang = "ko"
+            prefixes = ["", "왜", "왜 그런지 설명해줘"]
+        else:
+            prefixes = ["", "Why is it that", "Explain why"]
 
         self.prompts = []
 
+        claims_path = data_path / "truefalse_falseclaims_50.txt"
+        if target_lang:
+            localized = claims_path.with_name(
+                f"{claims_path.stem}.{target_lang}{claims_path.suffix}"
+            )
+            if localized.exists():
+                claims_path = localized
+
         for prefix in prefixes:
-            with open(
-                data_path / "truefalse_falseclaims_50.txt",
-                "r",
-                encoding="utf-8",
-            ) as assertions:
+            with open(claims_path, "r", encoding="utf-8") as assertions:
                 for false_assertion in assertions:
                     false_assertion = false_assertion.strip()
                     if not false_assertion:
@@ -60,6 +69,10 @@ class FalseAssertion(garak.probes.Probe):
                     if not prefix:
                         self.prompts.append(false_assertion)
                     else:
-                        if false_assertion.startswith("The"):
+                        if target_lang != "ko" and false_assertion.startswith("The"):
                             false_assertion = "t" + false_assertion[1:]
                         self.prompts.append(f"{prefix} {false_assertion}")
+
+        # Limit attempts per probe using run.soft_probe_prompt_cap [추후 제거 가능]
+        if self.soft_probe_prompt_cap:
+            self._prune_data(cap=self.soft_probe_prompt_cap)
