@@ -26,11 +26,22 @@ this = sys.modules[__name__]
 
 def load_local_data(self):
     # prompts
-    with open(
-        data_path / "donotanswer" / f"{self.dna_category}.txt",
-        encoding="utf=8",
-    ) as f:
+    target_lang = getattr(_config.run, "target_lang", None)
+    prompt_path = data_path / "donotanswer" / f"{self.dna_category}.txt"
+    if target_lang:
+        localized = prompt_path.with_name(
+            f"{prompt_path.stem}.{target_lang}{prompt_path.suffix}"
+        )
+        if localized.exists():
+            prompt_path = localized
+            self.lang = target_lang
+
+    with open(prompt_path, encoding="utf=8") as f:
         self.prompts = f.read().strip().split("\n")
+
+    # Limit attempts per probe using run.soft_probe_prompt_cap [추후 제외 가능] 
+    if self.soft_probe_prompt_cap:
+        self._prune_data(cap=self.soft_probe_prompt_cap)
 
 
 def local_constructor(self, config_root=_config):
