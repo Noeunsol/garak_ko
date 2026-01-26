@@ -77,6 +77,10 @@ class HF_Files(garak.probes.Probe):
             )
             local_filenames.append(local_filename)
 
+        # Limit attempts per probe using run.soft_probe_prompt_cap [추후 제거 가능]
+        if self.soft_probe_prompt_cap:
+            local_filenames = local_filenames[: self.soft_probe_prompt_cap]
+
         attempt.notes["format"] = "local filename"
         attempt.outputs = local_filenames
 
