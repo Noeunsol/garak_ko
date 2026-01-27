@@ -18,6 +18,10 @@ from garak.data import path as data_path
 import garak.probes
 
 
+def _is_ko_target() -> bool:
+    return getattr(_config.run, "target_lang", None) == "ko"
+
+
 class GraphConnectivityFull(garak.probes.Probe):
     """Probe asking for impossible flight routings
 
@@ -39,12 +43,26 @@ class GraphConnectivityFull(garak.probes.Probe):
 
     def __init__(self, config_root=_config):
         super().__init__(config_root=config_root)
+        target_lang = getattr(_config.run, "target_lang", None)
+        graph_path = data_path / "graph_connectivity.json"
+        if target_lang:
+            localized = graph_path.with_name(
+                f"{graph_path.stem}.{target_lang}{graph_path.suffix}"
+            )
+            if localized.exists():
+                graph_path = localized
+                self.lang = target_lang
+        if _is_ko_target():
+            self.primary_detector = "snowball.DontStartYesKO"
         with open(
-            data_path / "graph_connectivity.json",
+            graph_path,
             "r",
             encoding="utf-8",
         ) as f:
             self.prompts = json.load(f)
+        # Limit attempts per probe using run.soft_probe_prompt_cap [추후 제거 가능]
+        if self.soft_probe_prompt_cap:
+            self._prune_data(cap=self.soft_probe_prompt_cap)
 
 
 class GraphConnectivity(GraphConnectivityFull, garak.probes.Probe):
@@ -77,13 +95,27 @@ class PrimesFull(garak.probes.Probe):
 
     def __init__(self, config_root=_config):
         super().__init__(config_root=config_root)
+        target_lang = getattr(_config.run, "target_lang", None)
+        prime_path = data_path / "primality_testing.json"
+        if target_lang:
+            localized = prime_path.with_name(
+                f"{prime_path.stem}.{target_lang}{prime_path.suffix}"
+            )
+            if localized.exists():
+                prime_path = localized
+                self.lang = target_lang
+        if _is_ko_target():
+            self.primary_detector = "snowball.DontStartNoKO"
         with open(
-            data_path / "primality_testing.json",
+            prime_path,
             "r",
             encoding="utf-8",
         ) as f:
             dataset = json.load(f)
             self.prompts = [entry["question"] for entry in dataset]
+        # Limit attempts per probe using run.soft_probe_prompt_cap [추후 제거 가능]
+        if self.soft_probe_prompt_cap:
+            self._prune_data(cap=self.soft_probe_prompt_cap)
 
 
 class Primes(PrimesFull, garak.probes.Probe):
@@ -117,12 +149,26 @@ class SenatorsFull(garak.probes.Probe):
 
     def __init__(self, config_root=_config):
         super().__init__(config_root=config_root)
+        target_lang = getattr(_config.run, "target_lang", None)
+        senator_path = data_path / "senator_search.json"
+        if target_lang:
+            localized = senator_path.with_name(
+                f"{senator_path.stem}.{target_lang}{senator_path.suffix}"
+            )
+            if localized.exists():
+                senator_path = localized
+                self.lang = target_lang
+        if _is_ko_target():
+            self.primary_detector = "snowball.DontStartYesKO"
         with open(
-            data_path / "senator_search.json",
+            senator_path,
             "r",
             encoding="utf-8",
         ) as f:
             self.prompts = json.load(f)
+        # Limit attempts per probe using run.soft_probe_prompt_cap [추후 제거 가능]
+        if self.soft_probe_prompt_cap:
+            self._prune_data(cap=self.soft_probe_prompt_cap)
 
 
 class Senators(SenatorsFull, garak.probes.Probe):
