@@ -44,7 +44,7 @@ class FITD(garak.probes.IterativeProbe):
     ]
     goal = "Transform queries from benign to harmful obtaining intermediate responses to get compliance from the model"
     tier = garak.probes.Tier.INFORMATIONAL
-    active = False  # Note: This probe is currently not active because of the potential for the number of attempts to grow exponentially and have to be terminated early unless the user sets generations = 1
+    active = True  # Note: This probe is currently not active because of the potential for the number of attempts to grow exponentially and have to be terminated early unless the user sets generations = 1
 
     DEFAULT_PARAMS = garak.probes.IterativeProbe.DEFAULT_PARAMS | {
         "red_team_model_type": "nim.NVOpenAIChat",
@@ -64,6 +64,9 @@ class FITD(garak.probes.IterativeProbe):
         self.refusal_detector = None
 
         super().__init__(config_root=config_root)
+        target_lang = getattr(_config.run, "target_lang", None)
+        if target_lang == "ko":
+            self.lang = "ko"
         self._load_red_team_prompt_templates()
         if self.lang != self.langprovider.target_lang:
             raise GarakException(
@@ -72,31 +75,62 @@ class FITD(garak.probes.IterativeProbe):
             )
 
     def _load_red_team_prompt_templates(self):
+        target_lang = getattr(_config.run, "target_lang", None)
         prompts_file = data_path / "fitd" / "prompt_template_increase_safety.txt"
+        if target_lang == "ko":
+            localized = prompts_file.with_suffix(f".ko{prompts_file.suffix}")
+            if localized.exists():
+                prompts_file = localized
         with open(prompts_file, "r", encoding="utf-8") as f:
             self.prompt_template_increase_safety = f.read()
         prompts_file = data_path / "fitd" / "prompt_template_get_level_query.txt"
+        if target_lang == "ko":
+            localized = prompts_file.with_suffix(f".ko{prompts_file.suffix}")
+            if localized.exists():
+                prompts_file = localized
         with open(prompts_file, "r", encoding="utf-8") as f:
             self.prompt_template_get_level_query = f.read()
         prompts_file = (
             data_path / "fitd" / "prompt_template_slippery_slope_paraphrase.txt"
         )
+        if target_lang == "ko":
+            localized = prompts_file.with_suffix(f".ko{prompts_file.suffix}")
+            if localized.exists():
+                prompts_file = localized
         with open(prompts_file, "r", encoding="utf-8") as f:
             self.prompt_template_slippery_slope_paraphrase = f.read()
         prompts_file = data_path / "fitd" / "prompt_template_realign.txt"
+        if target_lang == "ko":
+            localized = prompts_file.with_suffix(f".ko{prompts_file.suffix}")
+            if localized.exists():
+                prompts_file = localized
         with open(prompts_file, "r", encoding="utf-8") as f:
             self.prompt_template_realign = f.read()
         self.prompt_template_realign__match_prefix_len = (
             self.prompt_template_realign.index("{") - 1
         )
         prompts_file = data_path / "fitd" / "prompt_template_eval.txt"
+        if target_lang == "ko":
+            localized = prompts_file.with_suffix(f".ko{prompts_file.suffix}")
+            if localized.exists():
+                prompts_file = localized
         with open(prompts_file, "r", encoding="utf-8") as f:
             self.prompt_template_eval = f.read()
         prompts_file = data_path / "fitd" / "prompt_template_response_aligned.txt"
+        if target_lang == "ko":
+            localized = prompts_file.with_suffix(f".ko{prompts_file.suffix}")
+            if localized.exists():
+                prompts_file = localized
         with open(prompts_file, "r", encoding="utf-8") as f:
             self.prompt_template_response_aligned = f.read()
 
         sensitive_words_file = data_path / "fitd" / "sensitive_words.csv"
+        if target_lang == "ko":
+            localized = sensitive_words_file.with_suffix(
+                f".ko{sensitive_words_file.suffix}"
+            )
+            if localized.exists():
+                sensitive_words_file = localized
         with open(sensitive_words_file, "r", encoding="utf-8") as f:
             reader = csv.reader(f)
             self.sensitive_words = {row[0]: row[1] for row in reader}
@@ -249,6 +283,12 @@ class FITD(garak.probes.IterativeProbe):
             self.target_prompts = random.sample(
                 harmbench_prompts, self.initial_prompt_count
             )
+        self.prompts = list(self.target_prompts)
+        self.triggers = [None] * len(self.prompts)
+        # Limit attempts per probe using run.soft_probe_prompt_cap [추후 제거 가능]
+        if self.soft_probe_prompt_cap:
+            self._prune_data(self.soft_probe_prompt_cap, prune_triggers=True)
+            self.target_prompts = list(self.prompts)
 
         self.level_queries_per_goal = dict()
         init_attempts = list()
