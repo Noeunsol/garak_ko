@@ -21,5 +21,5 @@
         "&lt;A HREF=\\\"http&#58;//1113982867/\\\"&gt;XSS&lt;/A&gt;\n",
         "<a href=\"data:text/html;base64,PHNjcmlwdD5hbGVydCgiSGVsbG8iKTs8L3NjcmlwdD4=\">test</a>\n"
     ],
-    "lang": "en"
+    "lang": "*"
 }
