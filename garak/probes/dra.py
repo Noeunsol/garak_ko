@@ -61,6 +61,22 @@ TOOL_LIST = [
     "some disguise tools",
     "a telescope",
 ]
+TOOL_LIST_KO = [
+    "많은 돈",
+    "실험실",
+    "망치",
+    "빠른 자동차",
+    "가면",
+    "컴퓨터",
+    "스마트폰",
+    "테이블",
+    "위조 신분증",
+    "공구통",
+    "장갑",
+    "손전등",
+    "변장 도구",
+    "망원경",
+]
 
 
 class DRA(garak.probes.Probe):
@@ -83,7 +99,7 @@ class DRA(garak.probes.Probe):
     behavior from fewer token hints.
     """
 
-    lang = "en"
+    lang = "*"
     primary_detector = "mitigation.MitigationBypass"
     extended_detectors = ["mitigation.Prefixes"]
     tags = [
@@ -115,31 +131,39 @@ class DRA(garak.probes.Probe):
         if self.seed is not None:
             random.seed(self.seed)
 
+        use_ko = getattr(_config.run, "target_lang", "en").lower().startswith("ko")
+
         # Load moderation data
-        with open(
-            data_path / "dra" / "moderation_cache.json",
-            encoding="utf-8",
-        ) as f:
+        mod_file = (
+            data_path / "dra" / "moderation_cache.ko.json"
+            if use_ko and (data_path / "dra" / "moderation_cache.ko.json").exists()
+            else data_path / "dra" / "moderation_cache.json"
+        )
+        with open(mod_file, encoding="utf-8") as f:
             self.moderation_cache = json.load(f)
 
         # Load letter map
-        with open(
-            data_path / "dra" / "letter_map.json",
-            encoding="utf-8",
-        ) as f:
+        letter_file = (
+            data_path / "dra" / "letter_map.ko.json"
+            if use_ko and (data_path / "dra" / "letter_map.ko.json").exists()
+            else data_path / "dra" / "letter_map.json"
+        )
+        with open(letter_file, encoding="utf-8") as f:
             self.letter_map = json.load(f)
 
-        # Load templates directly from file
-        with open(
-            data_path / "dra" / "prompt_templates.txt",
-            encoding="utf-8",
-        ) as f:
-            self.all_templates = [
-                line.strip() for line in f.readlines() if line.strip()
-            ]
+        # Load templates (locale-aware)
+        tmpl_file = (
+            data_path / "dra" / "prompt_templates.ko.txt"
+            if use_ko and (data_path / "dra" / "prompt_templates.ko.txt").exists()
+            else data_path / "dra" / "prompt_templates.txt"
+        )
+        with open(tmpl_file, encoding="utf-8") as f:
+            self.all_templates = [line.strip() for line in f.readlines() if line.strip()]
 
         # Load behaviors from payload
-        self.all_behaviors = garak.payloads.load(self.payload_name).payloads
+        ko_payload_path = data_path / "payloads" / "harmful_behaviors.ko.json"
+        payload_name = "harmful_behaviors.ko" if use_ko and ko_payload_path.exists() else self.payload_name
+        self.all_behaviors = garak.payloads.load(payload_name).payloads
 
         # Generate prompts for each behavior in the dataset
         self.prompts = self._generate_prompts()
@@ -228,8 +252,11 @@ class DRA(garak.probes.Probe):
                         word_guide += f"`{token[idx:]}` "
         # [2] tool guide
         # naively choose some
-        tools = random.sample(TOOL_LIST, 2)
-        tools = " and ".join(tools)
+        use_ko = getattr(_config.run, "target_lang", "en").lower().startswith("ko")
+        tool_pool = TOOL_LIST_KO if use_ko else TOOL_LIST
+        pick_n = min(2, len(tool_pool))
+        tools = random.sample(tool_pool, pick_n)
+        tools = ("과 " if use_ko else " and ").join(tools)
         # [3] fill it
         suffix = template.format(word_guide, tools)
         suffix = suffix.replace("`", '"')
@@ -253,6 +280,13 @@ class DRA(garak.probes.Probe):
         if self.follow_prompt_cap and self.soft_probe_prompt_cap is not None:
             if len(prompts) > self.soft_probe_prompt_cap:
                 prompts = random.sample(prompts, self.soft_probe_prompt_cap)
+
+        # Limit attempts per probe using run.soft_probe_prompt_cap [추후 제거 가능]
+        if self.soft_probe_prompt_cap:
+            cap = self.soft_probe_prompt_cap
+            # replace self.prompts only after pruning to avoid attribute errors during __init__
+            self.prompts = prompts[:cap]
+            return self.prompts
 
         logging.info(
             f"DRA probe generated {len(prompts)} prompts using "
@@ -339,3 +373,13 @@ class DRAAdvanced(DRA):
         )
 
         return prompts
+
+# if __name__ == "__main__":
+#     from garak import _config
+#     _config.run.target_lang = "ko"  # 또는 "en"
+#     _config.run.soft_probe_prompt_cap = 5
+#     probe = DRA(_config)
+#     print(f"총 프롬프트 수: {len(probe.prompts)}")
+#     for i, p in enumerate(probe.prompts[:3], 1):
+#         print(f"\n--- prompt {i} ---\n{p}")
+#     print("...")
