@@ -1,66 +1,108 @@
 # SPDX-FileCopyrightText: Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-"""Buff that converts prompts with different encodings."""
+"""Buff that translates prompts into low-resource languages using OpenAI."""
 
 from collections.abc import Iterable
-from deepl import Translator
+import os
+from openai import OpenAI
 
 import garak.attempt
 from garak import _config
 from garak.buffs.base import Buff
 
-# Low resource languages supported by DeepL
+# Low resource languages supported in the original paper
 # ET = Estonian
 # ID = Indonesian
 # LT = Lithuanian
 # LV = Latvian
 # SK = Slovak
 # SL = Slovenian
-LOW_RESOURCE_LANGUAGES = ["ET", "ID", "LV", "SK", "SL"]
+LOW_RESOURCE_LANGUAGES = ["ET", "ID", "LT", "LV", "SK", "SL"]
+LANG_NAMES = {
+    "ET": "Estonian",
+    "ID": "Indonesian",
+    "LT": "Lithuanian",
+    "LV": "Latvian",
+    "SK": "Slovak",
+    "SL": "Slovenian",
+}
 
 
 class LRLBuff(Buff):
     """Low Resource Language buff
 
-    Uses the DeepL API to translate prompts into low-resource languages"""
+    Uses the OpenAI API to translate prompts into low-resource languages"""
 
-    ENV_VAR = "DEEPL_API_KEY"
+    ENV_VAR = "OPENAI_API_KEY"
     doc_uri = "https://arxiv.org/abs/2310.02446"
+    DEFAULT_PARAMS = Buff.DEFAULT_PARAMS | {
+        "model_name": "gpt-4o-mini",
+        "temperature": 0.3,
+    }
 
     def __init__(self, config_root=_config):
         super().__init__(config_root=config_root)
         self.post_buff_hook = True
+        self.client = None
+
+    def _require_client(self):
+        if self.client is None:
+            api_key = getattr(self, "api_key", None) or os.getenv(self.ENV_VAR)
+            if not api_key:
+                raise ValueError(
+                    f"{self.ENV_VAR} not set; cannot run LRLBuff with OpenAI translation."
+                )
+            self.api_key = api_key
+            self.client = OpenAI(api_key=api_key)
+
+    def _translate(self, text: str, target_lang: str) -> str:
+        """Translate text to target_lang via OpenAI chat completion."""
+        self._require_client()
+        resp = self.client.chat.completions.create(
+            model=self.model_name,
+            temperature=self.temperature,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a precise translation engine. "
+                        "Return only the translated text with no extra commentary."
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": f"Translate the following text into {target_lang}:\n{text}",
+                },
+            ],
+        )
+        return resp.choices[0].message.content.strip()
 
     def transform(
         self, attempt: garak.attempt.Attempt
     ) -> Iterable[garak.attempt.Attempt]:
         # transform receives a copy of the attempt should it modify the prompt in place?
-        deepl_translator = Translator(self.api_key)
         # only process the last message, this may need to be expanded to support all `Messages` in a `Conversation`
         prompt_text = attempt.prompt.last_message().text
         # if extended to all messages this should be a `Message` object
         attempt.notes["original_prompt"] = prompt_text
         for language in LOW_RESOURCE_LANGUAGES:
             attempt.notes["LRL_buff_dest_lang"] = language
-            response = deepl_translator.translate_text(
-                prompt_text, target_lang=language
-            )
-            translated_prompt = response.text
+            target_name = LANG_NAMES.get(language, language)
+            translated_prompt = self._translate(prompt_text, target_lang=target_name)
             delattr(attempt, "_prompt")  # hack to allow prompt set
             attempt.prompt = garak.attempt.Message(translated_prompt, language)
             yield self._derive_new_attempt(attempt)
 
     def untransform(self, attempt: garak.attempt.Attempt) -> garak.attempt.Attempt:
-        deepl_translator = Translator(self.api_key)
+        # translate responses back to English for downstream detectors
         outputs = attempt.outputs
         attempt.notes["original_responses"] = [
             msg.text for msg in outputs
         ]  # serialise-friendly
         translated_outputs = list()
         for output in outputs:
-            response = deepl_translator.translate_text(output.text, target_lang="EN-US")
-            translated_output = response.text
+            translated_output = self._translate(output.text, target_lang="English")
             translated_outputs.append(
                 garak.attempt.Message(translated_output, lang="en")
             )
