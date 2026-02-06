@@ -9,6 +9,8 @@ import garak.attempt
 from garak import _config
 from garak.buffs.base import Buff
 from garak.resources.api.huggingface import HFCompatible
+import os
+from openai import OpenAI
 
 
 class PegasusT5(Buff, HFCompatible):
@@ -22,8 +24,12 @@ class PegasusT5(Buff, HFCompatible):
         },  # torch_dtype doesn't have standard support in Pegasus
         "max_length": 60,
         "temperature": 1.5,
+        # translation bridge for non-English inputs
+        "enable_translation_bridge": True,
+        "translation_model_name": "gpt-4o-mini",
+        "translation_temperature": 0.3,
     }
-    lang = "en"
+    lang = None  # allow all languages; non-en can route through bridge
     doc_uri = "https://huggingface.co/tuner007/pegasus_paraphrase"
 
     def __init__(self, config_root=_config) -> None:
@@ -31,7 +37,35 @@ class PegasusT5(Buff, HFCompatible):
         self.num_beams = self.num_return_sequences
         self.tokenizer = None
         self.para_model = None
+        self._oa_client = None
         super().__init__(config_root=config_root)
+
+    def _require_openai_client(self):
+        if self._oa_client is None:
+            api_key = getattr(self, "api_key", None) or os.getenv("OPENAI_API_KEY")
+            if not api_key:
+                raise ValueError(
+                    "OPENAI_API_KEY not set; required for translation bridge in PegasusT5."
+                )
+            self._oa_client = OpenAI(api_key=api_key)
+
+    def _translate(self, text: str, target_lang: str) -> str:
+        self._require_openai_client()
+        resp = self._oa_client.chat.completions.create(
+            model=self.translation_model_name,
+            temperature=self.translation_temperature,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a precise translation engine. "
+                        "Return only the translated text."
+                    ),
+                },
+                {"role": "user", "content": f"Translate into {target_lang}: {text}"},
+            ],
+        )
+        return resp.choices[0].message.content.strip()
 
     def _load_model(self):
         from transformers import PegasusForConditionalGeneration, PegasusTokenizer
@@ -65,6 +99,14 @@ class PegasusT5(Buff, HFCompatible):
         tgt_text = self.tokenizer.batch_decode(translated, skip_special_tokens=True)
         return tgt_text
 
+    def _is_korean(self, text: str) -> bool:
+        return any("\uac00" <= ch <= "\ud7a3" for ch in text)
+
+    def _should_bridge(self, source_lang: str, text: str) -> bool:
+        if not source_lang or source_lang == "*" or source_lang.lower() == "unknown":
+            return self._is_korean(text)
+        return not source_lang.lower().startswith("en")
+
     def transform(
         self, attempt: garak.attempt.Attempt
     ) -> Iterable[garak.attempt.Attempt]:
@@ -72,8 +114,26 @@ class PegasusT5(Buff, HFCompatible):
             attempt
         )  # why does this yield a copy of the original with no modification?
         last_message = attempt.prompt.last_message()
-        paraphrases = self._get_response(last_message.text)
+        source_lang = last_message.lang or ""
+        input_text = last_message.text
+
+        used_bridge = False
+        if self.enable_translation_bridge and self._should_bridge(source_lang, input_text):
+            try:
+                input_text = self._translate(input_text, target_lang="English")
+                used_bridge = True
+            except Exception:
+                pass  # fall back to original text if translation fails
+
+        paraphrases = self._get_response(input_text)
         for paraphrase in set(paraphrases):
+            if used_bridge:
+                try:
+                    paraphrase = self._translate(
+                        paraphrase, target_lang=source_lang or "Korean"
+                    )
+                except Exception:
+                    paraphrase = last_message.text  # ensure output stays in source language
             paraphrased_attempt = self._derive_new_attempt(attempt)
             # transform receives a copy of the attempt should it modify the prompt in place?
             delattr(paraphrased_attempt, "_prompt")  # hack to allow prompt set
@@ -83,14 +143,75 @@ class PegasusT5(Buff, HFCompatible):
             yield paraphrased_attempt
 
 
+class OpenAIParaphrase(Buff):
+    """OpenAI-based paraphraser (multilingual, works well for Korean)"""
+
+    ENV_VAR = "OPENAI_API_KEY"
+    DEFAULT_PARAMS = Buff.DEFAULT_PARAMS | {
+        "model_name": "gpt-4o-mini",
+        "temperature": 0.7,
+        "num_return_sequences": 3,
+    }
+    doc_uri = "https://platform.openai.com/docs/guides/text-generation"
+    lang = None  # allow all languages
+
+    def __init__(self, config_root=_config) -> None:
+        self.client = None
+        super().__init__(config_root=config_root)
+
+    def _require_client(self):
+        if self.client is None:
+            api_key = getattr(self, "api_key", None) or os.getenv(self.ENV_VAR)
+            if not api_key:
+                raise ValueError(f"{self.ENV_VAR} not set; cannot run OpenAIParaphrase.")
+            self.api_key = api_key
+            self.client = OpenAI(api_key=api_key)
+
+    def _paraphrases(self, text: str):
+        self._require_client()
+        resp = self.client.chat.completions.create(
+            model=self.model_name,
+            n=self.num_return_sequences,
+            temperature=self.temperature,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a paraphrasing engine. Rewrite the user's sentence "
+                        "with the same meaning, natural phrasing, and similar length. "
+                        "Return only the paraphrased sentence."
+                    ),
+                },
+                {"role": "user", "content": text},
+            ],
+        )
+        return [c.message.content.strip() for c in resp.choices]
+
+    def transform(
+        self, attempt: garak.attempt.Attempt
+    ) -> Iterable[garak.attempt.Attempt]:
+        last_message = attempt.prompt.last_message()
+        for para in set(self._paraphrases(last_message.text)):
+            para_attempt = self._derive_new_attempt(attempt)
+            delattr(para_attempt, "_prompt")  # hack to allow prompt set
+            para_attempt.prompt = garak.attempt.Message(
+                text=para, lang=last_message.lang
+            )
+            yield para_attempt
+
+
 class Fast(Buff, HFCompatible):
     """CPU-friendly paraphrase buff based on Humarin's T5 paraphraser"""
 
     DEFAULT_PARAMS = Buff.DEFAULT_PARAMS | {
         "para_model_name": "garak-llm/chatgpt_paraphraser_on_T5_base",
         "hf_args": {"device": "cpu", "torch_dtype": "float32"},
+        # translation bridge for non-English inputs
+        "enable_translation_bridge": True,
+        "translation_model_name": "gpt-4o-mini",
+        "translation_temperature": 0.3,
     }
-    lang = "en"
+    lang = None  # allow all; non-en can be routed through translation bridge
     doc_uri = "https://huggingface.co/humarin/chatgpt_paraphraser_on_T5_base"
 
     def __init__(self, config_root=_config) -> None:
@@ -104,7 +225,35 @@ class Fast(Buff, HFCompatible):
         self.max_length = 128
         self.tokenizer = None
         self.para_model = None
+        self._oa_client = None
         super().__init__(config_root=config_root)
+
+    def _require_openai_client(self):
+        if self._oa_client is None:
+            api_key = getattr(self, "api_key", None) or os.getenv("OPENAI_API_KEY")
+            if not api_key:
+                raise ValueError(
+                    "OPENAI_API_KEY not set; required for translation bridge in Fast."
+                )
+            self._oa_client = OpenAI(api_key=api_key)
+
+    def _translate(self, text: str, target_lang: str) -> str:
+        self._require_openai_client()
+        resp = self._oa_client.chat.completions.create(
+            model=self.translation_model_name,
+            temperature=self.translation_temperature,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a precise translation engine. "
+                        "Return only the translated text."
+                    ),
+                },
+                {"role": "user", "content": f"Translate into {target_lang}: {text}"},
+            ],
+        )
+        return resp.choices[0].message.content.strip()
 
     def _load_model(self):
         from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
@@ -148,6 +297,9 @@ class Fast(Buff, HFCompatible):
 
         return res
 
+    def _is_korean(self, text: str) -> bool:
+        return any("\uac00" <= ch <= "\ud7a3" for ch in text)
+
     def transform(
         self, attempt: garak.attempt.Attempt
     ) -> Iterable[garak.attempt.Attempt]:
@@ -155,8 +307,28 @@ class Fast(Buff, HFCompatible):
             attempt
         )  # why does this yield a copy of the original with no modification?
         last_message = attempt.prompt.last_message()
-        paraphrases = self._get_response(last_message.text)
+        source_lang = last_message.lang or ""
+        input_text = last_message.text
+
+        used_bridge = False
+        if self.enable_translation_bridge and (
+            not source_lang or source_lang == "*" or not source_lang.lower().startswith("en")
+        ):
+            try:
+                source_guess = source_lang or ("ko" if self._is_korean(input_text) else "en")
+                input_text = self._translate(input_text, target_lang="English")
+                used_bridge = True
+            except Exception:
+                pass  # fall back to original text if translation fails
+
+        paraphrases = self._get_response(input_text)
         for paraphrase in set(paraphrases):
+            if used_bridge:
+                try:
+                    target = source_lang or source_guess or "Korean"
+                    paraphrase = self._translate(paraphrase, target_lang=target)
+                except Exception:
+                    paraphrase = last_message.text  # keep source language on failure
             paraphrased_attempt = self._derive_new_attempt(attempt)
             # transform receives a copy of the attempt should it modify the prompt in place?
             delattr(paraphrased_attempt, "_prompt")  # hack to allow prompt set
