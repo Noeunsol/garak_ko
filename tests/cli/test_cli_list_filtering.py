@@ -49,17 +49,17 @@ def test_list_seeds_with_seed_spec(capsys, options):
 @pytest.mark.parametrize(
     "options",
     [
-        ("--list_detectors",),
-        ("--list_detectors", "-d", "unsafe_content"),
-        ("--list_detectors", "-d", "unsafe_content,shields.Up"),
+        ("--list_judges",),
+        ("--list_judges", "-d", "unsafe_content"),
+        ("--list_judges", "-d", "unsafe_content,shields.Up"),
     ],
 )
-def test_list_seeds_with_detector_spec(capsys, options):
+def test_list_seeds_with_judge_spec(capsys, options):
     cli.main(options)
     lines = _plugin_lines(capsys.readouterr().out)
     assert all(
-        ln.startswith("detectors: ") for ln in lines
-    ), "expected all 'detectors:' lines"
+        ln.startswith("judges: ") for ln in lines
+    ), "expected all 'judges:' lines"
 
     if len(options) > 1:
         parts = options[2].split(",")

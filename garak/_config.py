@@ -36,7 +36,7 @@ system_params = (
     "verbose narrow_output parallel_requests parallel_attempts skip_unknown".split()
 )
 run_params = "seed deprefix eval_threshold generations seed_tags interactive system_prompt".split()
-plugins_params = "target_type target_name extended_detectors".split()
+plugins_params = "target_type target_name extended_judges".split()
 reporting_params = "taxonomy report_prefix".split()
 project_dir_name = "garak"
 
@@ -89,7 +89,7 @@ reporting = GarakSubConfig()
 
 def _lock_config_as_dict():
     global plugins
-    for plugin_type in ("seeds", "generators", "attackers", "detectors", "harnesses"):
+    for plugin_type in ("seeds", "generators", "attackers", "judges", "harnesses"):
         setattr(plugins, plugin_type, _crystallise(getattr(plugins, plugin_type)))
 
 
@@ -108,7 +108,7 @@ nested_dict = _nested_dict
 
 plugins.seeds = nested_dict()
 plugins.generators = nested_dict()
-plugins.detectors = nested_dict()
+plugins.judges = nested_dict()
 plugins.attackers = nested_dict()
 plugins.harnesses = nested_dict()
 reporting.taxonomy = None  # set here to enable report_digest to be called directly
@@ -124,7 +124,7 @@ run.target_lang = "en"
 run.langproviders = []
 
 # placeholder
-# generator, seed, detector, attacker = {}, {}, {}, {}
+# generator, seed, judge, attacker = {}, {}, {}, {}
 
 
 def _key_exists(d: dict, key: str) -> bool:
@@ -296,7 +296,7 @@ def load_base_config() -> None:
 def load_config(
     site_config_filename="garak.site.yaml", run_config_filename=None
 ) -> None:
-    # would be good to bubble up things from run_config, e.g. generator, seed(s), detector(s)
+    # would be good to bubble up things from run_config, e.g. generator, seed(s), judge(s)
     # and then not have cli be upset when these are not given as cli params
     global loaded
 

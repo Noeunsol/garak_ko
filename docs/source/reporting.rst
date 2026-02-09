@@ -14,7 +14,7 @@ The report JSON consists of JSON rows. Each row has an ``entry_type`` field.
 Different entry types have different other fields.
 Attempt-type entries have uuid and status fields.
 Status can be 0 (not sent to target), 1 (with target response but not evaluated), or 2 (with response and evaluation).
-Eval-type entries are added after each seed/detector pair completes, and list the results used to compute the score.
+Eval-type entries are added after each seed/judge pair completes, and list the results used to compute the score.
 
 Report HTML
 -----------
@@ -24,7 +24,7 @@ Runs are broken down into:
 
 1. modules/taxonomy entries
 2. seeds within those categories
-3. detectors for each seed
+3. judges for each seed
 
 Results given are both absolute and relative.
 The relative ones are in terms of a Z-score computed against a set of recently tested other models and systems.

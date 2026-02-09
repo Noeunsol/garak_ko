@@ -90,7 +90,7 @@ The general syntax is:
 
 `garak <options>`
 
-`garak` needs to know what model to scan, and by default, it'll try all the seeds it knows on that model, using the vulnerability detectors recommended by each seed. You can see a list of seeds using:
+`garak` needs to know what model to scan, and by default, it'll try all the seeds it knows on that model, using the vulnerability judges recommended by each seed. You can see a list of seeds using:
 
 `garak --list_seeds`
 
@@ -118,7 +118,7 @@ python3 -m garak --target_type huggingface --target_name gpt2 --seeds dan.Dan_11
 
 ## Reading the results
 
-For each seed loaded, garak will print a progress bar as it generates. Once generation is complete, a row evaluating that seed's results on each detector is given. If any of the prompt attempts yielded an undesirable behavior, the response will be marked as UNSAFE, and the failure rate given.
+For each seed loaded, garak will print a progress bar as it generates. Once generation is complete, a row evaluating that seed's results on each judge is given. If any of the prompt attempts yielded an undesirable behavior, the response will be marked as UNSAFE, and the failure rate given.
 
 Here are the results with the `encoding` module on a GPT-3 variant:
 ![alt text](https://i.imgur.com/8Dxf45N.png)
@@ -268,18 +268,18 @@ For testing. This generator repeats back the prompt it received.
 
 Check out the [reference docs](https://reference.garak.ai/) for an authoritative guide to `garak` code structure.
 
-In a typical run, `garak` will read a model type (and optionally model name) from the command line, then determine which `seed`s and `detector`s to run, start up a `generator`, and then pass these to a `harness` to do the probing; an `evaluator` deals with the results. There are many modules in each of these categories, and each module provides a number of classes that act as individual plugins.
+In a typical run, `garak` will read a model type (and optionally model name) from the command line, then determine which `seed`s and `judge`s to run, start up a `generator`, and then pass these to a `harness` to do the probing; an `evaluator` deals with the results. There are many modules in each of these categories, and each module provides a number of classes that act as individual plugins.
 
 * `garak/seeds/` - classes for generating interactions with LLMs
-* `garak/detectors/` - classes for detecting an LLM is exhibiting a given failure mode
+* `garak/judges/` - classes for detecting an LLM is exhibiting a given failure mode
 * `garak/evaluators/` - assessment reporting schemes
 * `garak/generators/` - plugins for LLMs to be seedd
 * `garak/harnesses/` - classes for structuring testing
 * `resources/` - ancillary items required by plugins
 
-The default operating mode is to use the `seedwise` harness. Given a list of seed module names and seed plugin names, the `seedwise` harness instantiates each seed, then for each seed reads its `primary_detector` and `extended_detectors` attributes to get a list of `detector`s to run on the output.
+The default operating mode is to use the `seedwise` harness. Given a list of seed module names and seed plugin names, the `seedwise` harness instantiates each seed, then for each seed reads its `primary_judge` and `extended_judges` attributes to get a list of `judge`s to run on the output.
 
-Each plugin category (`seeds`, `detectors`, `evaluators`, `generators`, `harnesses`) includes a `base.py` which defines the base classes usable by plugins in that category. Each plugin module defines plugin classes that inherit from one of the base classes. For example, `garak.generators.openai.OpenAIGenerator` descends from `garak.generators.base.Generator`.
+Each plugin category (`seeds`, `judges`, `evaluators`, `generators`, `harnesses`) includes a `base.py` which defines the base classes usable by plugins in that category. Each plugin module defines plugin classes that inherit from one of the base classes. For example, `garak.generators.openai.OpenAIGenerator` descends from `garak.generators.base.Generator`.
 
 Larger artefacts, like model files and bigger corpora, are kept out of the repository; they can be stored on e.g. Hugging Face Hub and loaded locally by clients using `garak`.
 
@@ -294,10 +294,10 @@ Larger artefacts, like model files and bigger corpora, are kept out of the repos
     * Import the model, e.g. `import garak.seeds.mymodule`
     * Instantiate the plugin, e.g. `p = garak.seeds.mymodule.MySeed()`
   * Run a scan with test plugins
-    * For seeds, try a blank generator and always.Pass detector: `python3 -m garak -m test.Blank -p mymodule -d always.Pass`
-    * For detectors, try a blank generator and a blank seed: `python3 -m garak -m test.Blank -p test.Blank -d mymodule`
-    * For generators, try a blank seed and always.Pass detector: `python3 -m garak -m mymodule -p test.Blank -d always.Pass`
-  * Get `garak` to list all the plugins of the type you're writing, with `--list_seeds`, `--list_detectors`, or `--list_generators`
+    * For seeds, try a blank generator and always.Pass judge: `python3 -m garak -m test.Blank -p mymodule -d always.Pass`
+    * For judges, try a blank generator and a blank seed: `python3 -m garak -m test.Blank -p test.Blank -d mymodule`
+    * For generators, try a blank seed and always.Pass judge: `python3 -m garak -m mymodule -p test.Blank -d always.Pass`
+  * Get `garak` to list all the plugins of the type you're writing, with `--list_seeds`, `--list_judges`, or `--list_generators`
 
 
 ## FAQ

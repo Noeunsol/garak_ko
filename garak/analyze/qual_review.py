@@ -19,7 +19,7 @@ import garak.analyze
 import garak.analyze.calibration
 from garak.seeds import Tier
 
-SEED_DETECTOR_SEP = "+"
+SEED_JUDGE_SEP = "+"
 
 
 def build_tiers() -> dict:
@@ -40,13 +40,13 @@ def build_tiers() -> dict:
 def qual_review(report_path: str) -> None:
     tiers = build_tiers()
     c = garak.analyze.calibration.Calibration()
-    seed_detector_scores = {}
+    seed_judge_scores = {}
     pos_examples = defaultdict(list)
     neg_examples = defaultdict(list)
 
     print("# garak Qualitative review")
     print(
-        "Analysis of failing & passing seeds/detectors, grouped by tier, including prompt & response samples for failing entries"
+        "Analysis of failing & passing seeds/judges, grouped by tier, including prompt & response samples for failing entries"
     )
     print("source filename: ", report_path)
 
@@ -60,25 +60,25 @@ def qual_review(report_path: str) -> None:
                     else 0
                 )
                 seed_module, seed_classname = record["seed"].split(".", 1)
-                detector = record["detector"].replace("detector.", "")
-                detector_module, detector_classname = detector.split(".", 1)
+                judge = record["judge"].replace("judge.", "")
+                judge_module, judge_classname = judge.split(".", 1)
                 z = c.get_z_score(
                     seed_module,
                     seed_classname,
-                    detector_module,
-                    detector_classname,
+                    judge_module,
+                    judge_classname,
                     passrate,
                 )
-                seed_detector_scores[
-                    f"{record['seed']}{SEED_DETECTOR_SEP}{detector}"
+                seed_judge_scores[
+                    f"{record['seed']}{SEED_JUDGE_SEP}{judge}"
                 ] = {
                     "passrate": passrate,
                     "z": z,
                 }
             elif record["entry_type"] == "attempt" and record["status"] == 2:
-                results = record["detector_results"]
-                for detector_name in results:
-                    for i, score in enumerate(results[detector_name]):
+                results = record["judge_results"]
+                for judge_name in results:
+                    for i, score in enumerate(results[judge_name]):
                         try:
                             fields = [record["prompt"], record["outputs"][i]]
                             if "triggers" in record.get("notes", {}).keys():
@@ -86,21 +86,21 @@ def qual_review(report_path: str) -> None:
                             if score > 0.5:
                                 pos_examples[
                                     record["seed_classname"]
-                                    + SEED_DETECTOR_SEP
-                                    + detector_name
+                                    + SEED_JUDGE_SEP
+                                    + judge_name
                                 ].append(fields)
                             else:
                                 neg_examples[
                                     record["seed_classname"]
-                                    + SEED_DETECTOR_SEP
-                                    + detector_name
+                                    + SEED_JUDGE_SEP
+                                    + judge_name
                                 ].append(fields)
                         except IndexError:
                             continue
 
-    def _print_examples(seed_detector):
+    def _print_examples(seed_judge):
         print("\n#### Examples of responses marked failing")
-        excerpt = pos_examples[seed_detector]
+        excerpt = pos_examples[seed_judge]
         random.shuffle(excerpt)
         for index, entry in enumerate(excerpt[0:10]):
             print(f"##### Example {index+1}")
@@ -111,7 +111,7 @@ def qual_review(report_path: str) -> None:
             print("  * **response**:\n```\n" + repr(entry[1]) + "\n```\n")
             print()
         print("\n#### Examples of responses marked passing")
-        excerpt = neg_examples[seed_detector]
+        excerpt = neg_examples[seed_judge]
         random.shuffle(excerpt)
         for entry in excerpt[0:10]:
             print()
@@ -123,13 +123,13 @@ def qual_review(report_path: str) -> None:
 
     print("## Tier 1 seed results")
     t1_seed_names = tiers[Tier.OF_CONCERN]
-    for seed_detector in seed_detector_scores.keys():
-        if seed_detector.split(SEED_DETECTOR_SEP)[0] in t1_seed_names:
+    for seed_judge in seed_judge_scores.keys():
+        if seed_judge.split(SEED_JUDGE_SEP)[0] in t1_seed_names:
             z, passrate = (
-                seed_detector_scores[seed_detector]["z"],
-                seed_detector_scores[seed_detector]["passrate"],
+                seed_judge_scores[seed_judge]["z"],
+                seed_judge_scores[seed_judge]["passrate"],
             )
-            print("\n### Seed and detector: " + seed_detector)
+            print("\n### Seed and judge: " + seed_judge)
             print(f"\n\n * passrate: `{passrate:0.4f}`\n * z: `{z}`\n\n")
             if passrate < garak.analyze.ABSOLUTE_DEFCON_BOUNDS.BELOW_AVG or (
                 z is not None and z < garak.analyze.RELATIVE_DEFCON_BOUNDS.BELOW_AVG
@@ -139,33 +139,33 @@ def qual_review(report_path: str) -> None:
                     print(f"* low pass rate `{passrate:0.4f}`")
                 if z is not None and z < garak.analyze.RELATIVE_DEFCON_BOUNDS.BELOW_AVG:
                     print(f"* low z         `{z:-0.4f}`")
-                _print_examples(seed_detector)
+                _print_examples(seed_judge)
             else:
                 print("All performance within bounds")
 
     print("## Tier 2 seed results")
     t2_seed_names = tiers[Tier.COMPETE_WITH_SOTA]
-    for seed_detector in seed_detector_scores.keys():
-        if seed_detector.split(SEED_DETECTOR_SEP)[0] in t2_seed_names:
+    for seed_judge in seed_judge_scores.keys():
+        if seed_judge.split(SEED_JUDGE_SEP)[0] in t2_seed_names:
             z, passrate = (
-                seed_detector_scores[seed_detector]["z"],
-                seed_detector_scores[seed_detector]["passrate"],
+                seed_judge_scores[seed_judge]["z"],
+                seed_judge_scores[seed_judge]["passrate"],
             )
-            print("\n### Seed and detector: " + seed_detector)
+            print("\n### Seed and judge: " + seed_judge)
             print(f"\n\n * passrate: `{passrate:0.4f}`\n * z: `{z}`\n\n")
             if z is not None and z < garak.analyze.RELATIVE_DEFCON_BOUNDS.BELOW_AVG:
                 print("Issues found:")
                 print(f"* low z   `{z:-0.4f}`")
-                _print_examples(seed_detector)
+                _print_examples(seed_judge)
             else:
                 print("All performance within bounds")
 
-    print("\n## Seed/detector pairs not processed:")
+    print("\n## Seed/judge pairs not processed:")
     t1_t2_seeds = t1_seed_names + t2_seed_names
     for entry in [
-        seed_detector
-        for seed_detector in seed_detector_scores.keys()
-        if seed_detector.split(SEED_DETECTOR_SEP)[0] not in t1_t2_seeds
+        seed_judge
+        for seed_judge in seed_judge_scores.keys()
+        if seed_judge.split(SEED_JUDGE_SEP)[0] not in t1_t2_seeds
     ]:
         print("*", entry)
 
@@ -181,7 +181,7 @@ def main(argv=None) -> None:
 
     parser = argparse.ArgumentParser(
         prog="python -m garak.analyze.qual_review",
-        description="Qualitative review of failing/passing seeds and detectors with sample prompts/responses",
+        description="Qualitative review of failing/passing seeds and judges with sample prompts/responses",
         epilog="See https://github.com/NVIDIA/garak",
         allow_abbrev=False,
     )

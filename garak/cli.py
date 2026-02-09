@@ -3,7 +3,7 @@
 
 """Flow for invoking garak from the command line"""
 
-command_options = "list_detectors list_seeds list_seed_groups list_generators list_attackers list_attackers list_config plugin_info interactive report version fix".split()
+command_options = "list_judges list_seeds list_seed_groups list_generators list_attackers list_attackers list_config plugin_info interactive report version fix".split()
 
 
 def parse_cli_plugin_config(plugin_type, args):
@@ -294,7 +294,7 @@ def main(arguments=None) -> None:
     parser.add_argument(
         "--skip_unknown",
         action="store_true",
-        help="allow skip of unknown seeds, detectors, or attackers",
+        help="allow skip of unknown seeds, judges, or attackers",
     )
 
     ## RUN
@@ -371,18 +371,18 @@ def main(arguments=None) -> None:
         type=str,
         help="only include seeds with a tag that starts with this value (e.g. owasp:llm01)",
     )
-    # detectors
+    # judges
     parser.add_argument(
-        "--detectors",
+        "--judges",
         "-d",
         type=str,
-        default=_config.plugins.detector_spec,
-        help="list of detectors to use, or 'all' for all. Default is to use the seed's suggestion.",
+        default=_config.plugins.judge_spec,
+        help="list of judges to use, or 'all' for all. Default is to use the seed's suggestion.",
     )
     parser.add_argument(
-        "--extended_detectors",
+        "--extended_judges",
         action="store_true",
-        help="If detectors aren't specified on the command line, should we run all detectors? (default is just the primary detector, if given, else everything)",
+        help="If judges aren't specified on the command line, should we run all judges? (default is just the primary judge, if given, else everything)",
     )
     # attackers (formerly "attackers")
     parser.add_argument(
@@ -446,9 +446,9 @@ def main(arguments=None) -> None:
         help="list seed groups available from the seed groups file (see --seed_groups_file).",
     )
     parser.add_argument(
-        "--list_detectors",
+        "--list_judges",
         action="store_true",
-        help="list available detectors. Usage: combine with --detectors/-d to filter for detectors that will be activated based on a `detector_spec`, e.g. '--list_detectors -d misleading.Invalid' to show only that detector.",
+        help="list available judges. Usage: combine with --judges/-d to filter for judges that will be activated based on a `judge_spec`, e.g. '--list_judges -d misleading.Invalid' to show only that judge.",
     )
     parser.add_argument(
         "--list_generators",
@@ -585,8 +585,8 @@ def main(arguments=None) -> None:
     # put plugin spec into the _spec config value, if set at cli
     if "seeds" in args:
         _config.plugins.seed_spec = args.seeds
-    if "detectors" in args:
-        _config.plugins.detector_spec = args.detectors
+    if "judges" in args:
+        _config.plugins.judge_spec = args.judges
     if "attackers" in args:
         _config.plugins.attacker_spec = args.attackers
     if "target_lang" in args:
@@ -747,14 +747,14 @@ def main(arguments=None) -> None:
                 else:
                     print(f"  {name}: {_spec_from_group_value(desc)}")
 
-        elif args.list_detectors:
-            selected_detectors = None
-            detector_spec = getattr(args, "detectors", None)
-            if detector_spec and detector_spec.lower() not in ("", "auto", "all", "*"):
-                selected_detectors, _ = _config.parse_plugin_spec(
-                    detector_spec, "detectors"
+        elif args.list_judges:
+            selected_judges = None
+            judge_spec = getattr(args, "judges", None)
+            if judge_spec and judge_spec.lower() not in ("", "auto", "all", "*"):
+                selected_judges, _ = _config.parse_plugin_spec(
+                    judge_spec, "judges"
                 )
-            command.print_detectors(selected_detectors)
+            command.print_judges(selected_judges)
 
         elif getattr(args, "list_attackers", False) or getattr(args, "list_attackers", False):
             command.print_attackers()
@@ -856,7 +856,7 @@ def main(arguments=None) -> None:
                 logging.error(message)
                 raise ValueError(message)
 
-            parsable_specs = ["seed", "detector", "attacker"]
+            parsable_specs = ["seed", "judge", "attacker"]
             parsed_specs = {}
             for spec_type in parsable_specs:
                 spec_namespace = f"{spec_type}s"
@@ -901,7 +901,7 @@ def main(arguments=None) -> None:
                 command.start_run()  # start the run now that all config validation is complete
                 print(f"📜 reporting to {_config.transient.report_filename}")
 
-                if parsed_specs["detector"] == []:
+                if parsed_specs["judge"] == []:
                     command.seedwise_run(
                         generator,
                         parsed_specs["seed"],
@@ -912,7 +912,7 @@ def main(arguments=None) -> None:
                     command.pxd_run(
                         generator,
                         parsed_specs["seed"],
-                        parsed_specs["detector"],
+                        parsed_specs["judge"],
                         evaluator,
                         parsed_specs["attacker"],
                     )
@@ -930,7 +930,7 @@ def main(arguments=None) -> None:
                     _run_once()
                 else:
                     for combo in combos:
-                        # Ensure seeds/detectors reload with current _config (esp target_lang)
+                        # Ensure seeds/judges reload with current _config (esp target_lang)
                         _plugins.PluginProvider.clear_cache()
 
                         # Apply matrix overrides to run config

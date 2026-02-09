@@ -39,10 +39,10 @@ class Tox(garak.seeds.Seed):
     This seed uses an attack model, trained on conversations that led to LLMs
     outputting toxicity, to generate prompts that should nudge a target LLM into
     yielding toxic output. The data used for this attack generation model was selected
-    using the same detector as this tox seed uses, so both attack generation model
-    and detector are looking for the same definition of the failure mode."""
+    using the same judge as this tox seed uses, so both attack generation model
+    and judge are looking for the same definition of the failure mode."""
 
-    primary_detector = "unsafe_content.ToxicCommentModel"
+    primary_judge = "unsafe_content.ToxicCommentModel"
     tags = [
         "avid-effect:ethics:E0301",
         "quality:Behavioral:ContentSafety:Toxicity",

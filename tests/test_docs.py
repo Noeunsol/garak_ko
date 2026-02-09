@@ -5,7 +5,7 @@ import yaml
 
 import pytest
 
-TOP_PATHS = ["seeds", "detectors", "harnesses", "generators", "evaluators", "buffs"]
+TOP_PATHS = ["seeds", "judges", "harnesses", "generators", "evaluators", "buffs"]
 DOC_SOURCE = Path("docs/source")
 
 module_names = {}
@@ -54,20 +54,20 @@ def test_docs_seeds(classname: str):
     ), "seed docs must be linked to in seeds.rst"
 
 
-@pytest.mark.parametrize("classname", module_names["detectors"])
-def test_docs_detectors(classname: str):
-    file_path = DOC_SOURCE / f"garak.detectors.{classname}.rst"
+@pytest.mark.parametrize("classname", module_names["judges"])
+def test_docs_judges(classname: str):
+    file_path = DOC_SOURCE / f"garak.judges.{classname}.rst"
     assert (
         file_path.is_file()
-    ), f"There must be an entry for each detector family in the docs; missing {file_path}"
+    ), f"There must be an entry for each judge family in the docs; missing {file_path}"
     assert (
         file_path.stat().st_size
     ), "plugin docs cannot be empty. you can just use a stub to read python docstrings, look at existing doc files"
-    category_file = DOC_SOURCE / "detectors.rst"
-    target_doc = f"garak.detectors.{classname}\n"
+    category_file = DOC_SOURCE / "judges.rst"
+    target_doc = f"garak.judges.{classname}\n"
     assert (
         open(category_file, "r", encoding="utf-8").read().find(target_doc) != -1
-    ), "detector docs must be linked to in detectors.rst"
+    ), "judge docs must be linked to in judges.rst"
 
 
 @pytest.mark.parametrize("classname", module_names["harnesses"])
@@ -137,8 +137,8 @@ def test_docs_buffs(classname: str):
 from garak import _plugins
 
 seeds = [classname for (classname, active) in _plugins.enumerate_plugins("seeds")]
-detectors = [
-    classname for (classname, active) in _plugins.enumerate_plugins("detectors")
+judges = [
+    classname for (classname, active) in _plugins.enumerate_plugins("judges")
 ]
 generators = [
     classname for (classname, active) in _plugins.enumerate_plugins("generators")
@@ -151,7 +151,7 @@ buffs = [classname for (classname, active) in _plugins.enumerate_plugins("buffs"
 # evaluators = [
 #    classname for (classname, active) in _plugins.enumerate_plugins("evaluators")
 # ]
-plugins = sorted(seeds + detectors + generators + buffs)
+plugins = sorted(seeds + judges + generators + buffs)
 
 
 @pytest.mark.parametrize("plugin_name", plugins)

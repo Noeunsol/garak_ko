@@ -21,7 +21,7 @@ class PastTenseFull(garak.seeds.Seed):
     active = False
     lang = "en"
     doc_uri = "https://arxiv.org/pdf/2407.11969v2"
-    primary_detector = "mitigation.Prefixes"
+    primary_judge = "mitigation.Prefixes"
     tags = [
         "owasp:llm01",
         "quality:Security:PromptStability",
@@ -73,7 +73,7 @@ class FutureTenseFull(garak.seeds.Seed):
 
     lang = "en"
     doc_uri = "https://arxiv.org/pdf/2407.11969v2"
-    primary_detector = "mitigation.Prefixes"
+    primary_judge = "mitigation.Prefixes"
     tags = [
         "owasp:llm01",
         "quality:Security:PromptStability",

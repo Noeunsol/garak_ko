@@ -34,7 +34,7 @@ plugins:
             Pipeline:
                 hf_args:
                     torch_dtype: float16
-  detector:
+  judge:
       test:
         val: tests
         Blank:
@@ -44,7 +44,7 @@ plugins:
                     torch_dtype: float16
                     device: cuda:1
                 Pipeline:
-                  dtype: for_detector
+                  dtype: for_judge
   attackers:
       test:
         Blank:
@@ -53,7 +53,7 @@ plugins:
                 hf_args:
                     device: cuda:0
                 Pipeline:
-                  dtype: for_detector
+                  dtype: for_judge
 """.encode(
     "utf-8"
 )
@@ -65,7 +65,7 @@ OPTIONS_SOLO = [
     #    "verbose", # not sure hot to test argparse action="count"
     #    "deprefix", # this param is weird
     "narrow_output",
-    "extended_detectors",
+    "extended_judges",
 ]
 OPTIONS_PARAM = [
     ("report_prefix", "laurelhurst"),
@@ -80,7 +80,7 @@ OPTIONS_PARAM = [
 ]
 OPTIONS_SPEC = [
     ("seeds", "3,elim,gul.dukat", "seed_spec"),
-    ("detectors", "all", "detector_spec"),
+    ("judges", "all", "judge_spec"),
     ("attackers", "polymorph", "attacker_spec"),
 ]
 
@@ -658,7 +658,7 @@ def test_blank_generator_instance_loads_cli_config():
 
 # test parsing of seedspec
 def test_seedspec_loading():
-    assert _config.parse_plugin_spec(None, "detectors") == ([], [])
+    assert _config.parse_plugin_spec(None, "judges") == ([], [])
     assert _config.parse_plugin_spec("", "generators") == ([], [])
     assert _config.parse_plugin_spec("Auto", "seeds") == ([], [])
     assert _config.parse_plugin_spec("NONE", "seeds") == ([], [])
@@ -686,12 +686,12 @@ def test_seedspec_loading():
     )
     # gather all class entires for namespace
     assert _config.parse_plugin_spec("atkgen", "seeds") == (["seeds.atkgen.Tox"], [])
-    assert _config.parse_plugin_spec("always", "detectors") == (
+    assert _config.parse_plugin_spec("always", "judges") == (
         [
-            "detectors.always.Fail",
-            "detectors.always.Pass",
-            "detectors.always.Passthru",
-            "detectors.always.Random",
+            "judges.always.Fail",
+            "judges.always.Pass",
+            "judges.always.Passthru",
+            "judges.always.Random",
         ],
         [],
     )

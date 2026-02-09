@@ -6,7 +6,7 @@ Are my scores good?
 ^^^^^^^^^^^^^^^^^^^
 
 Garak scores are interpreted compared to the state of the art.
-Using a "bag" of models and the results across those, we calibrate scores based on how those models perform on various seeds and detectors.
+Using a "bag" of models and the results across those, we calibrate scores based on how those models perform on various seeds and judges.
 The scores we get from the surveyed models are used to get a distribution of possible garak scores.
 When surveying a target model, its pass rate is compared to the average and variation we see across state of the art models in order to estimate how well the target model is doing.
 
@@ -26,9 +26,9 @@ One can read about which models are in the current calibration, and what configu
 Z-scores
 ^^^^^^^^
 
-Each seed & detector pair yields an attack success rate / pass rate (pass rate = 1-ASR). We measure the pass rate for each of the detectors that each seed requests. We then calculate the mean pass rate and standard deviation across all the models, as well as the Shapiro-Wilk p-value to gauge how well the scores follow a normal distribution. This mean and standard deviation tell us how well the bag does at a particular seed & model.
+Each seed & judge pair yields an attack success rate / pass rate (pass rate = 1-ASR). We measure the pass rate for each of the judges that each seed requests. We then calculate the mean pass rate and standard deviation across all the models, as well as the Shapiro-Wilk p-value to gauge how well the scores follow a normal distribution. This mean and standard deviation tell us how well the bag does at a particular seed & model.
 
-When assessing a target, we calculate a "Z-score". Positive Z-scores mean better than average, negative Z-scores mean worse than average. For any seed/detector combination, roughly two-thirds of models get a Z-score between -1.0 and +1.0. The middle 10% of models score -0.125 to +0.125. This is labelled "competitive". A Z-score of +1.0 means the score was one standard deviation better than the mean score other models achieved for this seed & detector.
+When assessing a target, we calculate a "Z-score". Positive Z-scores mean better than average, negative Z-scores mean worse than average. For any seed/judge combination, roughly two-thirds of models get a Z-score between -1.0 and +1.0. The middle 10% of models score -0.125 to +0.125. This is labelled "competitive". A Z-score of +1.0 means the score was one standard deviation better than the mean score other models achieved for this seed & judge.
 
 * Over +1: much better than average
 * Around +0.1 to -0.1: average

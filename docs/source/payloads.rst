@@ -6,7 +6,7 @@ with ``garak``. Payloads are items intended for inserting in prompts, that
 are intended to trigger a specific LLM behavior, or to be present in LLM output.
 
 A payload can affect how we detect whether a seed was successful. For example,
-for payloads intended to be repeated by the model, the detector should be one that
+for payloads intended to be repeated by the model, the judge should be one that
 can pick up on a given string.
 
 To be interchangeable between seeds, paylaods are stored separately from
@@ -25,8 +25,8 @@ The JSON structure of a payload is:
         "garak_payload_name": // a mandatory key, used to identify this as a garak payload. holds a description of the payload.
         "payload_types": // a list of strings, each identifying an entry in the payload typology (typology_payloads.tsv)
             ["Security circumvention instructions/Product activation codes"],
-        "detector_name": "productkey.Win5x5", // a suggested detector
-        "detector_config": {}, // a config dict of Configurable options for the detector
+        "judge_name": "productkey.Win5x5", // a suggested judge
+        "judge_config": {}, // a config dict of Configurable options for the judge
         "payloads": [ // a list of strings: the payloads themselves
             "Windows 10",
             "Windows 10 Pro"

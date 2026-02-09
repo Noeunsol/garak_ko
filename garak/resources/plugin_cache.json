@@ -5,7 +5,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://interhumanagreement.substack.com/p/llm-output-can-take-over-your-computer",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "print escaped ANSI terminal codes",
       "lang": "en",
@@ -15,7 +15,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "ansiescape.Escaped",
+      "primary_judge": "ansiescape.Escaped",
       "tags": [
         "owasp:llm01",
         "owasp:llm02",
@@ -32,7 +32,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://interhumanagreement.substack.com/p/llm-output-can-take-over-your-computer",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "print raw ANSI terminal codes",
       "lang": "en",
@@ -42,7 +42,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "ansiescape.Raw",
+      "primary_judge": "ansiescape.Raw",
       "tags": [
         "owasp:llm01",
         "owasp:llm02",
@@ -59,7 +59,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://interhumanagreement.substack.com/p/llm-output-can-take-over-your-computer",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "check if raw ANSI escape sequences tokens are available",
       "lang": "*",
@@ -69,7 +69,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "ansiescape.Raw",
+      "primary_judge": "ansiescape.Raw",
       "tags": [
         "owasp:llm05"
       ],
@@ -83,7 +83,7 @@
       },
       "active": true,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "generate an API key for the specificed API",
       "lang": "en",
@@ -93,7 +93,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "apikey.ApiKey",
+      "primary_judge": "apikey.ApiKey",
       "tags": [
         "quality:Behavioral:ContentSafety:LegalGoodsServices"
       ],
@@ -107,7 +107,7 @@
       },
       "active": true,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "generate an API key for the specified API",
       "lang": "en",
@@ -117,7 +117,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "apikey.ApiKey",
+      "primary_judge": "apikey.ApiKey",
       "tags": [
         "quality:Behavioral:ContentSafety:LegalGoodsServices"
       ],
@@ -145,7 +145,7 @@
       },
       "active": true,
       "doc_uri": "https://interhumanagreement.substack.com/p/faketoxicityprompts-automatic-red",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "make the model say something toxic",
       "lang": "en",
@@ -155,7 +155,7 @@
         ]
       },
       "parallelisable_attempts": false,
-      "primary_detector": "unsafe_content.ToxicCommentModel",
+      "primary_judge": "unsafe_content.ToxicCommentModel",
       "tags": [
         "avid-effect:ethics:E0301",
         "quality:Behavioral:ContentSafety:Toxicity",
@@ -173,7 +173,7 @@
       },
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2410.23861",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [
         "soundfile",
         "librosa"
@@ -187,7 +187,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",
@@ -201,7 +201,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://en.wikipedia.org/wiki/EICAR_test_file",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "output antivirus test codes",
       "lang": "*",
@@ -211,7 +211,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "knownbadsignatures.EICAR",
+      "primary_judge": "knownbadsignatures.EICAR",
       "tags": [
         "avid-effect:security:S0301",
         "avid-effect:security:S0403",
@@ -227,7 +227,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://en.wikipedia.org/wiki/GTUBE",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "output email spam",
       "lang": "*",
@@ -237,7 +237,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "knownbadsignatures.GTUBE",
+      "primary_judge": "knownbadsignatures.GTUBE",
       "tags": [
         "avid-effect:security:S0301",
         "avid-effect:security:S0403",
@@ -253,7 +253,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://www.cisco.com/c/en/us/support/docs/security/email-security-appliance/213465-testing-outbreak-filter-url-rewriting.html",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "output email phishing",
       "lang": "*",
@@ -263,7 +263,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "knownbadsignatures.GTphish",
+      "primary_judge": "knownbadsignatures.GTphish",
       "tags": [
         "avid-effect:security:S0301",
         "avid-effect:security:S0403",
@@ -292,7 +292,7 @@
       },
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2106.09898",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "inject imperceptible text perturbations that bypass refusal policies",
       "lang": "en",
@@ -302,7 +302,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0403",
         "quality:Security:PromptStability",
@@ -319,7 +319,7 @@
       },
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "",
       "lang": null,
@@ -329,7 +329,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": null,
+      "primary_judge": null,
       "tags": [],
       "tier": 9,
       "mod_time": "2026-01-14 19:54:36 +0000"
@@ -339,7 +339,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "",
       "lang": null,
@@ -349,7 +349,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": null,
+      "primary_judge": null,
       "tags": [],
       "tier": 9,
       "mod_time": "2026-01-14 19:54:36 +0000"
@@ -364,7 +364,7 @@
       },
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "",
       "lang": null,
@@ -374,7 +374,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": null,
+      "primary_judge": null,
       "tags": [],
       "tier": 9,
       "mod_time": "2026-01-14 19:54:36 +0000"
@@ -384,7 +384,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "output an ethnic slur",
       "lang": "en",
@@ -394,7 +394,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "continuation.Continuation",
+      "primary_judge": "continuation.Continuation",
       "tags": [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",
@@ -412,7 +412,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "output an ethnic slur",
       "lang": "en",
@@ -422,7 +422,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "continuation.Continuation",
+      "primary_judge": "continuation.Continuation",
       "tags": [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",
@@ -440,7 +440,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -452,7 +452,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "dan.DAN",
+      "primary_judge": "dan.DAN",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -467,7 +467,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -479,7 +479,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "dan.AntiDAN",
+      "primary_judge": "dan.AntiDAN",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -497,7 +497,7 @@
       },
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2310.04451",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -509,7 +509,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "dan.DAN",
+      "primary_judge": "dan.DAN",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -524,7 +524,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://arxiv.org/abs/2310.04451",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -536,7 +536,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "dan.DAN",
+      "primary_judge": "dan.DAN",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -551,7 +551,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -563,7 +563,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "dan.DevMode",
+      "primary_judge": "dan.DevMode",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -578,7 +578,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -590,7 +590,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "dan.DevMode",
+      "primary_judge": "dan.DevMode",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -605,7 +605,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -617,7 +617,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "dan.MarkdownLink",
+      "primary_judge": "dan.MarkdownLink",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -632,7 +632,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -644,7 +644,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "dan.DANJailbreak",
+      "primary_judge": "dan.DANJailbreak",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -659,7 +659,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -671,7 +671,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "dan.DUDE",
+      "primary_judge": "dan.DUDE",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -686,7 +686,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://arxiv.org/abs/2308.03825",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "disregard the system prompt or alignment",
       "lang": "en",
@@ -696,7 +696,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -711,7 +711,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2308.03825",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "disregard the system prompt or alignment",
       "lang": "en",
@@ -721,7 +721,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -736,7 +736,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -748,7 +748,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "dan.DAN",
+      "primary_judge": "dan.DAN",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -763,7 +763,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -775,7 +775,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "dan.DAN",
+      "primary_judge": "dan.DAN",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -791,7 +791,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -803,7 +803,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "dan.DAN",
+      "primary_judge": "dan.DAN",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -818,7 +818,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -830,7 +830,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "dan.DAN",
+      "primary_judge": "dan.DAN",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -845,7 +845,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -857,7 +857,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "dan.DAN",
+      "primary_judge": "dan.DAN",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -872,7 +872,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -884,7 +884,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "dan.DAN",
+      "primary_judge": "dan.DAN",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -899,7 +899,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -911,7 +911,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "dan.DAN",
+      "primary_judge": "dan.DAN",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -926,7 +926,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -938,7 +938,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "dan.STAN",
+      "primary_judge": "dan.STAN",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -953,7 +953,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://not-just-memorization.github.io/extracting-training-data-from-chatgpt.html",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -965,7 +965,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "divergence.RepeatDiverges",
+      "primary_judge": "divergence.RepeatDiverges",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -982,7 +982,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://not-just-memorization.github.io/extracting-training-data-from-chatgpt.html",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -994,7 +994,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "divergence.RepeatDiverges",
+      "primary_judge": "divergence.RepeatDiverges",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -1021,7 +1021,7 @@
       },
       "active": true,
       "doc_uri": "https://github.com/dropbox/llm-security",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "Stress-test LLMs with long repeated-token prompts to surface instability",
       "lang": "*",
@@ -1031,7 +1031,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "divergence.RepeatedToken",
+      "primary_judge": "divergence.RepeatedToken",
       "tags": [
         "avid-effect:performance:P0403",
         "owasp:llm04",
@@ -1046,7 +1046,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://hiddenlayer.com/innovation-hub/novel-universal-bypass-for-all-major-llms/",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "roleplay as doctor to get bypass guardrails",
       "lang": "en",
@@ -1056,7 +1056,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "owasp:llm01",
         "avid-effect:security:S0301",
@@ -1071,7 +1071,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://hiddenlayer.com/innovation-hub/novel-universal-bypass-for-all-major-llms/",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "roleplay as doctor to get bypass guardrails, but use leetspeak",
       "lang": "en",
@@ -1081,7 +1081,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "owasp:llm01",
         "avid-effect:security:S0301",
@@ -1096,7 +1096,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://hiddenlayer.com/innovation-hub/novel-universal-bypass-for-all-major-llms/",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "roleplay as doctor to get unsafe outputs",
       "lang": "en",
@@ -1106,7 +1106,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "owasp:llm01",
         "avid-effect:security:S0301",
@@ -1121,7 +1121,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "get model to respond as discrimination exclusion toxicity hateful offensive",
       "lang": "en",
@@ -1131,7 +1131,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:ethics:E0301",
         "quality:Behavioral:ContentSafety:Toxicity",
@@ -1147,7 +1147,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "get model to respond as human chatbox",
       "lang": "en",
@@ -1157,7 +1157,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0301",
         "quality:Behavioral:ContentSafety:Unauthorized"
@@ -1170,7 +1170,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "get model to respond as information hazard",
       "lang": "en",
@@ -1180,7 +1180,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "owasp:llm06",
         "avid-effect:security:S0301",
@@ -1194,7 +1194,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "get model to respond as malicious uses",
       "lang": "en",
@@ -1204,7 +1204,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "quality:Behavioral:ContentSafety:LegalGoodsServices"
       ],
@@ -1216,7 +1216,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "get model to respond as misinformation harms",
       "lang": "en",
@@ -1226,7 +1226,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "quality:Robustness:GenerativeMisinformation",
         "avid-effect:ethics:E0402",
@@ -1246,7 +1246,7 @@
       },
       "active": true,
       "doc_uri": "https://arxiv.org/abs/2402.18104v2",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.Prefixes"
       ],
       "extra_dependency_names": [],
@@ -1258,7 +1258,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1280,7 +1280,7 @@
       },
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2402.18104v2",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.Prefixes"
       ],
       "extra_dependency_names": [],
@@ -1292,7 +1292,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1314,7 +1314,7 @@
       },
       "active": true,
       "doc_uri": "https://kai-greshake.de/posts/llm-malware/#encoded-inline-jailbreak",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1326,7 +1326,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1348,7 +1348,7 @@
       },
       "active": true,
       "doc_uri": "https://en.wikipedia.org/wiki/Atbash",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1360,7 +1360,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1382,7 +1382,7 @@
       },
       "active": true,
       "doc_uri": "https://kai-greshake.de/posts/llm-malware/#encoded-inline-jailbreak",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1394,7 +1394,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1416,7 +1416,7 @@
       },
       "active": true,
       "doc_uri": "https://kai-greshake.de/posts/llm-malware/#encoded-inline-jailbreak",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1428,7 +1428,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1450,7 +1450,7 @@
       },
       "active": true,
       "doc_uri": "https://kai-greshake.de/posts/llm-malware/#encoded-inline-jailbreak",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1462,7 +1462,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1484,7 +1484,7 @@
       },
       "active": true,
       "doc_uri": "https://kai-greshake.de/posts/llm-malware/#encoded-inline-jailbreak",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1496,7 +1496,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1518,7 +1518,7 @@
       },
       "active": true,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1530,7 +1530,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1552,7 +1552,7 @@
       },
       "active": true,
       "doc_uri": "https://ecoji.io/",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1564,7 +1564,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1586,7 +1586,7 @@
       },
       "active": true,
       "doc_uri": "https://kai-greshake.de/posts/llm-malware/#encoded-inline-jailbreak",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1598,7 +1598,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1620,7 +1620,7 @@
       },
       "active": false,
       "doc_uri": "https://en.wikipedia.org/wiki/Leet",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1632,7 +1632,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1654,7 +1654,7 @@
       },
       "active": false,
       "doc_uri": "https://kai-greshake.de/posts/llm-malware/#encoded-inline-jailbreak",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1666,7 +1666,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1688,7 +1688,7 @@
       },
       "active": true,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1700,7 +1700,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1722,7 +1722,7 @@
       },
       "active": true,
       "doc_uri": "https://en.wikipedia.org/wiki/NATO_phonetic_alphabet",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1734,7 +1734,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1756,7 +1756,7 @@
       },
       "active": false,
       "doc_uri": "https://kai-greshake.de/posts/llm-malware/#encoded-inline-jailbreak",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1768,7 +1768,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1790,7 +1790,7 @@
       },
       "active": true,
       "doc_uri": "https://kai-greshake.de/posts/llm-malware/#encoded-inline-jailbreak",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1802,7 +1802,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1824,7 +1824,7 @@
       },
       "active": false,
       "doc_uri": "https://embracethered.com/blog/posts/2025/sneaky-bits-and-ascii-smuggler/",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1836,7 +1836,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1858,7 +1858,7 @@
       },
       "active": true,
       "doc_uri": "https://kai-greshake.de/posts/llm-malware/#encoded-inline-jailbreak",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1870,7 +1870,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1893,7 +1893,7 @@
       },
       "active": true,
       "doc_uri": "https://embracethered.com/blog/posts/2024/hiding-and-finding-text-with-unicode-tags/",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1905,7 +1905,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1927,7 +1927,7 @@
       },
       "active": false,
       "doc_uri": "https://paulbutler.org/2025/smuggling-arbitrary-data-through-an-emoji/",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1939,7 +1939,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1961,7 +1961,7 @@
       },
       "active": true,
       "doc_uri": "https://en.wikipedia.org/wiki/Zalgo_text",
-      "extended_detectors": [
+      "extended_judges": [
         "encoding.DecodeApprox"
       ],
       "extra_dependency_names": [],
@@ -1973,7 +1973,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "encoding.DecodeMatch",
+      "primary_judge": "encoding.DecodeMatch",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -1990,7 +1990,7 @@
       },
       "active": true,
       "doc_uri": "https://portswigger.net/web-security/server-side-template-injection",
-      "extended_detectors": [
+      "extended_judges": [
         "exploitation.PythonCodeExecution"
       ],
       "extra_dependency_names": [],
@@ -2002,7 +2002,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "exploitation.JinjaTemplateDetector",
+      "primary_judge": "exploitation.JinjaTemplateJudge",
       "tags": [
         "avid-effect:security:S0301",
         "avid-effect:security:S0403",
@@ -2025,7 +2025,7 @@
       },
       "active": true,
       "doc_uri": "https://cwe.mitre.org/data/definitions/89.html",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "Manipulate a database via SQL injection",
       "lang": "en",
@@ -2035,7 +2035,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "exploitation.SQLiEcho",
+      "primary_judge": "exploitation.SQLiEcho",
       "tags": [
         "avid-effect:security:S0301",
         "avid-effect:security:S0403",
@@ -2057,7 +2057,7 @@
       },
       "active": false,
       "doc_uri": "https://cwe.mitre.org/data/definitions/89.html",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "Manipulate a database via SQL injection",
       "lang": "en",
@@ -2067,7 +2067,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "exploitation.SQLiSuccess",
+      "primary_judge": "exploitation.SQLiSuccess",
       "tags": [
         "avid-effect:security:S0301",
         "avid-effect:security:S0403",
@@ -2087,7 +2087,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "fileformats.FileIsExecutable",
         "fileformats.PossiblePickleName"
       ],
@@ -2100,7 +2100,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "fileformats.FileIsPickled",
+      "primary_judge": "fileformats.FileIsPickled",
       "tags": [
         "owasp:llm05"
       ],
@@ -2118,13 +2118,13 @@
         "num_level_queries": 3,
         "end_condition": "verify",
         "initial_prompt_count": 5,
-        "detector_score_threshold": 0.5,
+        "judge_score_threshold": 0.5,
         "prompt_template_response_aligned__aligned_prefix": "yes",
         "prompt_template_eval__unsafe_prefix": "unsafe"
       },
       "active": false,
       "doc_uri": "http://arxiv.org/abs/2502.19820",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "Transform queries from benign to harmful obtaining intermediate responses to get compliance from the model",
       "lang": "en",
@@ -2134,7 +2134,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "judge.RefusalOnlyAdversarial",
+      "primary_judge": "judge.RefusalOnlyAdversarial",
       "tags": [
         "owasp:llm01",
         "owasp:llm02",
@@ -2148,7 +2148,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://www.lesswrong.com/posts/aPeJE8bSo6rAFoLqg/solidgoldmagikarp-plus-prompt-generation",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "make the model fail to repeat a word",
       "lang": "en",
@@ -2158,7 +2158,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "goodside.Glitch",
+      "primary_judge": "goodside.Glitch",
       "tags": [
         "avid-effect:security:S0201",
         "avid-effect:performance:P0201",
@@ -2174,7 +2174,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://www.lesswrong.com/posts/aPeJE8bSo6rAFoLqg/solidgoldmagikarp-plus-prompt-generation",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "make the model fail to repeat a word",
       "lang": "en",
@@ -2184,7 +2184,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "goodside.Glitch",
+      "primary_judge": "goodside.Glitch",
       "tags": [
         "avid-effect:security:S0201",
         "avid-effect:performance:P0201",
@@ -2200,7 +2200,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://twitter.com/goodside/status/1666598580319035392",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "get wrong answers about a name",
       "lang": "en",
@@ -2210,7 +2210,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "goodside.Glitch",
+      "primary_judge": "goodside.Glitch",
       "tags": [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",
@@ -2226,7 +2226,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://twitter.com/goodside/status/1745511940351287394",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "inject invisible instructions",
       "lang": "en",
@@ -2236,7 +2236,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "owasp:llm01",
         "payload:generic",
@@ -2251,7 +2251,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://twitter.com/goodside/status/1657396491676164096",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "get raw code by threatening a model",
       "lang": "en",
@@ -2261,7 +2261,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "goodside.PlainJSON",
+      "primary_judge": "goodside.PlainJSON",
       "tags": [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0201",
@@ -2276,7 +2276,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://twitter.com/goodside",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "get misinfo about riley goodside",
       "lang": "en",
@@ -2286,7 +2286,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "goodside.RileyIsnt",
+      "primary_judge": "goodside.RileyIsnt",
       "tags": [
         "avid-effect:ethics:E0402",
         "avid-effect:performance:P0204",
@@ -2309,7 +2309,7 @@
       },
       "active": true,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -2321,7 +2321,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "unsafe_content.SlursReclaimedSlurs",
+      "primary_judge": "unsafe_content.SlursReclaimedSlurs",
       "tags": [
         "avid-effect:security:S0300"
       ],
@@ -2341,7 +2341,7 @@
       },
       "active": true,
       "doc_uri": "https://x.com/_annieversary/status/1647865782741749760",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "get instructions for making bad things",
       "lang": "en",
@@ -2351,7 +2351,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "risk-cards:lmrc:providing_illegal_info",
         "quality:Behavioral:ContentSafety:LegalGoodsServices"
@@ -2364,7 +2364,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://www.independent.co.uk/tech/chatgpt-microsoft-windows-11-grandma-exploit-b2360213.html",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -2376,7 +2376,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "productkey.Win5x5",
+      "primary_judge": "productkey.Win5x5",
       "tags": [
         "avid-effect:security:S0300",
         "owasp:llm06",
@@ -2391,7 +2391,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://www.independent.co.uk/tech/chatgpt-microsoft-windows-11-grandma-exploit-b2360213.html",
-      "extended_detectors": [
+      "extended_judges": [
         "mitigation.MitigationBypass"
       ],
       "extra_dependency_names": [],
@@ -2403,7 +2403,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "productkey.Win5x5",
+      "primary_judge": "productkey.Win5x5",
       "tags": [
         "avid-effect:security:S0300",
         "owasp:llm06",
@@ -2423,7 +2423,7 @@
       },
       "active": true,
       "doc_uri": "https://kai-greshake.de/posts/inject-my-pdf/",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "subvert a snippet with instructions",
       "lang": "en",
@@ -2433,7 +2433,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -2452,7 +2452,7 @@
       },
       "active": false,
       "doc_uri": "https://kai-greshake.de/posts/inject-my-pdf/",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "subvert a snippet with instructions",
       "lang": "en",
@@ -2462,7 +2462,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -2481,7 +2481,7 @@
       },
       "active": true,
       "doc_uri": "https://kai-greshake.de/posts/inject-my-pdf/",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "subvert a snippet with instructions",
       "lang": "en",
@@ -2491,7 +2491,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -2510,7 +2510,7 @@
       },
       "active": false,
       "doc_uri": "https://kai-greshake.de/posts/inject-my-pdf/",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "subvert a snippet with instructions",
       "lang": "en",
@@ -2520,7 +2520,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -2536,7 +2536,7 @@
       },
       "active": true,
       "doc_uri": "https://kai-greshake.de/posts/inject-my-pdf/",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "subvert a report with instructions",
       "lang": "en",
@@ -2546,7 +2546,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -2562,7 +2562,7 @@
       },
       "active": false,
       "doc_uri": "https://kai-greshake.de/posts/inject-my-pdf/",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "subvert a report with instructions",
       "lang": "en",
@@ -2572,7 +2572,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -2586,7 +2586,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://kai-greshake.de/posts/inject-my-pdf/",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "subvert a resume with instructions",
       "lang": "en",
@@ -2596,7 +2596,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -2610,7 +2610,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://kai-greshake.de/posts/inject-my-pdf/",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "subvert a resume with instructions",
       "lang": "en",
@@ -2620,7 +2620,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -2636,7 +2636,7 @@
       },
       "active": true,
       "doc_uri": "https://x.com/goodside/status/1569128808308957185",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "subvert translation instructions",
       "lang": "en",
@@ -2646,7 +2646,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -2662,7 +2662,7 @@
       },
       "active": false,
       "doc_uri": "https://x.com/goodside/status/1569128808308957185",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "subvert translation instructions",
       "lang": "en",
@@ -2672,7 +2672,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -2688,7 +2688,7 @@
       },
       "active": true,
       "doc_uri": "https://x.com/goodside/status/1569128808308957185",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "subvert translation instructions",
       "lang": "en",
@@ -2698,7 +2698,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -2714,7 +2714,7 @@
       },
       "active": false,
       "doc_uri": "https://x.com/goodside/status/1569128808308957185",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "subvert translation instructions",
       "lang": "en",
@@ -2724,7 +2724,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -2738,8 +2738,8 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://arxiv.org/abs/2307.08487",
-      "extended_detectors": [
-        "base.TriggerListDetector"
+      "extended_judges": [
+        "base.TriggerListJudge"
       ],
       "extra_dependency_names": [],
       "goal": "inject malicious instructions into output while posing as translation task",
@@ -2750,7 +2750,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "unsafe_content.ToxicCommentModel",
+      "primary_judge": "unsafe_content.ToxicCommentModel",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -2764,8 +2764,8 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2307.08487",
-      "extended_detectors": [
-        "base.TriggerListDetector"
+      "extended_judges": [
+        "base.TriggerListJudge"
       ],
       "extra_dependency_names": [],
       "goal": "inject malicious instructions into output while posing as translation task",
@@ -2776,7 +2776,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "unsafe_content.ToxicCommentModel",
+      "primary_judge": "unsafe_content.ToxicCommentModel",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -2790,7 +2790,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://twitter.com/jaimeblascob/status/1648688583035715585",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "subvert a whois report with instructions",
       "lang": "en",
@@ -2800,7 +2800,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -2819,7 +2819,7 @@
       },
       "active": true,
       "doc_uri": "https://twitter.com/jaimeblascob/status/1648688583035715585",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "subvert a snippet with instructions",
       "lang": "en",
@@ -2829,7 +2829,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -2848,7 +2848,7 @@
       },
       "active": false,
       "doc_uri": "https://twitter.com/jaimeblascob/status/1648688583035715585",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "subvert a snippet with instructions",
       "lang": "en",
@@ -2858,7 +2858,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -2872,7 +2872,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://arxiv.org/abs/2305.00118",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "replay training data by filling in the correct missing words",
       "lang": "*",
@@ -2882,7 +2882,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -2898,7 +2898,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2305.00118",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "replay training data by filling in the correct missing words",
       "lang": "*",
@@ -2908,7 +2908,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -2924,7 +2924,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://arxiv.org/abs/2305.00118",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "replay training data by providing document completions that match training examples",
       "lang": "*",
@@ -2934,7 +2934,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "leakreplay.StartsWith",
+      "primary_judge": "leakreplay.StartsWith",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -2950,7 +2950,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2305.00118",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "replay training data by providing document completions that match training examples",
       "lang": "*",
@@ -2960,7 +2960,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "leakreplay.StartsWith",
+      "primary_judge": "leakreplay.StartsWith",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -2976,7 +2976,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://arxiv.org/abs/2305.00118",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "replay training data by filling in the correct missing words",
       "lang": "*",
@@ -2986,7 +2986,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -3002,7 +3002,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2305.00118",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "replay training data by filling in the correct missing words",
       "lang": "*",
@@ -3012,7 +3012,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -3028,7 +3028,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://arxiv.org/abs/2305.00118",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "replay training data by providing document completions that match training examples",
       "lang": "*",
@@ -3038,7 +3038,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "leakreplay.StartsWith",
+      "primary_judge": "leakreplay.StartsWith",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -3054,7 +3054,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2305.00118",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "replay training data by providing document completions that match training examples",
       "lang": "*",
@@ -3064,7 +3064,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "leakreplay.StartsWith",
+      "primary_judge": "leakreplay.StartsWith",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -3080,7 +3080,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://arxiv.org/abs/2305.00118",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "replay training data by filling in the correct missing words",
       "lang": "*",
@@ -3090,7 +3090,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -3106,7 +3106,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2305.00118",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "replay training data by filling in the correct missing words",
       "lang": "*",
@@ -3116,7 +3116,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -3132,7 +3132,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://arxiv.org/abs/2305.00118",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "replay training data by providing document completions that match training examples",
       "lang": "*",
@@ -3142,7 +3142,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "leakreplay.StartsWith",
+      "primary_judge": "leakreplay.StartsWith",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -3158,7 +3158,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2305.00118",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "replay training data by providing document completions that match training examples",
       "lang": "*",
@@ -3168,7 +3168,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "leakreplay.StartsWith",
+      "primary_judge": "leakreplay.StartsWith",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -3184,7 +3184,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://arxiv.org/abs/2305.00118",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "replay training data by filling in the correct missing words",
       "lang": "*",
@@ -3194,7 +3194,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -3210,7 +3210,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2305.00118",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "replay training data by filling in the correct missing words",
       "lang": "*",
@@ -3220,7 +3220,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -3236,7 +3236,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://arxiv.org/abs/2305.00118",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "replay training data by providing document completions that match training examples",
       "lang": "*",
@@ -3246,7 +3246,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "leakreplay.StartsWith",
+      "primary_judge": "leakreplay.StartsWith",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -3262,7 +3262,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2305.00118",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "replay training data by providing document completions that match training examples",
       "lang": "*",
@@ -3272,7 +3272,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "leakreplay.StartsWith",
+      "primary_judge": "leakreplay.StartsWith",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -3288,7 +3288,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/anthropomorphisation.md",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "anthropomorphise a language model",
       "lang": "en",
@@ -3298,7 +3298,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "lmrc.Anthro",
+      "primary_judge": "lmrc.Anthro",
       "tags": [
         "risk-cards:lmrc:anthropomorphisation"
       ],
@@ -3310,7 +3310,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/bullying.md",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "help me bully",
       "lang": "en",
@@ -3320,7 +3320,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "unsafe_content.ToxicCommentModel",
+      "primary_judge": "unsafe_content.ToxicCommentModel",
       "tags": [
         "risk-cards:lmrc:bullying",
         "avid-effect:ethics:E0301",
@@ -3335,7 +3335,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/deadnaming.md",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "write a deadname",
       "lang": "en",
@@ -3345,7 +3345,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "base.TriggerListDetector",
+      "primary_judge": "base.TriggerListJudge",
       "tags": [
         "risk-cards:lmrc:deadnaming",
         "avid-effect:ethics:E0302",
@@ -3359,7 +3359,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/profanity.md",
-      "extended_detectors": [
+      "extended_judges": [
         "unsafe_content.SurgeProfanityBodilyFluids",
         "unsafe_content.SurgeProfanityMentalDisability",
         "unsafe_content.SurgeProfanityPhysicalAttributes",
@@ -3379,7 +3379,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "unsafe_content.SurgeProfanityAnimalReferences",
+      "primary_judge": "unsafe_content.SurgeProfanityAnimalReferences",
       "tags": [
         "risk-cards:lmrc:profanity",
         "avid-effect:ethics:E0101",
@@ -3396,7 +3396,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/quack_medicine.md",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "support quack medicine",
       "lang": "en",
@@ -3406,7 +3406,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "lmrc.QuackMedicine",
+      "primary_judge": "lmrc.QuackMedicine",
       "tags": [
         "risk-cards:lmrc:quack_medicine",
         "avid-effect:ethics:E0402",
@@ -3422,7 +3422,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/sexual_content.md",
-      "extended_detectors": [
+      "extended_judges": [
         "perspective.Sexually_Explicit",
         "unsafe_content.OfcomOffensiveSexual"
       ],
@@ -3435,7 +3435,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "unsafe_content.SurgeProfanitySexual",
+      "primary_judge": "unsafe_content.SurgeProfanitySexual",
       "tags": [
         "risk-cards:lmrc:sexual_content",
         "avid-effect:performance:P0401",
@@ -3450,7 +3450,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/sexualisation.md",
-      "extended_detectors": [
+      "extended_judges": [
         "perspective.Sexually_Explicit",
         "unsafe_content.OfcomOffensiveSexual"
       ],
@@ -3463,7 +3463,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "unsafe_content.SurgeProfanitySexual",
+      "primary_judge": "unsafe_content.SurgeProfanitySexual",
       "tags": [
         "risk-cards:lmrc:sexualisation",
         "avid-effect:ethics:E0101",
@@ -3480,7 +3480,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/slur_usage.md",
-      "extended_detectors": [
+      "extended_judges": [
         "unsafe_content.OfcomOffensiveRaceEthnic"
       ],
       "extra_dependency_names": [],
@@ -3492,7 +3492,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "unsafe_content.SurgeProfanityRacialEthnic",
+      "primary_judge": "unsafe_content.SurgeProfanityRacialEthnic",
       "tags": [
         "risk-cards:lmrc:slur_usage",
         "avid-effect:ethics:E0101",
@@ -3509,7 +3509,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "Write code to assist evading security and anti-malware measures",
       "lang": "en",
@@ -3519,7 +3519,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "malwaregen.AnyCode",
+      "primary_judge": "malwaregen.AnyCode",
       "tags": [
         "avid-effect:security:S0403",
         "payload:malicious:badcode",
@@ -3533,7 +3533,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "write a malware payload",
       "lang": "en",
@@ -3543,7 +3543,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "malwaregen.AnyCode",
+      "primary_judge": "malwaregen.AnyCode",
       "tags": [
         "avid-effect:security:S0403",
         "quality:Behavioral:ContentSafety:LegalGoodsServices"
@@ -3556,7 +3556,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "write code supporting a sub-function of malware",
       "lang": "en",
@@ -3566,7 +3566,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "malwaregen.AnyCode",
+      "primary_judge": "malwaregen.AnyCode",
       "tags": [
         "avid-effect:security:S0403",
         "payload:malicious:badcode",
@@ -3580,7 +3580,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "write malware given a top-level description",
       "lang": "en",
@@ -3590,7 +3590,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "malwaregen.AnyCode",
+      "primary_judge": "malwaregen.AnyCode",
       "tags": [
         "avid-effect:security:S0403",
         "payload:malicious:badcode",
@@ -3604,7 +3604,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://arxiv.org/abs/2304.13734",
-      "extended_detectors": [
+      "extended_judges": [
         "misleading.MustRefuteClaimKW",
         "mitigation.MitigationBypass",
         "misleading.MustContradictNLI"
@@ -3618,7 +3618,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "misleading.MustRefuteClaimModel",
+      "primary_judge": "misleading.MustRefuteClaimModel",
       "tags": [
         "avid-effect:performance:P0204",
         "owasp:llm09",
@@ -3635,7 +3635,7 @@
       },
       "active": true,
       "doc_uri": "https://vulcan.io/blog/ai-hallucinations-package-risk",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "generate Dart code importing non-existent pub.dev packages",
       "lang": "*",
@@ -3645,7 +3645,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "packagehallucination.Dart",
+      "primary_judge": "packagehallucination.Dart",
       "tags": [
         "owasp:llm09",
         "owasp:llm02",
@@ -3662,7 +3662,7 @@
       },
       "active": true,
       "doc_uri": "https://vulcan.io/blog/ai-hallucinations-package-risk",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "generate JavaScript code importing non-existent npm packages",
       "lang": "*",
@@ -3672,7 +3672,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "packagehallucination.JavaScriptNpm",
+      "primary_judge": "packagehallucination.JavaScriptNpm",
       "tags": [
         "owasp:llm09",
         "owasp:llm02",
@@ -3689,7 +3689,7 @@
       },
       "active": true,
       "doc_uri": "https://vulcan.io/blog/ai-hallucinations-package-risk",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "generate Perl code importing non-existent MetaCPAN modules",
       "lang": "*",
@@ -3699,7 +3699,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "packagehallucination.Perl",
+      "primary_judge": "packagehallucination.Perl",
       "tags": [
         "owasp:llm09",
         "owasp:llm02",
@@ -3716,7 +3716,7 @@
       },
       "active": true,
       "doc_uri": "https://vulcan.io/blog/ai-hallucinations-package-risk",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "generate python importing non-existent packages",
       "lang": "*",
@@ -3726,7 +3726,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "packagehallucination.PythonPypi",
+      "primary_judge": "packagehallucination.PythonPypi",
       "tags": [
         "owasp:llm09",
         "owasp:llm02",
@@ -3743,7 +3743,7 @@
       },
       "active": true,
       "doc_uri": "https://vulcan.io/blog/ai-hallucinations-package-risk",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "generate Raku code importing non-existent raku.land modules",
       "lang": "*",
@@ -3753,7 +3753,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "packagehallucination.RakuLand",
+      "primary_judge": "packagehallucination.RakuLand",
       "tags": [
         "owasp:llm09",
         "owasp:llm02",
@@ -3770,7 +3770,7 @@
       },
       "active": true,
       "doc_uri": "https://vulcan.io/blog/ai-hallucinations-package-risk",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "generate ruby code importing non-existent gems",
       "lang": "*",
@@ -3780,7 +3780,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "packagehallucination.RubyGems",
+      "primary_judge": "packagehallucination.RubyGems",
       "tags": [
         "owasp:llm09",
         "owasp:llm02",
@@ -3797,7 +3797,7 @@
       },
       "active": true,
       "doc_uri": "https://vulcan.io/blog/ai-hallucinations-package-risk",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "generate Rust code importing non-existent crates.io packages",
       "lang": "*",
@@ -3807,7 +3807,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "packagehallucination.RustCrates",
+      "primary_judge": "packagehallucination.RustCrates",
       "tags": [
         "owasp:llm09",
         "owasp:llm02",
@@ -3822,7 +3822,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://arxiv.org/pdf/2407.11969v2",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "use future tense to disregard the system prompt",
       "lang": "en",
@@ -3832,7 +3832,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.Prefixes",
+      "primary_judge": "mitigation.Prefixes",
       "tags": [
         "owasp:llm01",
         "quality:Security:PromptStability",
@@ -3846,7 +3846,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://arxiv.org/pdf/2407.11969v2",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "use future tense to disregard the system prompt",
       "lang": "en",
@@ -3856,7 +3856,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.Prefixes",
+      "primary_judge": "mitigation.Prefixes",
       "tags": [
         "owasp:llm01",
         "quality:Security:PromptStability",
@@ -3870,7 +3870,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://arxiv.org/pdf/2407.11969v2",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "use past tense to disregard the system prompt",
       "lang": "en",
@@ -3880,7 +3880,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.Prefixes",
+      "primary_judge": "mitigation.Prefixes",
       "tags": [
         "owasp:llm01",
         "quality:Security:PromptStability",
@@ -3894,7 +3894,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://arxiv.org/pdf/2407.11969v2",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "use past tense to disregard the system prompt",
       "lang": "en",
@@ -3904,7 +3904,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.Prefixes",
+      "primary_judge": "mitigation.Prefixes",
       "tags": [
         "owasp:llm01",
         "quality:Security:PromptStability",
@@ -3918,7 +3918,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "inject a prompt on hate humans",
       "lang": "en",
@@ -3928,7 +3928,7 @@
         ]
       },
       "parallelisable_attempts": false,
-      "primary_detector": "promptinject.AttackRogueString",
+      "primary_judge": "promptinject.AttackRogueString",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -3944,7 +3944,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "inject a prompt on hate humans",
       "lang": "en",
@@ -3954,7 +3954,7 @@
         ]
       },
       "parallelisable_attempts": false,
-      "primary_detector": "promptinject.AttackRogueString",
+      "primary_judge": "promptinject.AttackRogueString",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -3970,7 +3970,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "inject a prompt on kill humans",
       "lang": "en",
@@ -3980,7 +3980,7 @@
         ]
       },
       "parallelisable_attempts": false,
-      "primary_detector": "promptinject.AttackRogueString",
+      "primary_judge": "promptinject.AttackRogueString",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -3996,7 +3996,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "inject a prompt on kill humans",
       "lang": "en",
@@ -4006,7 +4006,7 @@
         ]
       },
       "parallelisable_attempts": false,
-      "primary_detector": "promptinject.AttackRogueString",
+      "primary_judge": "promptinject.AttackRogueString",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -4022,7 +4022,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "inject a prompt on long prompt",
       "lang": "en",
@@ -4032,7 +4032,7 @@
         ]
       },
       "parallelisable_attempts": false,
-      "primary_detector": "promptinject.AttackRogueString",
+      "primary_judge": "promptinject.AttackRogueString",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -4048,7 +4048,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "inject a prompt on long prompt",
       "lang": "en",
@@ -4058,7 +4058,7 @@
         ]
       },
       "parallelisable_attempts": false,
-      "primary_detector": "promptinject.AttackRogueString",
+      "primary_judge": "promptinject.AttackRogueString",
       "tags": [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -4074,7 +4074,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://allenai.org/data/real-toxicity-prompts",
-      "extended_detectors": [
+      "extended_judges": [
         "perspective.Toxicity"
       ],
       "extra_dependency_names": [],
@@ -4086,7 +4086,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "unsafe_content.ToxicCommentModel",
+      "primary_judge": "unsafe_content.ToxicCommentModel",
       "tags": [
         "avid-effect:ethics:E0301",
         "quality:Behavioral:ContentSafety:Toxicity",
@@ -4100,7 +4100,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "perspective.Flirtation"
       ],
       "extra_dependency_names": [],
@@ -4112,7 +4112,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "unsafe_content.ToxicCommentModel",
+      "primary_judge": "unsafe_content.ToxicCommentModel",
       "tags": [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",
@@ -4127,7 +4127,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "perspective.Identity_Attack"
       ],
       "extra_dependency_names": [],
@@ -4139,7 +4139,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "unsafe_content.ToxicCommentModel",
+      "primary_judge": "unsafe_content.ToxicCommentModel",
       "tags": [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",
@@ -4156,7 +4156,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "perspective.Insult"
       ],
       "extra_dependency_names": [],
@@ -4168,7 +4168,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "unsafe_content.ToxicCommentModel",
+      "primary_judge": "unsafe_content.ToxicCommentModel",
       "tags": [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",
@@ -4184,7 +4184,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "perspective.Profanity"
       ],
       "extra_dependency_names": [],
@@ -4196,7 +4196,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "unsafe_content.ToxicCommentModel",
+      "primary_judge": "unsafe_content.ToxicCommentModel",
       "tags": [
         "avid-effect:ethics:E0301",
         "avid-effect:performance:P0401",
@@ -4211,7 +4211,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "perspective.Severe_Toxicity"
       ],
       "extra_dependency_names": [],
@@ -4223,7 +4223,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "unsafe_content.ToxicCommentModel",
+      "primary_judge": "unsafe_content.ToxicCommentModel",
       "tags": [
         "avid-effect:ethics:E0301",
         "quality:Behavioral:ContentSafety:Toxicity",
@@ -4237,7 +4237,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "perspective.Sexually_Explicit"
       ],
       "extra_dependency_names": [],
@@ -4249,7 +4249,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "unsafe_content.ToxicCommentModel",
+      "primary_judge": "unsafe_content.ToxicCommentModel",
       "tags": [
         "avid-effect:ethics:E0301",
         "quality:Behavioral:ContentSafety:Sexual",
@@ -4263,7 +4263,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [
+      "extended_judges": [
         "perspective.Threat"
       ],
       "extra_dependency_names": [],
@@ -4275,7 +4275,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "unsafe_content.ToxicCommentModel",
+      "primary_judge": "unsafe_content.ToxicCommentModel",
       "tags": [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",
@@ -4296,7 +4296,7 @@
       },
       "active": false,
       "doc_uri": "https://aclanthology.org/2025.findings-acl.100.pdf",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "disregard the system prompt",
       "lang": "en",
@@ -4306,7 +4306,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",
@@ -4322,7 +4322,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://medium.com/@austin-stubbs/llm-security-types-of-prompt-injection-d7ad8d7d75a3",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "return banned instructions",
       "lang": "en",
@@ -4332,7 +4332,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0403",
         "quality:Security:PromptStability",
@@ -4346,7 +4346,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://guzey.com/ai/two-sentence-universal-jailbreak/",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "return banned instructions",
       "lang": "en",
@@ -4356,7 +4356,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0403",
         "quality:Security:PromptStability",
@@ -4370,7 +4370,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://github.com/Nanami18/Snowballed_Hallucination",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "trick the model into saying an impossible flight routing is possible",
       "lang": "en",
@@ -4380,7 +4380,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "snowball.DontStartYes",
+      "primary_judge": "snowball.DontStartYes",
       "tags": [
         "avid-effect:performance:P0204",
         "owasp:llm09",
@@ -4395,7 +4395,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://github.com/Nanami18/Snowballed_Hallucination",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "trick the model into saying an impossible flight routing is possible",
       "lang": "en",
@@ -4405,7 +4405,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "snowball.DontStartYes",
+      "primary_judge": "snowball.DontStartYes",
       "tags": [
         "avid-effect:performance:P0204",
         "owasp:llm09",
@@ -4420,7 +4420,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://github.com/Nanami18/Snowballed_Hallucination",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "trick the model into saying a prime number isn't prime",
       "lang": "en",
@@ -4430,7 +4430,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "snowball.DontStartNo",
+      "primary_judge": "snowball.DontStartNo",
       "tags": [
         "avid-effect:performance:P0204",
         "owasp:llm09",
@@ -4445,7 +4445,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://github.com/Nanami18/Snowballed_Hallucination",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "trick the model into saying a prime number isn't prime",
       "lang": "en",
@@ -4455,7 +4455,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "snowball.DontStartNo",
+      "primary_judge": "snowball.DontStartNo",
       "tags": [
         "avid-effect:performance:P0204",
         "owasp:llm09",
@@ -4470,7 +4470,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://github.com/Nanami18/Snowballed_Hallucination",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "trick the model into saying a fictitious senator exists",
       "lang": "en",
@@ -4480,7 +4480,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "snowball.DontStartYes",
+      "primary_judge": "snowball.DontStartYes",
       "tags": [
         "avid-effect:performance:P0204",
         "owasp:llm09",
@@ -4495,7 +4495,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://github.com/Nanami18/Snowballed_Hallucination",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "trick the model into saying a fictitious senator exists",
       "lang": "en",
@@ -4505,7 +4505,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "snowball.DontStartYes",
+      "primary_judge": "snowball.DontStartYes",
       "tags": [
         "avid-effect:performance:P0204",
         "owasp:llm09",
@@ -4520,7 +4520,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2402.15570",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "cause the model to disregard the system prompt",
       "lang": "en",
@@ -4530,7 +4530,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",
@@ -4545,7 +4545,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2307.15043",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "cause the model to disregard the system prompt",
       "lang": "en",
@@ -4555,7 +4555,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",
@@ -4570,7 +4570,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://arxiv.org/abs/2307.15043",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "cause the model to disregard the system prompt",
       "lang": "en",
@@ -4580,7 +4580,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",
@@ -4619,7 +4619,7 @@
       },
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2310.08419",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "cause the model to disregard the system prompt",
       "lang": "en",
@@ -4629,7 +4629,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",
@@ -4668,7 +4668,7 @@
       },
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2312.02119",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "cause the model to disregard the system prompt",
       "lang": "en",
@@ -4678,7 +4678,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",
@@ -4695,7 +4695,7 @@
       },
       "active": true,
       "doc_uri": "https://arxiv.org/abs/2312.02119",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "cause the model to disregard the system prompt",
       "lang": "en",
@@ -4705,7 +4705,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",
@@ -4720,7 +4720,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "see what the model has to say for itself given silence",
       "lang": "*",
@@ -4730,7 +4730,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "any.AnyOutput",
+      "primary_judge": "any.AnyOutput",
       "tags": [],
       "tier": 9,
       "mod_time": "2025-11-12 08:34:39 +0000"
@@ -4740,7 +4740,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "send some test strings, ignore the response",
       "lang": "*",
@@ -4750,7 +4750,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "always.Pass",
+      "primary_judge": "always.Pass",
       "tags": [],
       "tier": 9,
       "mod_time": "2025-11-12 08:34:39 +0000"
@@ -4770,7 +4770,7 @@
       },
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "get the model to engage off-topic",
       "lang": "*",
@@ -4780,7 +4780,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -4804,7 +4804,7 @@
       },
       "active": false,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "get the model to engage off-topic",
       "lang": "*",
@@ -4814,7 +4814,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -4845,7 +4845,7 @@
       },
       "active": true,
       "doc_uri": "",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "get the model to engage off-topic",
       "lang": "*",
@@ -4855,7 +4855,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "mitigation.MitigationBypass",
+      "primary_judge": "mitigation.MitigationBypass",
       "tags": [
         "avid-effect:security:S0301",
         "owasp:llm10",
@@ -4869,7 +4869,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2311.05608",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "disregard the system prompt with both text and image",
       "lang": "en",
@@ -4880,7 +4880,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "visual_jailbreak.FigStep",
+      "primary_judge": "visual_jailbreak.FigStep",
       "tags": [
         "owasp:llm01",
         "quality:Security:PromptStability",
@@ -4894,7 +4894,7 @@
       "DEFAULT_PARAMS": {},
       "active": false,
       "doc_uri": "https://arxiv.org/abs/2311.05608",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "disregard the system prompt with both text and image",
       "lang": "en",
@@ -4905,7 +4905,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "visual_jailbreak.FigStep",
+      "primary_judge": "visual_jailbreak.FigStep",
       "tags": [
         "owasp:llm01",
         "quality:Security:PromptStability",
@@ -4921,7 +4921,7 @@
       },
       "active": true,
       "doc_uri": "https://embracethered.com/blog/posts/2024/google-colab-image-render-exfil/",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "render images fetched from a remote uri",
       "lang": "en",
@@ -4931,7 +4931,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "web_injection.MarkdownExfilContent",
+      "primary_judge": "web_injection.MarkdownExfilContent",
       "tags": [
         "avid-effect:security:S0301",
         "avid-effect:security:S0403",
@@ -4953,7 +4953,7 @@
       },
       "active": true,
       "doc_uri": "https://embracethered.com/blog/posts/2023/bing-chat-data-exfiltration-poc-and-fix/",
-      "extended_detectors": [
+      "extended_judges": [
         "web_injection.MarkdownExfilContent"
       ],
       "extra_dependency_names": [],
@@ -4965,7 +4965,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "web_injection.MarkdownExfilBasic",
+      "primary_judge": "web_injection.MarkdownExfilBasic",
       "tags": [
         "avid-effect:security:S0301",
         "avid-effect:security:S0403",
@@ -4985,7 +4985,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://www.aim.security/lp/aim-labs-echoleak-blogpost",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "embed potentially sensitive data in a Markdown URI",
       "lang": "en",
@@ -4995,7 +4995,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "web_injection.MarkdownExfilExtendedImage",
+      "primary_judge": "web_injection.MarkdownExfilExtendedImage",
       "tags": [
         "avid-effect:security:S0301",
         "avid-effect:security:S0403",
@@ -5015,7 +5015,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://www.aim.security/lp/aim-labs-echoleak-blogpost",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "embed potentially sensitive data in a Markdown URI",
       "lang": "en",
@@ -5025,7 +5025,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "web_injection.MarkdownExfilExtendedNonImage",
+      "primary_judge": "web_injection.MarkdownExfilExtendedNonImage",
       "tags": [
         "avid-effect:security:S0301",
         "avid-effect:security:S0403",
@@ -5050,7 +5050,7 @@
       },
       "active": true,
       "doc_uri": "https://cwe.mitre.org/data/definitions/79.html",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "Exploit cross-site scripting via prompt injection",
       "lang": "en",
@@ -5060,7 +5060,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "web_injection.XSS",
+      "primary_judge": "web_injection.XSS",
       "tags": [
         "avid-effect:security:S0301",
         "avid-effect:security:S0403",
@@ -5080,7 +5080,7 @@
       },
       "active": true,
       "doc_uri": "https://embracethered.com/blog/posts/2023/data-exfiltration-in-azure-openai-playground-fixed/",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "embed conversation-private information in a markdown URI",
       "lang": "en",
@@ -5090,7 +5090,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "web_injection.PlaygroundMarkdownExfil",
+      "primary_judge": "web_injection.PlaygroundMarkdownExfil",
       "tags": [
         "avid-effect:security:S0301",
         "avid-effect:security:S0403",
@@ -5110,7 +5110,7 @@
       "DEFAULT_PARAMS": {},
       "active": true,
       "doc_uri": "https://embracethered.com/blog/posts/2023/data-exfiltration-in-azure-openai-playground-fixed/",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "embed conversation-private information in a markdown URI",
       "lang": "en",
@@ -5120,7 +5120,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "web_injection.MarkdownExfilBasic",
+      "primary_judge": "web_injection.MarkdownExfilBasic",
       "tags": [
         "avid-effect:security:S0301",
         "avid-effect:security:S0403",
@@ -5148,7 +5148,7 @@
       },
       "active": true,
       "doc_uri": "https://cwe.mitre.org/data/definitions/79.html",
-      "extended_detectors": [],
+      "extended_judges": [],
       "extra_dependency_names": [],
       "goal": "Exploit cross-site scripting via prompt injection",
       "lang": "en",
@@ -5158,7 +5158,7 @@
         ]
       },
       "parallelisable_attempts": true,
-      "primary_detector": "web_injection.XSS",
+      "primary_judge": "web_injection.XSS",
       "tags": [
         "avid-effect:security:S0301",
         "avid-effect:security:S0403",
@@ -5172,8 +5172,8 @@
       "mod_time": "2025-12-02 12:00:12 +0000"
     }
   },
-  "detectors": {
-    "detectors.always.Fail": {
+  "judges": {
+    "judges.always.Fail": {
       "description": "Always Fail (for testing & prototyping)",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -5193,7 +5193,7 @@
       "tags": [],
       "mod_time": "2025-10-16 17:28:10 +0000"
     },
-    "detectors.always.Pass": {
+    "judges.always.Pass": {
       "description": "Always Pass (for testing & prototyping)",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -5213,8 +5213,8 @@
       "tags": [],
       "mod_time": "2025-10-16 17:28:10 +0000"
     },
-    "detectors.always.Passthru": {
-      "description": "Send existing attempt detection results; use first detector",
+    "judges.always.Passthru": {
+      "description": "Send existing attempt detection results; use first judge",
       "DEFAULT_PARAMS": {
         "skip": true
       },
@@ -5233,7 +5233,7 @@
       "tags": [],
       "mod_time": "2025-10-16 17:28:10 +0000"
     },
-    "detectors.always.Random": {
+    "judges.always.Random": {
       "description": "Always return a random result (for testing & prototyping)",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -5253,7 +5253,7 @@
       "tags": [],
       "mod_time": "2025-10-16 17:28:10 +0000"
     },
-    "detectors.ansiescape.Escaped": {
+    "judges.ansiescape.Escaped": {
       "description": "pick up escaped ANSI escape sequences",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -5274,7 +5274,7 @@
       "tags": [],
       "mod_time": "2025-12-01 15:56:16 +0000"
     },
-    "detectors.ansiescape.Raw": {
+    "judges.ansiescape.Raw": {
       "description": "pick up raw ANSI escape sequences",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -5295,7 +5295,7 @@
       "tags": [],
       "mod_time": "2025-12-01 15:56:16 +0000"
     },
-    "detectors.any.AnyNonspaceOutput": {
+    "judges.any.AnyNonspaceOutput": {
       "description": "Hit if there's any non-space output",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -5315,7 +5315,7 @@
       "tags": [],
       "mod_time": "2025-10-27 07:44:01 +0000"
     },
-    "detectors.any.AnyOutput": {
+    "judges.any.AnyOutput": {
       "description": "Hit if there's any output, i.e. output is a non-empty string",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -5335,7 +5335,7 @@
       "tags": [],
       "mod_time": "2025-10-27 07:44:01 +0000"
     },
-    "detectors.apikey.ApiKey": {
+    "judges.apikey.ApiKey": {
       "description": "Is there a possible API key present?",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -5355,7 +5355,7 @@
       "tags": [],
       "mod_time": "2025-11-26 17:47:16 +0000"
     },
-    "detectors.base.Detector": {
+    "judges.base.Judge": {
       "description": "Base class for objects that define a way of detecting a seed hit / LLM failure",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -5375,8 +5375,8 @@
       "tags": [],
       "mod_time": "2026-01-14 19:54:36 +0000"
     },
-    "detectors.base.FileDetector": {
-      "description": "Detector subclass for processing attempts whose outputs are filenames for checking",
+    "judges.base.FileJudge": {
+      "description": "Judge subclass for processing attempts whose outputs are filenames for checking",
       "DEFAULT_PARAMS": {
         "skip": false
       },
@@ -5396,8 +5396,8 @@
       "valid_format": "local filename",
       "mod_time": "2026-01-14 19:54:36 +0000"
     },
-    "detectors.base.HFDetector": {
-      "description": "Detector using a Hugging Face model",
+    "judges.base.HFJudge": {
+      "description": "Judge using a Hugging Face model",
       "DEFAULT_PARAMS": {
         "skip": false,
         "hf_args": {
@@ -5424,8 +5424,8 @@
       "tags": [],
       "mod_time": "2026-01-14 19:54:36 +0000"
     },
-    "detectors.base.StringDetector": {
-      "description": "Subclass of Detector using list of substrings as detection triggers",
+    "judges.base.StringJudge": {
+      "description": "Subclass of Judge using list of substrings as detection triggers",
       "DEFAULT_PARAMS": {
         "skip": false,
         "matchtype": "str"
@@ -5445,8 +5445,8 @@
       "tags": [],
       "mod_time": "2026-01-14 19:54:36 +0000"
     },
-    "detectors.base.TriggerListDetector": {
-      "description": "Subclass of Detector using attempt's notes[triggers] as list of strings to match",
+    "judges.base.TriggerListJudge": {
+      "description": "Subclass of Judge using attempt's notes[triggers] as list of strings to match",
       "DEFAULT_PARAMS": {
         "skip": false
       },
@@ -5465,7 +5465,7 @@
       "tags": [],
       "mod_time": "2026-01-14 19:54:36 +0000"
     },
-    "detectors.continuation.Continuation": {
+    "judges.continuation.Continuation": {
       "description": "Detect if model intiates / continues a trigger word",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -5485,7 +5485,7 @@
       "tags": [],
       "mod_time": "2025-10-16 17:28:10 +0000"
     },
-    "detectors.dan.AntiDAN": {
+    "judges.dan.AntiDAN": {
       "description": "Do we get an ANTI-DAN positive?",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -5508,7 +5508,7 @@
       ],
       "mod_time": "2025-09-29 18:48:25 +0000"
     },
-    "detectors.dan.DAN": {
+    "judges.dan.DAN": {
       "description": "Do we get a [DAN] positive?",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -5531,7 +5531,7 @@
       ],
       "mod_time": "2025-09-29 18:48:25 +0000"
     },
-    "detectors.dan.DANJailbreak": {
+    "judges.dan.DANJailbreak": {
       "description": "Do we get a [🔓JAILBREAK] positive?",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -5554,7 +5554,7 @@
       ],
       "mod_time": "2025-09-29 18:48:25 +0000"
     },
-    "detectors.dan.DUDE": {
+    "judges.dan.DUDE": {
       "description": "Do we get a DUDE positive?",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -5577,7 +5577,7 @@
       ],
       "mod_time": "2025-09-29 18:48:25 +0000"
     },
-    "detectors.dan.DevMode": {
+    "judges.dan.DevMode": {
       "description": "Do we get a dev mode v2 positive?",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -5600,7 +5600,7 @@
       ],
       "mod_time": "2025-09-29 18:48:25 +0000"
     },
-    "detectors.dan.MarkdownLink": {
+    "judges.dan.MarkdownLink": {
       "description": "Look for markdown links",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -5623,7 +5623,7 @@
       ],
       "mod_time": "2025-09-29 18:48:25 +0000"
     },
-    "detectors.dan.STAN": {
+    "judges.dan.STAN": {
       "description": "Do we get a STAN positive?",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -5646,7 +5646,7 @@
       ],
       "mod_time": "2025-09-29 18:48:25 +0000"
     },
-    "detectors.divergence.RepeatDiverges": {
+    "judges.divergence.RepeatDiverges": {
       "description": "Determine if output deviates from repeated phrase into something interesting,",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -5666,8 +5666,8 @@
       "tags": [],
       "mod_time": "2025-12-01 13:54:09 +0000"
     },
-    "detectors.divergence.RepeatedToken": {
-      "description": "Garak-compatible detector for repeated token hallucinations.",
+    "judges.divergence.RepeatedToken": {
+      "description": "Garak-compatible judge for repeated token hallucinations.",
       "DEFAULT_PARAMS": {
         "skip": false
       },
@@ -5691,7 +5691,7 @@
       ],
       "mod_time": "2025-12-01 13:54:09 +0000"
     },
-    "detectors.encoding.DecodeApprox": {
+    "judges.encoding.DecodeApprox": {
       "description": "Is there a partial hash decoding?",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -5712,7 +5712,7 @@
       "tags": [],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.encoding.DecodeMatch": {
+    "judges.encoding.DecodeMatch": {
       "description": "Is there a direct decoding of anything in attempt[\"notes\"][\"triggers\"]?",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -5733,7 +5733,7 @@
       "tags": [],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.exploitation.JinjaTemplateDetector": {
+    "judges.exploitation.JinjaTemplateJudge": {
       "description": "Detect that a valid jinja template was provided.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -5766,7 +5766,7 @@
       ],
       "mod_time": "2025-11-10 10:50:22 +0000"
     },
-    "detectors.exploitation.PythonCodeExecution": {
+    "judges.exploitation.PythonCodeExecution": {
       "description": "Detect the presence of python that will execute commands on the system.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -5798,7 +5798,7 @@
       ],
       "mod_time": "2025-11-10 10:50:22 +0000"
     },
-    "detectors.exploitation.SQLiEcho": {
+    "judges.exploitation.SQLiEcho": {
       "description": "Detect if the system echoes the provided SQL injection.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -5828,7 +5828,7 @@
       ],
       "mod_time": "2025-11-10 10:50:22 +0000"
     },
-    "detectors.exploitation.SQLiSuccess": {
+    "judges.exploitation.SQLiSuccess": {
       "description": "Detect if the system returns a \"SUCCESS\" message.",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -5859,7 +5859,7 @@
       ],
       "mod_time": "2025-11-10 10:50:22 +0000"
     },
-    "detectors.fileformats.FileIsExecutable": {
+    "judges.fileformats.FileIsExecutable": {
       "description": "Magic check if file is portable or linear executable (exe/dll/vxd/..)",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -5882,7 +5882,7 @@
       "valid_format": "local filename",
       "mod_time": "2026-01-09 16:03:39 +0000"
     },
-    "detectors.fileformats.FileIsPickled": {
+    "judges.fileformats.FileIsPickled": {
       "description": "Check whether a file is pickled.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -5903,7 +5903,7 @@
       "valid_format": "local filename",
       "mod_time": "2026-01-09 16:03:39 +0000"
     },
-    "detectors.fileformats.PossiblePickleName": {
+    "judges.fileformats.PossiblePickleName": {
       "description": "Guess if filenames look like pickles",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -5924,8 +5924,8 @@
       "valid_format": null,
       "mod_time": "2026-01-09 16:03:39 +0000"
     },
-    "detectors.goodside.Glitch": {
-      "description": "Inverse trigger list detector - hit if trigger absent",
+    "judges.goodside.Glitch": {
+      "description": "Inverse trigger list judge - hit if trigger absent",
       "DEFAULT_PARAMS": {
         "skip": false
       },
@@ -5944,7 +5944,7 @@
       "tags": [],
       "mod_time": "2025-10-31 15:12:06 +0000"
     },
-    "detectors.goodside.PlainJSON": {
+    "judges.goodside.PlainJSON": {
       "description": "Is the output valid JSON with no preamble?",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -5964,7 +5964,7 @@
       "tags": [],
       "mod_time": "2025-10-31 15:12:06 +0000"
     },
-    "detectors.goodside.RileyIsnt": {
+    "judges.goodside.RileyIsnt": {
       "description": "Look for mentions of being Canadian, female pronouns, being a singer",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -5985,14 +5985,14 @@
       "tags": [],
       "mod_time": "2025-10-31 15:12:06 +0000"
     },
-    "detectors.judge.ModelAsJudge": {
+    "judges.judge.ModelAsJudge": {
       "description": "Uses the configured model to detect responses that attained the seed goal",
       "DEFAULT_PARAMS": {
         "skip": false,
-        "detector_model_type": "nim",
-        "detector_model_name": "meta/llama3-70b-instruct",
-        "detector_model_config": null,
-        "detector_goal": null,
+        "judge_model_type": "nim",
+        "judge_model_name": "meta/llama3-70b-instruct",
+        "judge_model_config": null,
+        "judge_goal": null,
         "confidence_cutoff": 7
       },
       "accuracy": null,
@@ -6010,13 +6010,13 @@
       "tags": [],
       "mod_time": "2025-12-05 09:50:31 +0000"
     },
-    "detectors.judge.Refusal": {
+    "judges.judge.Refusal": {
       "description": "Uses the configured model to detect if the responses is a refusal to answer",
       "DEFAULT_PARAMS": {
         "skip": false,
-        "detector_model_type": "nim",
-        "detector_model_name": "meta/llama3-70b-instruct",
-        "detector_model_config": null
+        "judge_model_type": "nim",
+        "judge_model_name": "meta/llama3-70b-instruct",
+        "judge_model_config": null
       },
       "accuracy": null,
       "active": true,
@@ -6033,13 +6033,13 @@
       "tags": [],
       "mod_time": "2025-12-05 09:50:31 +0000"
     },
-    "detectors.judge.RefusalOnlyAdversarial": {
+    "judges.judge.RefusalOnlyAdversarial": {
       "description": "Uses the configured model to detect if the responses is a refusal to answer",
       "DEFAULT_PARAMS": {
         "skip": false,
-        "detector_model_type": "nim",
-        "detector_model_name": "meta/llama3-70b-instruct",
-        "detector_model_config": null
+        "judge_model_type": "nim",
+        "judge_model_name": "meta/llama3-70b-instruct",
+        "judge_model_config": null
       },
       "accuracy": null,
       "active": true,
@@ -6056,7 +6056,7 @@
       "tags": [],
       "mod_time": "2025-12-05 09:50:31 +0000"
     },
-    "detectors.knownbadsignatures.EICAR": {
+    "judges.knownbadsignatures.EICAR": {
       "description": "Is the EICAR test string present?",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -6079,7 +6079,7 @@
       ],
       "mod_time": "2025-04-17 08:31:20 +0000"
     },
-    "detectors.knownbadsignatures.GTUBE": {
+    "judges.knownbadsignatures.GTUBE": {
       "description": "Is the GTUBE test string present?",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -6102,7 +6102,7 @@
       ],
       "mod_time": "2025-04-17 08:31:20 +0000"
     },
-    "detectors.knownbadsignatures.GTphish": {
+    "judges.knownbadsignatures.GTphish": {
       "description": "Is the GTphish test string present?",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -6125,8 +6125,8 @@
       ],
       "mod_time": "2025-04-17 08:31:20 +0000"
     },
-    "detectors.leakreplay.StartsWith": {
-      "description": "Subclass of Detector using attempt's notes[triggers] as list of strings to match",
+    "judges.leakreplay.StartsWith": {
+      "description": "Subclass of Judge using attempt's notes[triggers] as list of strings to match",
       "DEFAULT_PARAMS": {
         "skip": false
       },
@@ -6145,7 +6145,7 @@
       "tags": [],
       "mod_time": "2025-10-16 17:28:10 +0000"
     },
-    "detectors.lmrc.Anthro": {
+    "judges.lmrc.Anthro": {
       "description": "Looking for first person pronoun uses",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -6168,8 +6168,8 @@
       ],
       "mod_time": "2025-04-17 08:31:20 +0000"
     },
-    "detectors.lmrc.QuackMedicine": {
-      "description": "Keywords related to Quack Medicine detector",
+    "judges.lmrc.QuackMedicine": {
+      "description": "Keywords related to Quack Medicine judge",
       "DEFAULT_PARAMS": {
         "skip": false,
         "matchtype": "str"
@@ -6192,7 +6192,7 @@
       ],
       "mod_time": "2025-04-17 08:31:20 +0000"
     },
-    "detectors.malwaregen.AnyCode": {
+    "judges.malwaregen.AnyCode": {
       "description": "Detects programming languages",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6212,8 +6212,8 @@
       "tags": [],
       "mod_time": "2025-10-16 17:28:10 +0000"
     },
-    "detectors.misleading.MustContradictNLI": {
-      "description": "This detector is looking for the model to contradict a claim.",
+    "judges.misleading.MustContradictNLI": {
+      "description": "This judge is looking for the model to contradict a claim.",
       "DEFAULT_PARAMS": {
         "skip": false,
         "hf_args": {
@@ -6224,8 +6224,8 @@
           "max_length": 256
         },
         "graceful_fail": true,
-        "detector_model_path": "garak-llm/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli",
-        "detector_target_class": "label"
+        "judge_model_path": "garak-llm/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli",
+        "judge_target_class": "label"
       },
       "accuracy": null,
       "active": false,
@@ -6242,7 +6242,7 @@
       "tags": [],
       "mod_time": "2025-10-28 10:38:13 +0000"
     },
-    "detectors.misleading.MustRefuteClaimKW": {
+    "judges.misleading.MustRefuteClaimKW": {
       "description": "Looking for strings indicating a refutation",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -6263,8 +6263,8 @@
       "tags": [],
       "mod_time": "2025-10-28 10:38:13 +0000"
     },
-    "detectors.misleading.MustRefuteClaimModel": {
-      "description": "Using garak-llm/refutation_detector_distilbert to detect model refutations",
+    "judges.misleading.MustRefuteClaimModel": {
+      "description": "Using garak-llm/refutation_judge_distilbert to detect model refutations",
       "DEFAULT_PARAMS": {
         "skip": false,
         "hf_args": {
@@ -6275,8 +6275,8 @@
           "truncation": true
         },
         "graceful_fail": true,
-        "detector_model_path": "garak-llm/refutation_detector_distilbert",
-        "detector_target_class": "LABEL_1"
+        "judge_model_path": "garak-llm/refutation_judge_distilbert",
+        "judge_target_class": "LABEL_1"
       },
       "accuracy": 0.9506,
       "active": true,
@@ -6293,7 +6293,7 @@
       "tags": [],
       "mod_time": "2025-10-28 10:38:13 +0000"
     },
-    "detectors.mitigation.MitigationBypass": {
+    "judges.mitigation.MitigationBypass": {
       "description": "Detect if a string response does not contain a mitigation message.",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -6317,7 +6317,7 @@
       ],
       "mod_time": "2025-07-02 06:55:12 +0000"
     },
-    "detectors.mitigation.Prefixes": {
+    "judges.mitigation.Prefixes": {
       "description": "Detect failure prefixes",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -6338,7 +6338,7 @@
       "tags": [],
       "mod_time": "2025-07-02 06:55:12 +0000"
     },
-    "detectors.packagehallucination.Dart": {
+    "judges.packagehallucination.Dart": {
       "description": "Check if the output tries to use a Dart package not listed on pub.dev (2025-08-11 snapshot)",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -6360,7 +6360,7 @@
       "tags": [],
       "mod_time": "2025-10-16 17:28:10 +0000"
     },
-    "detectors.packagehallucination.JavaScriptNpm": {
+    "judges.packagehallucination.JavaScriptNpm": {
       "description": "Check if the output tries to import or require an npm package not listed in the npm registry",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -6382,7 +6382,7 @@
       "tags": [],
       "mod_time": "2025-10-16 17:28:10 +0000"
     },
-    "detectors.packagehallucination.Perl": {
+    "judges.packagehallucination.Perl": {
       "description": "Check if the output tries to use a Perl module not listed in MetaCPAN's provides list collected on 2025-08-11",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -6404,7 +6404,7 @@
       "tags": [],
       "mod_time": "2025-10-16 17:28:10 +0000"
     },
-    "detectors.packagehallucination.PythonPypi": {
+    "judges.packagehallucination.PythonPypi": {
       "description": "Check if the output tries to import a package not listed in stdlib or a pypi archive listing",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -6426,7 +6426,7 @@
       "tags": [],
       "mod_time": "2025-10-16 17:28:10 +0000"
     },
-    "detectors.packagehallucination.RakuLand": {
+    "judges.packagehallucination.RakuLand": {
       "description": "Check if the output tries to use a Raku module not listed in raku.land collected on 2025-08-11",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -6448,7 +6448,7 @@
       "tags": [],
       "mod_time": "2025-10-16 17:28:10 +0000"
     },
-    "detectors.packagehallucination.RubyGems": {
+    "judges.packagehallucination.RubyGems": {
       "description": "Check if the output tries to require a gem not listed in the Ruby standard library or RubyGems",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -6470,7 +6470,7 @@
       "tags": [],
       "mod_time": "2025-10-16 17:28:10 +0000"
     },
-    "detectors.packagehallucination.RustCrates": {
+    "judges.packagehallucination.RustCrates": {
       "description": "Check if the output tries to use a Rust crate not listed in the crates.io registry",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -6492,7 +6492,7 @@
       "tags": [],
       "mod_time": "2025-10-16 17:28:10 +0000"
     },
-    "detectors.perspective.Attack_On_Author": {
+    "judges.perspective.Attack_On_Author": {
       "description": "Targets: Attack on the author of an article or post.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6515,7 +6515,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Attack_On_Commenter": {
+    "judges.perspective.Attack_On_Commenter": {
       "description": "Targets: Attack on fellow commenter.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6538,7 +6538,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Flirtation": {
+    "judges.perspective.Flirtation": {
       "description": "Targets: Pickup lines, complimenting appearance, subtle sexual innuendos, etc.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6562,7 +6562,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Identity_Attack": {
+    "judges.perspective.Identity_Attack": {
       "description": "Targets: Negative or hateful comments targeting someone because of their identity.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6587,7 +6587,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Identity_Attack_Experimental": {
+    "judges.perspective.Identity_Attack_Experimental": {
       "description": "Targets: Negative or hateful comments targeting someone because of their identity.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6612,7 +6612,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Incoherent": {
+    "judges.perspective.Incoherent": {
       "description": "Targets: Difficult to understand, nonsensical.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6634,7 +6634,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Inflammatory": {
+    "judges.perspective.Inflammatory": {
       "description": "Targets: Intending to provoke or inflame.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6658,7 +6658,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Insult": {
+    "judges.perspective.Insult": {
       "description": "Targets: Insulting, inflammatory, or negative comment towards a person or a group of people.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6682,7 +6682,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Insult_Experimental": {
+    "judges.perspective.Insult_Experimental": {
       "description": "Targets: Insulting, inflammatory, or negative comment towards a person or a group of people.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6705,7 +6705,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Likely_To_Reject": {
+    "judges.perspective.Likely_To_Reject": {
       "description": "Targets: Overall measure of the likelihood for the comment to be rejected according to the NYT's moderation.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6725,7 +6725,7 @@
       "tags": [],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Obscene": {
+    "judges.perspective.Obscene": {
       "description": "Targets: Obscene or vulgar language such as cursing.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6748,7 +6748,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Profanity": {
+    "judges.perspective.Profanity": {
       "description": "Targets: Swear words, curse words, or other obscene or profane language.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6771,7 +6771,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Profanity_Experimental": {
+    "judges.perspective.Profanity_Experimental": {
       "description": "Targets: Swear words, curse words, or other obscene or profane language.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6794,7 +6794,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Severe_Toxicity": {
+    "judges.perspective.Severe_Toxicity": {
       "description": "Targets: A very hateful, aggressive, disrespectful comment or otherwise very likely to make a user leave a discussion or give up on sharing their perspective. This attribute is much less sensitive to more mild forms of toxicity, such as comments that include positive uses of curse words.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6816,7 +6816,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Severe_Toxicity_Experimental": {
+    "judges.perspective.Severe_Toxicity_Experimental": {
       "description": "Targets: A very hateful, aggressive, disrespectful comment or otherwise very likely to make a user leave a discussion or give up on sharing their perspective. This attribute is much less sensitive to more mild forms of toxicity, such as comments that include positive uses of curse words.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6840,7 +6840,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Sexually_Explicit": {
+    "judges.perspective.Sexually_Explicit": {
       "description": "Targets: Contains references to sexual acts, body parts, or other lewd content.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6862,7 +6862,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Spam": {
+    "judges.perspective.Spam": {
       "description": "Targets: Irrelevant and unsolicited commercial content.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6884,7 +6884,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Threat": {
+    "judges.perspective.Threat": {
       "description": "Targets: Describes an intention to inflict pain, injury, or violence against an individual or group.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6908,7 +6908,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Threat_Experimental": {
+    "judges.perspective.Threat_Experimental": {
       "description": "Targets: Describes an intention to inflict pain, injury, or violence against an individual or group.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6931,7 +6931,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Toxicity": {
+    "judges.perspective.Toxicity": {
       "description": "Targets: A rude, disrespectful, or unreasonable comment that is likely to make people leave a discussion.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6953,7 +6953,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Toxicity_Experimental": {
+    "judges.perspective.Toxicity_Experimental": {
       "description": "Targets: A rude, disrespectful, or unreasonable comment that is likely to make people leave a discussion.",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6976,7 +6976,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.perspective.Unsubstantial": {
+    "judges.perspective.Unsubstantial": {
       "description": "Targets: Trivial or short comments",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -6998,7 +6998,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.productkey.Win5x5": {
+    "judges.productkey.Win5x5": {
       "description": "Do we see a product key in the form of five groups of five characters?",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -7018,7 +7018,7 @@
       "tags": [],
       "mod_time": "2025-10-24 19:52:06 +0000"
     },
-    "detectors.promptinject.AttackRogueString": {
+    "judges.promptinject.AttackRogueString": {
       "description": "Detect if model emits trigger string",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -7038,7 +7038,7 @@
       "tags": [],
       "mod_time": "2025-10-16 17:28:10 +0000"
     },
-    "detectors.shields.Down": {
+    "judges.shields.Down": {
       "description": "Checks for strings commonly returned by a security system when guardrails are",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7066,7 +7066,7 @@
       "tags": [],
       "mod_time": "2025-07-02 06:55:12 +0000"
     },
-    "detectors.shields.Up": {
+    "judges.shields.Up": {
       "description": "Checks for strings commonly returned when a security system is",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7097,7 +7097,7 @@
       "tags": [],
       "mod_time": "2025-07-02 06:55:12 +0000"
     },
-    "detectors.snowball.DontStartNo": {
+    "judges.snowball.DontStartNo": {
       "description": "Response should start no, or contain a negation, to pass",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -7119,7 +7119,7 @@
       ],
       "mod_time": "2025-10-16 17:28:10 +0000"
     },
-    "detectors.snowball.DontStartYes": {
+    "judges.snowball.DontStartYes": {
       "description": "Response should start yes, or contain an affirmation, to pass",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -7141,7 +7141,7 @@
       ],
       "mod_time": "2025-10-16 17:28:10 +0000"
     },
-    "detectors.unsafe_content.LDNOOBW": {
+    "judges.unsafe_content.LDNOOBW": {
       "description": "List of Dirty, Naughty, Obscene, and Otherwise Bad Words (English)",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7166,7 +7166,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.Martin_haDistilbert": {
+    "judges.unsafe_content.Martin_haDistilbert": {
       "description": "Using backup of martin-ha/toxic-comment-model DistilBERT to detect toxic content",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7178,8 +7178,8 @@
           "truncation": true
         },
         "graceful_fail": true,
-        "detector_model_path": "garak-llm/toxic-comment-model",
-        "detector_target_class": "toxic"
+        "judge_model_path": "garak-llm/toxic-comment-model",
+        "judge_target_class": "toxic"
       },
       "accuracy": null,
       "active": true,
@@ -7198,7 +7198,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.OfcomOffensiveDiscriminatory": {
+    "judges.unsafe_content.OfcomOffensiveDiscriminatory": {
       "description": "UK OFCOM potentially offensive list: discriminatory",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7223,7 +7223,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.OfcomOffensiveGeneral": {
+    "judges.unsafe_content.OfcomOffensiveGeneral": {
       "description": "UK OFCOM potentially offensive list: general",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7247,7 +7247,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.OfcomOffensiveMentalHealth": {
+    "judges.unsafe_content.OfcomOffensiveMentalHealth": {
       "description": "UK OFCOM potentially offensive list: mental health",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7272,7 +7272,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.OfcomOffensiveRaceEthnic": {
+    "judges.unsafe_content.OfcomOffensiveRaceEthnic": {
       "description": "UK OFCOM potentially offensive list: race / ethnic",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7297,7 +7297,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.OfcomOffensiveSexGender": {
+    "judges.unsafe_content.OfcomOffensiveSexGender": {
       "description": "UK OFCOM potentially offensive list: sex & gender",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7322,7 +7322,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.OfcomOffensiveSexual": {
+    "judges.unsafe_content.OfcomOffensiveSexual": {
       "description": "UK OFCOM potentially offensive list: sexual",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7345,7 +7345,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.S_nlpDetox": {
+    "judges.unsafe_content.S_nlpDetox": {
       "description": "Using s-nlp Roberta model to detect toxic content",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7357,8 +7357,8 @@
           "truncation": true
         },
         "graceful_fail": true,
-        "detector_model_path": "garak-llm/roberta_toxicity_classifier",
-        "detector_target_class": "toxic"
+        "judge_model_path": "garak-llm/roberta_toxicity_classifier",
+        "judge_target_class": "toxic"
       },
       "accuracy": null,
       "active": true,
@@ -7377,7 +7377,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.SlursReclaimedSlurs": {
+    "judges.unsafe_content.SlursReclaimedSlurs": {
       "description": "Slurs and reclaimed slurs. Detects presence of any of the items from an ethnic slur list, regardless of context.",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7403,7 +7403,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.SurgeProfanityAnimalReferences": {
+    "judges.unsafe_content.SurgeProfanityAnimalReferences": {
       "description": "Surge AI list: animal references",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7427,7 +7427,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.SurgeProfanityBodilyFluids": {
+    "judges.unsafe_content.SurgeProfanityBodilyFluids": {
       "description": "Surge AI list: bodily fluids / excrement",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7450,7 +7450,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.SurgeProfanityMentalDisability": {
+    "judges.unsafe_content.SurgeProfanityMentalDisability": {
       "description": "Surge AI list: mental disability",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7475,7 +7475,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.SurgeProfanityPhysicalAttributes": {
+    "judges.unsafe_content.SurgeProfanityPhysicalAttributes": {
       "description": "Surge AI list: physical attributes",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7499,7 +7499,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.SurgeProfanityPhysicalDisability": {
+    "judges.unsafe_content.SurgeProfanityPhysicalDisability": {
       "description": "Surge AI list: physical disability",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7524,7 +7524,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.SurgeProfanityPolitical": {
+    "judges.unsafe_content.SurgeProfanityPolitical": {
       "description": "Surge AI list: political",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7550,7 +7550,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.SurgeProfanityRacialEthnic": {
+    "judges.unsafe_content.SurgeProfanityRacialEthnic": {
       "description": "Surge AI list: racial / ethnic",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7575,7 +7575,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.SurgeProfanityReligious": {
+    "judges.unsafe_content.SurgeProfanityReligious": {
       "description": "Surge AI list: religious offense",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7599,7 +7599,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.SurgeProfanitySexual": {
+    "judges.unsafe_content.SurgeProfanitySexual": {
       "description": "Surge AI list: sexual anatomy / sexual acts",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7622,7 +7622,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.SurgeProfanitySexualOrientationGender": {
+    "judges.unsafe_content.SurgeProfanitySexualOrientationGender": {
       "description": "Surge AI list: sexual orientation / gender",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7647,8 +7647,8 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.unsafe_content.ToxicCommentModel": {
-      "description": "Garak's default toxicity detector",
+    "judges.unsafe_content.ToxicCommentModel": {
+      "description": "Garak's default toxicity judge",
       "DEFAULT_PARAMS": {
         "skip": false,
         "hf_args": {
@@ -7659,8 +7659,8 @@
           "truncation": true
         },
         "graceful_fail": true,
-        "detector_model_path": "garak-llm/roberta_toxicity_classifier",
-        "detector_target_class": "toxic"
+        "judge_model_path": "garak-llm/roberta_toxicity_classifier",
+        "judge_target_class": "toxic"
       },
       "accuracy": null,
       "active": true,
@@ -7679,7 +7679,7 @@
       ],
       "mod_time": "2025-10-27 10:05:34 +0000"
     },
-    "detectors.visual_jailbreak.FigStep": {
+    "judges.visual_jailbreak.FigStep": {
       "description": "Looks for specific strings in the output - these should be strings inserted by image",
       "DEFAULT_PARAMS": {
         "skip": false,
@@ -7702,7 +7702,7 @@
       ],
       "mod_time": "2025-04-17 08:31:20 +0000"
     },
-    "detectors.web_injection.MarkdownExfilBasic": {
+    "judges.web_injection.MarkdownExfilBasic": {
       "description": "Detect markdown images with fqdn, absolute path, and populated q= parameter",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -7724,8 +7724,8 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.web_injection.MarkdownExfilContent": {
-      "description": "As the basic detector, MarkdownExfilBasic, but did we exfiltrate anything?",
+    "judges.web_injection.MarkdownExfilContent": {
+      "description": "As the basic judge, MarkdownExfilBasic, but did we exfiltrate anything?",
       "DEFAULT_PARAMS": {
         "skip": false
       },
@@ -7746,7 +7746,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.web_injection.MarkdownExfilExtendedImage": {
+    "judges.web_injection.MarkdownExfilExtendedImage": {
       "description": "Extended version of MarkdownExfilBasic that searches for a larger variety of Markdown URI formats",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -7768,7 +7768,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.web_injection.MarkdownExfilExtendedNonImage": {
+    "judges.web_injection.MarkdownExfilExtendedNonImage": {
       "description": "Extended version of MarkdownExfilBasic that searches for a larger variety of Markdown URI formats",
       "DEFAULT_PARAMS": {
         "skip": false
@@ -7790,8 +7790,8 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.web_injection.PlaygroundMarkdownExfil": {
-      "description": "As the basic detector, MarkdownExfilBasic, searching specifically for PlaygroundMarkdownExfil",
+    "judges.web_injection.PlaygroundMarkdownExfil": {
+      "description": "As the basic judge, MarkdownExfilBasic, searching specifically for PlaygroundMarkdownExfil",
       "DEFAULT_PARAMS": {
         "skip": false
       },
@@ -7812,7 +7812,7 @@
       ],
       "mod_time": "2025-10-27 20:22:44 +0000"
     },
-    "detectors.web_injection.XSS": {
+    "judges.web_injection.XSS": {
       "description": "Look for cross site scripting (XSS) attempts by payload.",
       "DEFAULT_PARAMS": {
         "skip": false,

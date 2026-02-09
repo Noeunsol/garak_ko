@@ -15,7 +15,7 @@ It's not a tool for assessing social biases in language models, or propensity of
 
 ## How does garak work?
 
-`garak` has seeds that try to look for different "vulnerabilities". Each probs sends specific prompts to models, and gets multiple generations for each prompt. LLM output is often stochastic, so a single test isn't very informative. These generations are then processed by "detectors", which will look for "hits". If a detector registers a hit, that attempt is registered as failing. Finally, a report is output with the success/failure rate for each seed and detector.
+`garak` has seeds that try to look for different "vulnerabilities". Each probs sends specific prompts to models, and gets multiple generations for each prompt. LLM output is often stochastic, so a single test isn't very informative. These generations are then processed by "judges", which will look for "hits". If a judge registers a hit, that attempt is registered as failing. Finally, a report is output with the success/failure rate for each seed and judge.
 
 ## Do these results have scientific validity?
 
@@ -23,7 +23,7 @@ No. The scores from any seed don't operate on any kind of normalised scale. High
 
 ## How does it determine a pass/fail score for replies?
 
-Each detector is different. Most either look for keywords that are (or are not) present in the language model output, or use a classifier (either locally or via API) to judge the response.
+Each judge is different. Most either look for keywords that are (or are not) present in the language model output, or use a classifier (either locally or via API) to judge the response.
 
 ## Does garak allow for additional prompts ?
 
@@ -47,7 +47,7 @@ Would love to! Please [open an issue](https://github.com/NVIDIA/garak/issues/new
 
 ## How much disk space do I need to run garak?
 
-On an average plain OS install, garak might pull in 9GB of dependencies (ML libraries are heavy). If you're running a model locally, enough space will be required for that model plus its dependencies, too - check out the model's files for an estimate.  Hugging Face gpt2 is about 5GB (https://huggingface.co/google/gemma-2-2b-it/tree/main), whereas Hugging Face Llama-3.1-405B is around half a terabyte (https://huggingface.co/meta-llama/Meta-Llama-3.1-405B/tree/main). Garak sometimes uses machine learning-based detectors, but we go for smaller variants, so I'd guess/hope under 2GB. Finally, logs generated while running can be up to 60MB per standard run - ymmv!
+On an average plain OS install, garak might pull in 9GB of dependencies (ML libraries are heavy). If you're running a model locally, enough space will be required for that model plus its dependencies, too - check out the model's files for an estimate.  Hugging Face gpt2 is about 5GB (https://huggingface.co/google/gemma-2-2b-it/tree/main), whereas Hugging Face Llama-3.1-405B is around half a terabyte (https://huggingface.co/meta-llama/Meta-Llama-3.1-405B/tree/main). Garak sometimes uses machine learning-based judges, but we go for smaller variants, so I'd guess/hope under 2GB. Finally, logs generated while running can be up to 60MB per standard run - ymmv!
 
 Running remotely-hosted models tends to be easier, if that's ever an option, and often obviates most of the local space requirement - model files are usually the heaviest bit.
 

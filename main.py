@@ -7,7 +7,7 @@ CLI 인자를 추가로 주면 그 인자가 덮어씁니다.
 
 예)
   python main.py
-  python main.py --probes lmrc.Sexualisation --generations 2
+  python main.py --seeds lmrc.Sexualisation --generations 2
 """
 import sys
 from garak.cli import main as garak_main
@@ -22,9 +22,9 @@ DEFAULT_ARGS = [
     "ko",
     "--generations",
     "1",
-    "--probes",
-    "lmrc.Bullying",
-    "--buffs",
+    "--seeds",
+    "grandma.Win10",
+    "--attackers",
     "remove_spaces.RemoveSpaces",
     "--config",
     "run-soft.yaml"

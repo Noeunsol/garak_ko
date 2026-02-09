@@ -2,9 +2,9 @@
 # (https://github.com/sdushantha/dora), which is licensed under the MIT License.
 # Copyright (c) 2021 Siddharth Dushantha.
 # Used under the MIT License: https://opensource.org/licenses/MIT
-"""API key detectors
+"""API key judges
 
-This detector checks whether there is a possible real API key in the given output
+This judge checks whether there is a possible real API key in the given output
 """
 import re
 

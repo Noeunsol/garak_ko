@@ -57,7 +57,7 @@ class Attacker(Configurable):
             seed_params=source_attempt.seed_params,
             targets=source_attempt.targets,
             notes=source_attempt.notes,
-            detector_results=source_attempt.detector_results,
+            judge_results=source_attempt.judge_results,
             goal=source_attempt.goal,
             seq=seq,
         )

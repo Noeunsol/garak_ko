@@ -23,7 +23,7 @@
 | [Vijil](https://www.vijil.ai/) | Vijil helps organizations build and operate autonomous agents that humans can trust. Garak forms part of their “vijil score”. They have an API and efficient orchestration engine |
 | [Deepchecks](https://deepchecks.com) | [Integrating garak and NeMo Guardrails together](https://deepchecks.com/the-best-llm-safety-net-to-date-deepchecks-garak-and-nemo-guardrails-all-in-one-bundle/); [Example use of garak tools](https://llmdocs.deepchecks.com/docs/pentesting-your-llm-pipeline) |
 | [Mindgard](https://www.mindgard.ai) | An AI security platform, Mindgard integrate garak as part of their pentesting & eval suite |
-| [Giskard](https://giskard.ai) | [Giskard integration](https://docs.giskard.ai/en/stable/reference/scan/llm_detectors.html) |
+| [Giskard](https://giskard.ai) | [Giskard integration](https://docs.giskard.ai/en/stable/reference/scan/llm_judges.html) |
 | [OpsMX](https://www.opsmx.com/) | "OpsMx Delivery Shield embeds Garak’s adversarial testing engine to continuously seed, monitor, and guard live AI and LLM workloads against jailbreaks, data leaks, and policy violations"  https://www.opsmx.com/dynamic-runtime-ai-security |
 | [Upwind](https://www.upwind.io/) | "Upwind secures your cloud deployments, configurations, and applications through a runtime fabric that provides real-time visibility from the inside out" |
 | [GuardionAI](https://guardion.ai/) | "Discover, analyze, and understand 89 AI security threats across 25 categories. From prompt injection to data leakage, including 29,310 prompt attack examples. Explore the complete landscape of LLM vulnerabilities." [PromptIntel](https://guardion.ai/promptintel) |

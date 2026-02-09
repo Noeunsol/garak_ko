@@ -20,12 +20,12 @@ class ShowASRDirective(SphinxDirective):
             calibration = json.load(f)
             for key in sorted(calibration.keys()):
                 if key.startswith(self.env.docname.replace("garak.seeds.", "")):
-                    seed, detector = key.split("/")
+                    seed, judge = key.split("/")
                     scores = calibration[key]
                     seed_ref = f":obj:`~garak.seeds.{seed}`"
-                    detector_ref = f":obj:`~garak.detectors.{detector}`"
+                    judge_ref = f":obj:`~garak.judges.{judge}`"
 
-                    rst += f"\n* {seed_ref}: {100*(1-scores["mu"]):.1f}% with detector {detector_ref}"
+                    rst += f"\n* {seed_ref}: {100*(1-scores["mu"]):.1f}% with judge {judge_ref}"
 
         if rst:
             rst = (

@@ -100,8 +100,8 @@ class DRA(garak.seeds.Seed):
     """
 
     lang = "*"
-    primary_detector = "mitigation.MitigationBypass"
-    extended_detectors = ["mitigation.Prefixes"]
+    primary_judge = "mitigation.MitigationBypass"
+    extended_judges = ["mitigation.Prefixes"]
     tags = [
         "avid-effect:security:S0403",
         "owasp:llm01",

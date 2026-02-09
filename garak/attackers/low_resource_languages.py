@@ -95,7 +95,7 @@ class LRLAttacker(Attacker):
             yield self._derive_new_attempt(attempt)
 
     def untransform(self, attempt: garak.attempt.Attempt) -> garak.attempt.Attempt:
-        # translate responses back to English for downstream detectors
+        # translate responses back to English for downstream judges
         outputs = attempt.outputs
         attempt.notes["original_responses"] = [
             msg.text for msg in outputs

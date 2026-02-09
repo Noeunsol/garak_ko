@@ -12,7 +12,7 @@ run:
   generations: 1
 
 plugins:
-  extended_detectors: true
+  extended_judges: true
   seed_spec: all
   attacker_spec: paraphrase.Fast
   seeds:

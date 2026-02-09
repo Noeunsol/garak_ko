@@ -217,8 +217,8 @@ class EncodingMixin:
     doc_uri = "https://kai-greshake.de/posts/llm-malware/#encoded-inline-jailbreak"
     tier = garak.seeds.Tier.COMPETE_WITH_SOTA
 
-    primary_detector = "encoding.DecodeMatch"
-    extended_detectors = [
+    primary_judge = "encoding.DecodeMatch"
+    extended_judges = [
         "encoding.DecodeApprox",
     ]
 

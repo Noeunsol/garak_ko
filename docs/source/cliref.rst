@@ -13,16 +13,16 @@ CLI reference for garak
                          [--generations GENERATIONS] [--config CONFIG]
                          [--target_type TARGET_TYPE] [--target_name TARGET_NAME]
                          [--seeds PROBES] [--seed_tags PROBE_TAGS]
-                         [--detectors DETECTORS] [--extended_detectors]
+                         [--judges JUDGES] [--extended_judges]
                          [--buffs BUFFS]
                          [--target_lang TARGET_LANG] [--language TARGET_LANG] [--lang TARGET_LANG]
                          [--buff_option_file BUFF_OPTION_FILE | --buff_options BUFF_OPTIONS]
-                         [--detector_option_file DETECTOR_OPTION_FILE | --detector_options DETECTOR_OPTIONS]
+                         [--judge_option_file JUDGE_OPTION_FILE | --judge_options JUDGE_OPTIONS]
                          [--generator_option_file GENERATOR_OPTION_FILE | --generator_options GENERATOR_OPTIONS]
                          [--harness_option_file HARNESS_OPTION_FILE | --harness_options HARNESS_OPTIONS]
                          [--seed_option_file PROBE_OPTION_FILE | --seed_options PROBE_OPTIONS]
                          [--taxonomy TAXONOMY] [--plugin_info PLUGIN_INFO]
-                         [--list_seeds] [--list_detectors] [--list_generators]
+                         [--list_seeds] [--list_judges] [--list_generators]
                          [--list_buffs] [--list_config] [--version]
                          [--report REPORT] [--interactive] [--fix]
   
@@ -42,7 +42,7 @@ CLI reference for garak
     --parallel_attempts PARALLEL_ATTEMPTS
                           How many seed attempts to launch in parallel. Raise
                           this for faster runs when using non-local models.
-    --skip_unknown        allow skip of unknown seeds, detectors, or buffs
+    --skip_unknown        allow skip of unknown seeds, judges, or buffs
     --seed SEED, -s SEED  random seed
     --deprefix            remove the prompt from the front of generator output
     --eval_threshold EVAL_THRESHOLD
@@ -62,12 +62,12 @@ CLI reference for garak
     --seed_tags PROBE_TAGS
                           only include seeds with a tag that starts with this
                           value (e.g. owasp:llm01)
-    --detectors DETECTORS, -d DETECTORS
-                          list of detectors to use, or 'all' for all. Default is
+    --judges JUDGES, -d JUDGES
+                          list of judges to use, or 'all' for all. Default is
                           to use the seed's suggestion.
-    --extended_detectors  If detectors aren't specified on the command line,
-                          should we run all detectors? (default is just the
-                          primary detector, if given, else everything)
+    --extended_judges  If judges aren't specified on the command line,
+                          should we run all judges? (default is just the
+                          primary judge, if given, else everything)
     --buffs BUFFS, -b BUFFS
                           list of buffs to use. Default is none
     --target_lang TARGET_LANG, --language TARGET_LANG, --lang TARGET_LANG
@@ -77,11 +77,11 @@ CLI reference for garak
                           path to JSON file containing options to pass to buff
     --buff_options BUFF_OPTIONS
                           options to pass to buff, formatted as a JSON dict
-    --detector_option_file DETECTOR_OPTION_FILE, -D DETECTOR_OPTION_FILE
+    --judge_option_file JUDGE_OPTION_FILE, -D JUDGE_OPTION_FILE
                           path to JSON file containing options to pass to
-                          detector
-    --detector_options DETECTOR_OPTIONS
-                          options to pass to detector, formatted as a JSON dict
+                          judge
+    --judge_options JUDGE_OPTIONS
+                          options to pass to judge, formatted as a JSON dict
     --generator_option_file GENERATOR_OPTION_FILE, -G GENERATOR_OPTION_FILE
                           path to JSON file containing options to pass to
                           generator
@@ -106,11 +106,11 @@ CLI reference for garak
                           --seeds/-p to filter for seeds that will be
                           activated based on a `seed_spec`, e.g. '--list_seeds
                           -p dan' to show only active 'dan' family seeds.
-    --list_detectors      list available detectors. Usage: combine with
-                          --detectors/-d to filter for detectors that will be
-                          activated based on a `detector_spec`, e.g. '--
-                          list_detectors -d misleading.Invalid' to show only
-                          that detector.
+    --list_judges      list available judges. Usage: combine with
+                          --judges/-d to filter for judges that will be
+                          activated based on a `judge_spec`, e.g. '--
+                          list_judges -d misleading.Invalid' to show only
+                          that judge.
     --list_generators     list available generation model interfaces
     --list_buffs          list available buffs/fuzzes
     --list_config         print active config info (and don't scan)

@@ -10,7 +10,7 @@ of ways. The set of risks is large, but not all risks apply in
 all scenarios - and so not all lmrc seeds will be relevant to
 every system.
 
-Contributions of prompts, seeds, and especially detectors
+Contributions of prompts, seeds, and especially judges
 are always welcome here!
 
 Further info:
@@ -52,7 +52,7 @@ class Anthropomorphisation(LMRCLocalizedSeed):
 
     lang = "en"
     doc_uri = "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/anthropomorphisation.md"
-    primary_detector = "lmrc.Anthro"
+    primary_judge = "lmrc.Anthro"
     tags = ["risk-cards:lmrc:anthropomorphisation"]
     goal = "anthropomorphise a language model"
     tier = garak.seeds.Tier.INFORMATIONAL
@@ -86,7 +86,7 @@ class Bullying(LMRCLocalizedSeed):
 
     lang = "en"
     doc_uri = "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/bullying.md"
-    primary_detector = "unsafe_content.ToxicCommentModel"
+    primary_judge = "unsafe_content.ToxicCommentModel"
     tags = [
         "risk-cards:lmrc:bullying",
         "avid-effect:ethics:E0301",
@@ -127,7 +127,7 @@ class Deadnaming(LMRCLocalizedSeed):
 
     lang = "en"
     doc_uri = "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/deadnaming.md"
-    primary_detector = "base.TriggerListDetector"
+    primary_judge = "base.TriggerListJudge"
     tags = [
         "risk-cards:lmrc:deadnaming",
         "avid-effect:ethics:E0302",
@@ -188,8 +188,8 @@ class SexualContent(LMRCLocalizedSeed):
     doc_uri = (
         "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/sexual_content.md"
     )
-    primary_detector = "unsafe_content.SurgeProfanitySexual"
-    extended_detectors = [
+    primary_judge = "unsafe_content.SurgeProfanitySexual"
+    extended_judges = [
         "perspective.Sexually_Explicit",
         "unsafe_content.OfcomOffensiveSexual",
     ]
@@ -223,8 +223,8 @@ class Sexualisation(LMRCLocalizedSeed):
     doc_uri = (
         "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/sexualisation.md"
     )
-    primary_detector = "unsafe_content.SurgeProfanitySexual"
-    extended_detectors = [
+    primary_judge = "unsafe_content.SurgeProfanitySexual"
+    extended_judges = [
         "perspective.Sexually_Explicit",
         "unsafe_content.OfcomOffensiveSexual",
     ]
@@ -262,8 +262,8 @@ class SlurUsage(LMRCLocalizedSeed):
 
     lang = "en"
     doc_uri = "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/slur_usage.md"
-    primary_detector = "unsafe_content.SurgeProfanityRacialEthnic"
-    extended_detectors = ["unsafe_content.OfcomOffensiveRaceEthnic"]
+    primary_judge = "unsafe_content.SurgeProfanityRacialEthnic"
+    extended_judges = ["unsafe_content.OfcomOffensiveRaceEthnic"]
     tags = [
         "risk-cards:lmrc:slur_usage",
         "avid-effect:ethics:E0101",
@@ -294,8 +294,8 @@ class Profanity(LMRCLocalizedSeed):
 
     lang = "en"
     doc_uri = "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/profanity.md"
-    primary_detector = "unsafe_content.SurgeProfanityAnimalReferences"
-    extended_detectors = [
+    primary_judge = "unsafe_content.SurgeProfanityAnimalReferences"
+    extended_judges = [
         "unsafe_content.SurgeProfanityBodilyFluids",
         "unsafe_content.SurgeProfanityMentalDisability",
         "unsafe_content.SurgeProfanityPhysicalAttributes",
@@ -340,7 +340,7 @@ class QuackMedicine(LMRCLocalizedSeed):
     doc_uri = (
         "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/quack_medicine.md"
     )
-    primary_detector = "lmrc.QuackMedicine"
+    primary_judge = "lmrc.QuackMedicine"
     tags = [
         "risk-cards:lmrc:quack_medicine",
         "avid-effect:ethics:E0402",

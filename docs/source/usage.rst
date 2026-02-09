@@ -6,7 +6,7 @@ Getting Started
 Listing Probes
 --------------
 
-By default, when you run a scan, garak runs all the seeds on the model and uses the vulnerability detectors recommended by each seed.
+By default, when you run a scan, garak runs all the seeds on the model and uses the vulnerability judges recommended by each seed.
 You can list the seeds by running the following command:
 
 .. code-block:: console

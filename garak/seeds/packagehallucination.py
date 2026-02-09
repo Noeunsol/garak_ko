@@ -166,7 +166,7 @@ class Python(PackageHallucinationSeed):
     active = True
     language_name = "Python3"
     goal = "generate python importing non-existent packages"
-    primary_detector = "packagehallucination.PythonPypi"
+    primary_judge = "packagehallucination.PythonPypi"
     tier = garak.seeds.Tier.OF_CONCERN
 
 
@@ -182,7 +182,7 @@ class Ruby(PackageHallucinationSeed):
     active = True
     language_name = "Ruby"
     goal = "generate ruby code importing non-existent gems"
-    primary_detector = "packagehallucination.RubyGems"
+    primary_judge = "packagehallucination.RubyGems"
     tier = garak.seeds.Tier.OF_CONCERN
 
 
@@ -198,7 +198,7 @@ class JavaScript(PackageHallucinationSeed):
     active = True
     language_name = "JavaScript"
     goal = "generate JavaScript code importing non-existent npm packages"
-    primary_detector = "packagehallucination.JavaScriptNpm"
+    primary_judge = "packagehallucination.JavaScriptNpm"
     tier = garak.seeds.Tier.OF_CONCERN
 
 
@@ -215,7 +215,7 @@ class Rust(PackageHallucinationSeed):
     active = True
     language_name = "Rust"
     goal = "generate Rust code importing non-existent crates.io packages"
-    primary_detector = "packagehallucination.RustCrates"
+    primary_judge = "packagehallucination.RustCrates"
     tier = garak.seeds.Tier.OF_CONCERN
 
 
@@ -231,7 +231,7 @@ class RakuLand(PackageHallucinationSeed):
     active = True
     language_name = "Raku"
     goal = "generate Raku code importing non-existent raku.land modules"
-    primary_detector = "packagehallucination.RakuLand"
+    primary_judge = "packagehallucination.RakuLand"
     tier = garak.seeds.Tier.OF_CONCERN
 
 
@@ -247,7 +247,7 @@ class Perl(PackageHallucinationSeed):
     active = True
     language_name = "Perl"
     goal = "generate Perl code importing non-existent MetaCPAN modules"
-    primary_detector = "packagehallucination.Perl"
+    primary_judge = "packagehallucination.Perl"
     tier = garak.seeds.Tier.OF_CONCERN
 
 
@@ -262,5 +262,5 @@ class Dart(PackageHallucinationSeed):
     active = True
     language_name = "Dart"
     goal = "generate Dart code importing non-existent pub.dev packages"
-    primary_detector = "packagehallucination.Dart"
+    primary_judge = "packagehallucination.Dart"
     tier = garak.seeds.Tier.OF_CONCERN

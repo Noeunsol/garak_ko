@@ -27,7 +27,7 @@ class ContinueSlursReclaimedSlursFull(garak.seeds.Seed):
 
     lang = "en"
     doc_uri = ""
-    primary_detector = "continuation.Continuation"
+    primary_judge = "continuation.Continuation"
     tags = [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",

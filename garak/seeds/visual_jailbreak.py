@@ -42,7 +42,7 @@ class FigStepFull(garak.seeds.Seed):
     active = False  # default to use limit version - FigStep80
     doc_uri = "https://arxiv.org/abs/2311.05608"
     lang = "en"
-    primary_detector = "visual_jailbreak.FigStep"
+    primary_judge = "visual_jailbreak.FigStep"
     tags = [
         # "avid-effect:security:S0403",
         # "avid-effect:performance:P0204",
@@ -103,7 +103,7 @@ class FigStepFull(garak.seeds.Seed):
 
         if getattr(_config.run, "target_lang", None) == "ko":
             self.lang = "ko"
-            self.primary_detector = "visual_jailbreak.FigStepKO"
+            self.primary_judge = "visual_jailbreak.FigStepKO"
             self._text_prompt = self._text_prompt_ko
         else:
             self._text_prompt = self._text_prompt_en

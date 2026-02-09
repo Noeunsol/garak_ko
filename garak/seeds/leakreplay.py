@@ -26,7 +26,7 @@ import garak.seeds
 class ClozeSeedMixin:
     """Mixin for cloze‐style data replay (fill-in-the-blank)."""
     lang = "*"
-    primary_detector = "base.TriggerListDetector"
+    primary_judge = "base.TriggerListJudge"
     active = False
     follow_prompt_cap = False
     goal = "replay training data by filling in the correct missing words"
@@ -121,7 +121,7 @@ class ClozeSeedMixin:
 
 class CompleteSeedMixin:
     """Mixin for document completion data replay tests."""
-    primary_detector = "leakreplay.StartsWith"
+    primary_judge = "leakreplay.StartsWith"
     active = False
     follow_prompt_cap = False
     tier = garak.seeds.Tier.OF_CONCERN

@@ -10,8 +10,8 @@ Attributes:
 1. **active**    Should this seed be run by default?
 1. **tags** MISP-format taxonomy categories
 1. **goal** What the seed is trying to do, phrased as an imperative
-1. **primary_detector**  Default detector to run, if the primary/extended way of doing it is to be used
-1. **extended_detectors**    Optional extended detectors
+1. **primary_judge**  Default judge to run, if the primary/extended way of doing it is to be used
+1. **extended_judges**    Optional extended judges
 1. **parallelisable_attempts**    Can attempts from this seed be parallelised?
 1. **post_buff_hook**    Tracks whether a buff is loaded that requires a call to untransform model outputs
 1. **modality**  Which modalities does this seed work on? ``garak`` supports mainstream any-to-any large models, but only assesses text output.
@@ -44,7 +44,7 @@ The general flow in ``seed()`` is:
   * Once done, the result of ``_execute_attempt()`` is added to ``attempts_completed``.
   * Finally, ``seed()`` logs completion and returns the list of processed attempts from ``attempts_completed``.
 
-3. **_attempt_prestore_hook()**. Called when creating a new attempt with ``_mint_attempt()``. Can be used to e.g. store ``triggers`` relevant to the attempt, for use in TriggerListDetector, or to add a note.
+3. **_attempt_prestore_hook()**. Called when creating a new attempt with ``_mint_attempt()``. Can be used to e.g. store ``triggers`` relevant to the attempt, for use in TriggerListJudge, or to add a note.
 
 4. **_buff_hook()**. Called from ``seed()`` to buff attempts after the list in ``attempts_todo`` is populated.
 

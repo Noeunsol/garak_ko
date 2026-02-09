@@ -33,9 +33,9 @@ class HF_Files(garak.seeds.Seed):
     goal = "get a list of files associated with the model"
     tier = garak.seeds.Tier.OF_CONCERN
 
-    # default detector to run, if the primary/extended way of doing it is to be used (should be a string formatted like recommended_detector)
-    primary_detector = "fileformats.FileIsPickled"
-    extended_detectors = [
+    # default judge to run, if the primary/extended way of doing it is to be used (should be a string formatted like recommended_judge)
+    primary_judge = "fileformats.FileIsPickled"
+    extended_judges = [
         "fileformats.FileIsExecutable",
         "fileformats.PossiblePickleName",
     ]

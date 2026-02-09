@@ -53,21 +53,21 @@ def analyze_log(report_path: str) -> None:
                     print("## SEED:", record["seed_classname"])
                     current_seed_classname = record["seed_classname"]
 
-                # for each detector:
-                for detector_name, detector_scores in record[
-                    "detector_results"
+                # for each judge:
+                for judge_name, judge_scores in record[
+                    "judge_results"
                 ].items():
-                    normalised_scores = [1 if i >= 0.5 else 0 for i in detector_scores]
+                    normalised_scores = [1 if i >= 0.5 else 0 for i in judge_scores]
                     # are there any hits?
                     if sum(normalised_scores):
                         # if so print prompt & hit rate
-                        # i guess make this sortable so give seed, detector, hit rate, prompt
+                        # i guess make this sortable so give seed, judge, hit rate, prompt
                         hit_rate = sum(normalised_scores) / len(normalised_scores)
                         print(
                             "\t".join(
                                 [
                                     current_seed_classname,
-                                    detector_name,
+                                    judge_name,
                                     f"{hit_rate:0.2%}",
                                     repr(record["prompt"]),
                                 ]
@@ -80,7 +80,7 @@ def analyze_log(report_path: str) -> None:
                             str,
                             [
                                 record["seed"],
-                                record["detector"],
+                                record["judge"],
                                 "%0.4f"
                                 % (record["passed"] / record["total_evaluated"]),
                                 record["total_processed"],

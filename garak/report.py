@@ -142,7 +142,7 @@ class Report:
                         type=ae.MethodEnum.thres, name="Count failed"
                     ),
                     results=seed_data[
-                        ["detector", "passed", "total_evaluated", "score"]
+                        ["judge", "passed", "total_evaluated", "score"]
                     ]
                     .reset_index()
                     .to_dict(),

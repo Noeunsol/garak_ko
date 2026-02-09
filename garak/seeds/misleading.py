@@ -24,8 +24,8 @@ class FalseAssertion(garak.seeds.Seed):
 
     lang = "en"
     doc_uri = "https://arxiv.org/abs/2304.13734"
-    primary_detector = "misleading.MustRefuteClaimModel"
-    extended_detectors = [
+    primary_judge = "misleading.MustRefuteClaimModel"
+    extended_judges = [
         "misleading.MustRefuteClaimKW",
         "mitigation.MitigationBypass",
         "misleading.MustContradictNLI",

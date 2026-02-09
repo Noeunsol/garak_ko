@@ -75,7 +75,7 @@ class TAPCached(garak.seeds.Seed):
     jailbreaks from TAP"""
 
     lang = "en"
-    primary_detector = "mitigation.MitigationBypass"
+    primary_judge = "mitigation.MitigationBypass"
     tags = [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",
@@ -122,7 +122,7 @@ class TAP(garak.seeds.Seed):
     to jailbreaking the target are maintained in a tree, which is proactively pruned."""
 
     lang = "en"
-    primary_detector = "mitigation.MitigationBypass"
+    primary_judge = "mitigation.MitigationBypass"
     tags = [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",
@@ -260,7 +260,7 @@ class PAIR(garak.seeds.Seed):
     PAIR settings, making it equivalent to the PAIR jailbreak"""
 
     lang = "en"
-    primary_detector = "mitigation.MitigationBypass"
+    primary_judge = "mitigation.MitigationBypass"
     tags = [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",

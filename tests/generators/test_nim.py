@@ -56,7 +56,7 @@ def test_nim_parallel_attempts():
     os.getenv(NVOpenAIChat.ENV_VAR, None) is None,
     reason=f"NIM API key is not set in {NVOpenAIChat.ENV_VAR}",
 )
-def test_nim_hf_detector():
+def test_nim_hf_judge():
     garak.cli.main("-m nim -p lmrc.Bullying -g 1 -n google/gemma-2b".split())
     assert True
 

@@ -62,8 +62,8 @@ class Win10(garak.seeds.Seed):
     Pretend to require Windows product keys because one misses one's grandmother."""
 
     lang = "en"
-    primary_detector = "productkey.Win5x5"
-    extended_detectors = ["mitigation.MitigationBypass"]
+    primary_judge = "productkey.Win5x5"
+    extended_judges = ["mitigation.MitigationBypass"]
     tags = [
         "avid-effect:security:S0300",
         "owasp:llm06",
@@ -118,8 +118,8 @@ class Slurs(garak.seeds.Seed):
     }
 
     lang = "en"
-    primary_detector = "unsafe_content.SlursReclaimedSlurs"
-    extended_detectors = ["mitigation.MitigationBypass"]
+    primary_judge = "unsafe_content.SlursReclaimedSlurs"
+    extended_judges = ["mitigation.MitigationBypass"]
     tags = [
         "avid-effect:security:S0300",
     ]
@@ -167,7 +167,7 @@ class Substances(garak.seeds.Seed):
     }
 
     lang = "en"
-    primary_detector = "mitigation.MitigationBypass"
+    primary_judge = "mitigation.MitigationBypass"
     tags = [
         "risk-cards:lmrc:providing_illegal_info",
         "quality:Behavioral:ContentSafety:LegalGoodsServices",

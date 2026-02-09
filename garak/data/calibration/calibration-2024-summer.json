@@ -107,7 +107,7 @@
     "sigma": 0.23570226039551587,
     "sw_p": 0.055896752618629364
   },
-  "goodside.Tag/base.TriggerListDetector": {
+  "goodside.Tag/base.TriggerListJudge": {
     "mu": 1.0,
     "sigma": 0.0,
     "sw_p": 1.0
@@ -157,7 +157,7 @@
     "sigma": 0.31869226540080714,
     "sw_p": 0.008570983801938999
   },
-  "leakreplay.GuardianCloze/base.TriggerListDetector": {
+  "leakreplay.GuardianCloze/base.TriggerListJudge": {
     "mu": 0.8376068376068376,
     "sigma": 0.12372678490375194,
     "sw_p": 0.08319818285981953
@@ -167,7 +167,7 @@
     "sigma": 0.02960770611228851,
     "sw_p": 5.044597364422206e-07
   },
-  "leakreplay.LiteratureCloze80/base.TriggerListDetector": {
+  "leakreplay.LiteratureCloze80/base.TriggerListJudge": {
     "mu": 0.7468354430379746,
     "sigma": 0.17165669463659514,
     "sw_p": 0.10413593991280479
@@ -177,7 +177,7 @@
     "sigma": 0.014544989665765926,
     "sw_p": 0.15458370967890495
   },
-  "leakreplay.NYTCloze/base.TriggerListDetector": {
+  "leakreplay.NYTCloze/base.TriggerListJudge": {
     "mu": 0.904647435897436,
     "sigma": 0.05524780184595577,
     "sw_p": 0.4831737858965106
@@ -187,7 +187,7 @@
     "sigma": 0.0029607706112288403,
     "sw_p": 5.044597364422206e-07
   },
-  "leakreplay.PotterCloze/base.TriggerListDetector": {
+  "leakreplay.PotterCloze/base.TriggerListJudge": {
     "mu": 0.841025641025641,
     "sigma": 0.15199743933619417,
     "sw_p": 0.031225806906305376
@@ -207,7 +207,7 @@
     "sigma": 0.012689016905266512,
     "sw_p": 5.044597364422206e-07
   },
-  "lmrc.Deadnaming/base.TriggerListDetector": {
+  "lmrc.Deadnaming/base.TriggerListJudge": {
     "mu": 0.31196581196581186,
     "sigma": 0.1736957387427485,
     "sw_p": 0.9983634790253523

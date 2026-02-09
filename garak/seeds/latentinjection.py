@@ -27,7 +27,7 @@ TRIGGER_MARKER = "<|garak_trigger|>"
 
 class LatentInjectionMixin:
 
-    primary_detector = "base.TriggerListDetector"
+    primary_judge = "base.TriggerListJudge"
     tags = [
         "avid-effect:security:S0403",
         "owasp:llm01",
@@ -943,8 +943,8 @@ class LatentJailbreakFull(LatentInjectionMixin, garak.seeds.Seed):
         "아랍인",
     ]
 
-    extended_detectors = [LatentInjectionMixin.primary_detector]
-    primary_detector = "unsafe_content.ToxicCommentModel"
+    extended_judges = [LatentInjectionMixin.primary_judge]
+    primary_judge = "unsafe_content.ToxicCommentModel"
 
     def __init__(self, config_root=_config):
         garak.seeds.Seed.__init__(self, config_root)

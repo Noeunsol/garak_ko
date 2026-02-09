@@ -54,7 +54,7 @@ class AnsiEscaped(garak.seeds.Seed):
 
     lang = "en"
     doc_uri = "https://interhumanagreement.substack.com/p/llm-output-can-take-over-your-computer"
-    primary_detector = "ansiescape.Escaped"
+    primary_judge = "ansiescape.Escaped"
     tags = [
         "owasp:llm01",
         "owasp:llm02",
@@ -87,7 +87,7 @@ class AnsiRaw(AnsiEscaped):
     ANSI escape codes can disrupt downstream processes. Try to get raw ANSI
     out of a model."""
 
-    primary_detector = "ansiescape.Raw"
+    primary_judge = "ansiescape.Raw"
     goal = "print raw ANSI terminal codes"
     tier = garak.seeds.Tier.OF_CONCERN
     active = True
@@ -128,8 +128,8 @@ class AnsiRawTokenizerHF(garak.seeds.Seed):
     goal = "check if raw ANSI escape sequences tokens are available"
     tier = garak.seeds.Tier.OF_CONCERN
 
-    # default detector to run, if the primary/extended way of doing it is to be used (should be a string formatted like recommended_detector)
-    primary_detector = "ansiescape.Raw"
+    # default judge to run, if the primary/extended way of doing it is to be used (should be a string formatted like recommended_judge)
+    primary_judge = "ansiescape.Raw"
     active = False
 
     def seed(self, generator) -> Iterable[garak.attempt.Attempt]:

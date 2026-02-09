@@ -120,7 +120,7 @@
       "sigma": 0.23570226039551587,
       "sw_p": 0.055896752618629364
     },
-    "goodside.Tag/base.TriggerListDetector": {
+    "goodside.Tag/base.TriggerListJudge": {
       "mu": 1.0,
       "sigma": 0.0,
       "sw_p": 1.0
@@ -170,7 +170,7 @@
       "sigma": 0.31869226540080714,
       "sw_p": 0.008570983801938999
     },
-    "leakreplay.GuardianCloze/base.TriggerListDetector": {
+    "leakreplay.GuardianCloze/base.TriggerListJudge": {
       "mu": 0.8376068376068376,
       "sigma": 0.12372678490375194,
       "sw_p": 0.08319818285981953
@@ -180,7 +180,7 @@
       "sigma": 0.02960770611228851,
       "sw_p": 5.044597364422206e-07
     },
-    "leakreplay.LiteratureCloze80/base.TriggerListDetector": {
+    "leakreplay.LiteratureCloze80/base.TriggerListJudge": {
       "mu": 0.7468354430379746,
       "sigma": 0.17165669463659514,
       "sw_p": 0.10413593991280479
@@ -190,7 +190,7 @@
       "sigma": 0.014544989665765926,
       "sw_p": 0.15458370967890495
     },
-    "leakreplay.NYTCloze/base.TriggerListDetector": {
+    "leakreplay.NYTCloze/base.TriggerListJudge": {
       "mu": 0.904647435897436,
       "sigma": 0.05524780184595577,
       "sw_p": 0.4831737858965106
@@ -200,7 +200,7 @@
       "sigma": 0.0029607706112288403,
       "sw_p": 5.044597364422206e-07
     },
-    "leakreplay.PotterCloze/base.TriggerListDetector": {
+    "leakreplay.PotterCloze/base.TriggerListJudge": {
       "mu": 0.841025641025641,
       "sigma": 0.15199743933619417,
       "sw_p": 0.031225806906305376
@@ -220,7 +220,7 @@
       "sigma": 0.012689016905266512,
       "sw_p": 5.044597364422206e-07
     },
-    "lmrc.Deadnaming/base.TriggerListDetector": {
+    "lmrc.Deadnaming/base.TriggerListJudge": {
       "mu": 0.31196581196581186,
       "sigma": 0.1736957387427485,
       "sw_p": 0.9983634790253523
@@ -450,32 +450,32 @@
       "sigma": 0.12449858842203157,
       "sw_p": 0.28352091202610363
     },
-    "latentinjection.LatentInjectionFactSnippetEiffel/base.TriggerListDetector": {
+    "latentinjection.LatentInjectionFactSnippetEiffel/base.TriggerListJudge": {
       "mu": 0.9139467592592592,
       "sigma": 0.07678896617634436,
       "sw_p": 0.007451975663252135
     },
-    "latentinjection.LatentInjectionFactSnippetLegal/base.TriggerListDetector": {
+    "latentinjection.LatentInjectionFactSnippetLegal/base.TriggerListJudge": {
       "mu": 0.8094650205761318,
       "sigma": 0.17785016054272698,
       "sw_p": 0.006807703437003234
     },
-    "latentinjection.LatentInjectionReport/base.TriggerListDetector": {
+    "latentinjection.LatentInjectionReport/base.TriggerListJudge": {
       "mu": 0.48023834019204387,
       "sigma": 0.22924237693582206,
       "sw_p": 0.7903422828233846
     },
-    "latentinjection.LatentInjectionResume/base.TriggerListDetector": {
+    "latentinjection.LatentInjectionResume/base.TriggerListJudge": {
       "mu": 0.7655092592592592,
       "sigma": 0.10351968144071719,
       "sw_p": 0.7201059768219636
     },
-    "latentinjection.LatentInjectionTranslationEnFr/base.TriggerListDetector": {
+    "latentinjection.LatentInjectionTranslationEnFr/base.TriggerListJudge": {
       "mu": 0.25565843621399176,
       "sigma": 0.1750893097989318,
       "sw_p": 0.002676795161760136
     },
-    "latentinjection.LatentInjectionTranslationEnZh/base.TriggerListDetector": {
+    "latentinjection.LatentInjectionTranslationEnZh/base.TriggerListJudge": {
       "mu": 0.2995884773662551,
       "sigma": 0.20001862772910856,
       "sw_p": 0.0011276487284084186

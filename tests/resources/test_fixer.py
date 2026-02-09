@@ -158,11 +158,11 @@ def test_fixer_empty(mocker):
             "RenameXSS",
             {
                 "seed_spec": "test.Test",
-                "detector_spec": "xss.MarkdownExfil20230929",
+                "judge_spec": "xss.MarkdownExfil20230929",
             },
             {
                 "seed_spec": "test.Test",
-                "detector_spec": "web_injection.PlaygroundMarkdownExfil",
+                "judge_spec": "web_injection.PlaygroundMarkdownExfil",
             },
         ),
     ],

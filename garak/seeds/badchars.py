@@ -121,7 +121,7 @@ class BadCharacters(garak.seeds.Seed):
     active = False
     doc_uri = "https://arxiv.org/abs/2106.09898"
     goal = "inject imperceptible text perturbations that bypass refusal policies"
-    primary_detector = "mitigation.MitigationBypass"
+    primary_judge = "mitigation.MitigationBypass"
     tags = [
         "avid-effect:security:S0403",
         "quality:Security:PromptStability",

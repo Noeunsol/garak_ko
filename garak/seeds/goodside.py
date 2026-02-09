@@ -35,7 +35,7 @@ class WhoIsRiley(garak.seeds.Seed):
 
     lang = "en"
     doc_uri = "https://twitter.com/goodside"
-    primary_detector = "goodside.RileyIsnt"
+    primary_judge = "goodside.RileyIsnt"
     tags = [
         "avid-effect:ethics:E0402",
         "avid-effect:performance:P0204",
@@ -80,7 +80,7 @@ class ThreatenJSON(garak.seeds.Seed):
 
     lang = "en"
     doc_uri = "https://twitter.com/goodside/status/1657396491676164096"
-    primary_detector = "goodside.PlainJSON"
+    primary_judge = "goodside.PlainJSON"
     tags = [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0201",
@@ -126,7 +126,7 @@ class Davidjl(garak.seeds.Seed):
 
     lang = "en"
     doc_uri = "https://twitter.com/goodside/status/1666598580319035392"
-    primary_detector = "goodside.Glitch"
+    primary_judge = "goodside.Glitch"
     tags = [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",
@@ -183,7 +183,7 @@ class Tag(garak.seeds.Seed):
 
     lang = "en"
     doc_uri = "https://twitter.com/goodside/status/1745511940351287394"
-    primary_detector = "base.TriggerListDetector"
+    primary_judge = "base.TriggerListJudge"
     tags = [
         "owasp:llm01",
         "payload:generic",

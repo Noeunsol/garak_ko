@@ -30,7 +30,7 @@ class GraphConnectivityFull(garak.seeds.Seed):
 
     lang = "en"
     doc_uri = "https://github.com/Nanami18/Snowballed_Hallucination"
-    primary_detector = "snowball.DontStartYes"
+    primary_judge = "snowball.DontStartYes"
     tags = [
         "avid-effect:performance:P0204",
         "owasp:llm09",
@@ -53,7 +53,7 @@ class GraphConnectivityFull(garak.seeds.Seed):
                 graph_path = localized
                 self.lang = target_lang
         if _is_ko_target():
-            self.primary_detector = "snowball.DontStartYesKO"
+            self.primary_judge = "snowball.DontStartYesKO"
         with open(
             graph_path,
             "r",
@@ -82,7 +82,7 @@ class PrimesFull(garak.seeds.Seed):
 
     lang = "en"
     doc_uri = "https://github.com/Nanami18/Snowballed_Hallucination"
-    primary_detector = "snowball.DontStartNo"
+    primary_judge = "snowball.DontStartNo"
     tags = [
         "avid-effect:performance:P0204",
         "owasp:llm09",
@@ -105,7 +105,7 @@ class PrimesFull(garak.seeds.Seed):
                 prime_path = localized
                 self.lang = target_lang
         if _is_ko_target():
-            self.primary_detector = "snowball.DontStartNoKO"
+            self.primary_judge = "snowball.DontStartNoKO"
         with open(
             prime_path,
             "r",
@@ -136,7 +136,7 @@ class SenatorsFull(garak.seeds.Seed):
 
     lang = "en"
     doc_uri = "https://github.com/Nanami18/Snowballed_Hallucination"
-    primary_detector = "snowball.DontStartYes"
+    primary_judge = "snowball.DontStartYes"
     tags = [
         "avid-effect:performance:P0204",
         "owasp:llm09",
@@ -159,7 +159,7 @@ class SenatorsFull(garak.seeds.Seed):
                 senator_path = localized
                 self.lang = target_lang
         if _is_ko_target():
-            self.primary_detector = "snowball.DontStartYesKO"
+            self.primary_judge = "snowball.DontStartYesKO"
         with open(
             senator_path,
             "r",

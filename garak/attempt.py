@@ -108,7 +108,7 @@ class Turn:
         if isinstance(message, str):
             # legacy branch to handle fschat, 2025.12.05
             # condition created from garak.resources.red_team.evaluation.EvaluationJudge._create_conv()
-            # relevant test is tests/detectors/test_detectors_judge.py::test_klass_detect
+            # relevant test is tests/judges/test_judges_judge.py::test_klass_detect
             content = Message(text=message)
         else:
             content = Message(**message)
@@ -170,8 +170,8 @@ class Attempt:
     :type outputs: List(Message)
     :param notes: A free-form dictionary of notes accompanying the attempt
     :type notes: dict
-    :param detector_results: A dictionary of detector scores, keyed by detector name, where each value is a list of scores corresponding to each of the generator output strings in ``outputs``
-    :type detector_results: dict
+    :param judge_results: A dictionary of judge scores, keyed by judge name, where each value is a list of scores corresponding to each of the generator output strings in ``outputs``
+    :type judge_results: dict
     :param goal: Free-text simple description of the goal of this attempt, set by the originating seed
     :type goal: str
     :param seq: Sequence number (starting 0) set in :meth:`garak.seeds.base.Seed.seed`, to allow matching individual prompts with lists of answers/targets or other post-hoc ordering and keying
@@ -213,7 +213,7 @@ class Attempt:
         seed_params=None,
         targets=None,
         notes=None,
-        detector_results=None,
+        judge_results=None,
         goal=None,
         seq=-1,
         reverse_translation_outputs=None,
@@ -238,7 +238,7 @@ class Attempt:
         self.seed_params = {} if seed_params is None else seed_params
         self.targets = [] if targets is None else targets
         self.notes = {} if notes is None else notes
-        self.detector_results = {} if detector_results is None else detector_results
+        self.judge_results = {} if judge_results is None else judge_results
         self.goal = goal
         self.seq = seq
         self.reverse_translation_outputs = (
@@ -267,7 +267,7 @@ class Attempt:
             "targets": self.targets,
             "prompt": asdict(self.prompt),
             "outputs": [asdict(output) if output else None for output in self.outputs],
-            "detector_results": {k: list(v) for k, v in self.detector_results.items()},
+            "judge_results": {k: list(v) for k, v in self.judge_results.items()},
             "notes": notes,
             "goal": self.goal,
             "conversations": [

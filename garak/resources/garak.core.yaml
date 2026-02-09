@@ -29,12 +29,12 @@ plugins:
   target_type:
   target_name:
   seed_spec: all
-  detector_spec: auto
-  extended_detectors: true
+  judge_spec: auto
+  extended_judges: true
   attacker_spec:
   attackers_include_original_prompt: false
   attacker_max: 
-  detectors: {}
+  judges: {}
   generators: {}
   attackers: {}
   harnesses: {}

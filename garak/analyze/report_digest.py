@@ -40,7 +40,7 @@ header_template = templateEnv.get_template("digest_header.jinja")
 footer_template = templateEnv.get_template("digest_footer.jinja")
 group_template = templateEnv.get_template("digest_group.jinja")
 seed_template = templateEnv.get_template("digest_seed.jinja")
-detector_template = templateEnv.get_template("digest_detector.jinja")
+judge_template = templateEnv.get_template("digest_judge.jinja")
 end_module = templateEnv.get_template("digest_end_module.jinja")
 about_z_template = templateEnv.get_template("digest_about_z.jinja")
 
@@ -123,13 +123,13 @@ def _init_populate_result_db(evals, taxonomy=None):
     conn = sqlite3.connect(":memory:")
     cursor = conn.cursor()
 
-    # build a structured obj: seedmodule.seedclass.detectorname = %
+    # build a structured obj: seedmodule.seedclass.judgename = %
 
     create_table = """create table results(
         seed_module VARCHAR(255) not null,
         seed_group VARCHAR(255) not null,
         seed_class VARCHAR(255) not null,
-        detector VARCHAR(255) not null, 
+        judge VARCHAR(255) not null, 
         score FLOAT not null,
         instances INT not null
     );"""
@@ -139,7 +139,7 @@ def _init_populate_result_db(evals, taxonomy=None):
     for eval in evals:
         eval["seed"] = eval["seed"].replace("seeds.", "")
         pm, pc = eval["seed"].split(".")
-        detector = eval["detector"].replace("detector.", "")
+        judge = eval["judge"].replace("judge.", "")
         score = (
             eval["passed"] / eval["total_evaluated"] if eval["total_evaluated"] else 0
         )
@@ -158,7 +158,7 @@ def _init_populate_result_db(evals, taxonomy=None):
         # add a row for each group
         for group in groups:
             cursor.execute(
-                f"insert into results values ('{pm}', '{group}', '{pc}', '{detector}', '{score}', '{instances}')"
+                f"insert into results values ('{pm}', '{group}', '{pc}', '{judge}', '{score}', '{instances}')"
             )
 
     return conn, cursor
@@ -280,29 +280,29 @@ def _get_seed_info(seed_module, seed_class, absolute_score) -> dict:
     }
 
 
-def _get_detectors_info(cursor, seed_group, seed_class) -> List[tuple]:
+def _get_judges_info(cursor, seed_group, seed_class) -> List[tuple]:
     res = cursor.execute(
-        f"select detector, score from results where seed_group='{seed_group}' and seed_class='{seed_class}' order by score asc, detector asc;"
+        f"select judge, score from results where seed_group='{seed_group}' and seed_class='{seed_class}' order by score asc, judge asc;"
     )
     return res.fetchall()
 
 
-def _get_seed_detector_details(
-    seed_module, seed_class, detector, absolute_score, calibration, seed_tier
+def _get_seed_judge_details(
+    seed_module, seed_class, judge, absolute_score, calibration, seed_tier
 ) -> dict:
     calibration_used = False
-    detector = re.sub(r"[^0-9A-Za-z_.]", "", detector)
-    detector_module, detector_class = detector.split(".")
-    detector_cache_entry = garak._plugins.PluginCache.plugin_info(
-        f"detectors.{detector_module}.{detector_class}"
+    judge = re.sub(r"[^0-9A-Za-z_.]", "", judge)
+    judge_module, judge_class = judge.split(".")
+    judge_cache_entry = garak._plugins.PluginCache.plugin_info(
+        f"judges.{judge_module}.{judge_class}"
     )
-    detector_description = detector_cache_entry["description"]
+    judge_description = judge_cache_entry["description"]
 
     zscore = calibration.get_z_score(
         seed_module,
         seed_class,
-        detector_module,
-        detector_class,
+        judge_module,
+        judge_class,
         absolute_score,
     )
 
@@ -319,24 +319,24 @@ def _get_seed_detector_details(
     if absolute_score == 1.0:
         relative_defcon, absolute_defcon = 5, 5
     if seed_tier == 1:
-        detector_defcon = (
+        judge_defcon = (
             min(absolute_defcon, relative_defcon)
             if isinstance(relative_defcon, int)
             else absolute_defcon
         )
     else:
-        detector_defcon = relative_defcon
+        judge_defcon = relative_defcon
 
     return {
-        "detector_name": detector,
-        "detector_descr": html.escape(detector_description),
+        "judge_name": judge,
+        "judge_descr": html.escape(judge_description),
         "absolute_score": absolute_score,
         "absolute_defcon": absolute_defcon,
         "absolute_comment": garak.analyze.ABSOLUTE_COMMENT[absolute_defcon],
         "relative_score": relative_score,
         "relative_defcon": relative_defcon,
         "relative_comment": relative_comment,
-        "detector_defcon": detector_defcon,
+        "judge_defcon": judge_defcon,
         "calibration_used": calibration_used,
     }
 
@@ -419,22 +419,22 @@ def build_digest(report_filename: str, config=_config):
                 "_summary"
             ] = seed_info
 
-            detectors_info = _get_detectors_info(cursor, seed_group, seed_class)
-            for detector, absolute_score in detectors_info:
-                seed_detector_result = _get_seed_detector_details(
+            judges_info = _get_judges_info(cursor, seed_group, seed_class)
+            for judge, absolute_score in judges_info:
+                seed_judge_result = _get_seed_judge_details(
                     seed_module,
                     seed_class,
-                    detector,
+                    judge,
                     absolute_score,
                     calibration,
                     seed_info["seed_tier"],
                 )
 
                 report_digest["eval"][seed_group][f"{seed_module}.{seed_class}"][
-                    detector
-                ] = seed_detector_result
+                    judge
+                ] = seed_judge_result
 
-                if seed_detector_result["calibration_used"]:
+                if seed_judge_result["calibration_used"]:
                     calibration_used = True
 
     _close_result_db(conn)
@@ -478,21 +478,21 @@ def build_html(digest: dict, config=_config):
                 seed_info = digest["eval"][seed_group][seed_name]["_summary"]
                 html_report_content += seed_template.render(seed_info)
 
-                detector_names = digest["eval"][seed_group][seed_name].keys()
-                for detector_name in detector_names:
-                    if detector_name == "_summary":
+                judge_names = digest["eval"][seed_group][seed_name].keys()
+                for judge_name in judge_names:
+                    if judge_name == "_summary":
                         continue
 
-                    seed_detector_result = digest["eval"][seed_group][seed_name][
-                        detector_name
+                    seed_judge_result = digest["eval"][seed_group][seed_name][
+                        judge_name
                     ]
 
                     if (
-                        seed_detector_result["absolute_score"] < 1.0
+                        seed_judge_result["absolute_score"] < 1.0
                         or config.reporting.show_100_pass_modules
                     ):
-                        html_report_content += detector_template.render(
-                            seed_detector_result
+                        html_report_content += judge_template.render(
+                            seed_judge_result
                         )
 
         html_report_content += end_module.render()

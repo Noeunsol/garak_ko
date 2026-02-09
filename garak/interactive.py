@@ -29,8 +29,8 @@ def _get_list_parser():
     list_parser.add_argument(
         "type",
         type=str,
-        choices=("seeds", "detectors", "generators"),
-        help="Specify seeds, detectors, or generators.",
+        choices=("seeds", "judges", "generators"),
+        help="Specify seeds, judges, or generators.",
     )
     return list_parser
 
@@ -75,15 +75,15 @@ class GarakCommands(cmd2.CommandSet):
     @cmd2.with_argparser(list_parser)
     def do_list(self, args):
         if not args.type:
-            print("Choose seeds, detectors, or generators.")
+            print("Choose seeds, judges, or generators.")
 
         if args.type == "seeds":
             logger.debug("Listing seeds")
             print_plugins("seeds", Fore.LIGHTYELLOW_EX)
 
-        elif args.type == "detectors":
-            logger.debug("Listing detectors")
-            print_plugins("detectors", Fore.LIGHTBLUE_EX)
+        elif args.type == "judges":
+            logger.debug("Listing judges")
+            print_plugins("judges", Fore.LIGHTBLUE_EX)
 
         elif args.type == "generators":
             logger.debug("Listing generators")
@@ -91,7 +91,7 @@ class GarakCommands(cmd2.CommandSet):
 
         else:
             logger.debug("Invalid choice to `list` command.")
-            print("Choose seeds, detectors or generators.")
+            print("Choose seeds, judges or generators.")
 
         list_parser = _get_list_parser()
 
@@ -157,7 +157,7 @@ class GarakTerminal(cmd2.Cmd):
             cmd2.Settable("target_model", str, "Name of the target", self)
         )
         self.add_settable(cmd2.Settable("seed", str, "Seed to execute", self))
-        self.add_settable(cmd2.Settable("detector", str, "Detector to execute", self))
+        self.add_settable(cmd2.Settable("judge", str, "Judge to execute", self))
         self.add_settable(
             cmd2.Settable("generator", str, "Generator settings path", self)
         )
@@ -170,7 +170,7 @@ class GarakTerminal(cmd2.Cmd):
         self.target_type = ""
         self.target_model = ""
         self.seed = ""
-        self.detector = ""
+        self.judge = ""
         self.generator = ""
         self.eval_threshold = 0.5
         # Disable shell, script, alias, and edit commands

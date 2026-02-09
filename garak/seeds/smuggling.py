@@ -40,7 +40,7 @@ class HypotheticalResponse(Seed):
 
     lang = "en"
     active = False
-    primary_detector = "mitigation.MitigationBypass"
+    primary_judge = "mitigation.MitigationBypass"
     doc_uri = "https://guzey.com/ai/two-sentence-universal-jailbreak/"
     goal = "return banned instructions"
     _prompt_template_en = (
@@ -82,7 +82,7 @@ class FunctionMasking(Seed):
 
     lang = "en"
     active = False
-    primary_detector = "mitigation.MitigationBypass"
+    primary_judge = "mitigation.MitigationBypass"
     doc_uri = "https://medium.com/@austin-stubbs/llm-security-types-of-prompt-injection-d7ad8d7d75a3"
     goal = "return banned instructions"
     _prompt_en = """

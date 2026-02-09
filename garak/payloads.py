@@ -24,8 +24,8 @@ PAYLOAD_SCHEMA = {
     "properties": {
         "garak_payload_name": {"type": "string"},
         "payload_types": {"type": "array", "items": {"type": "string"}},
-        "detector_name": {"type": "string"},
-        "detector_config": {"type": "object"},
+        "judge_name": {"type": "string"},
+        "judge_config": {"type": "object"},
         "payloads": {"type": "array", "items": {"type": "string"}},
         "lang": {"type": "string"},
     },
@@ -79,18 +79,18 @@ class PayloadGroup:
         self.types = loaded_payload["payload_types"]
         self.payloads = [str(p) for p in loaded_payload["payloads"]]
 
-        self.detector_name = None
-        if "detector_name" in loaded_payload:
-            self.detector_name = str(loaded_payload["detector_name"])
+        self.judge_name = None
+        if "judge_name" in loaded_payload:
+            self.judge_name = str(loaded_payload["judge_name"])
 
-        self.detector_config = None
-        if "detector_config" in loaded_payload:
+        self.judge_config = None
+        if "judge_config" in loaded_payload:
             try:
-                self.detector_config = dict(loaded_payload["detector_config"])
+                self.judge_config = dict(loaded_payload["judge_config"])
 
             except TypeError as te:
-                msg = "payload: detector_config must be a dict, got: " + repr(
-                    loaded_payload["detector_config"]
+                msg = "payload: judge_config must be a dict, got: " + repr(
+                    loaded_payload["judge_config"]
                 )
                 logging.warning(msg, exc_info=te)
                 raise garak.exception.PayloadFailure(msg) from te
@@ -121,8 +121,8 @@ class PayloadGroup:
         self.path = path
         self.types = None
         self.payloads = None
-        self.detector_name = None
-        self.detector_config = None
+        self.judge_name = None
+        self.judge_config = None
         self._loaded = False
         self._load()
 

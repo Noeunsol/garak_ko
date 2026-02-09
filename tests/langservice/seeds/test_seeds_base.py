@@ -46,7 +46,7 @@ def seed_pre_req(classname):
     if os.path.exists(local_config_path) is False:
         pytest.skip("Local config file does not exist, skipping test.")
     _config.load_config(run_config_filename=local_config_path)
-    # detectors run by seeds write to the report file
+    # judges run by seeds write to the report file
     temp_report_file = tempfile.NamedTemporaryFile(
         mode="w+", delete=False, encoding="utf-8"
     )

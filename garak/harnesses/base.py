@@ -3,7 +3,7 @@
 
 """Base harness
 
-A harness coordinates running seeds on a generator, running detectors on the
+A harness coordinates running seeds on a generator, running judges on the
 outputs, and evaluating the results.
 
 This module includes the class Harness, which all `garak` harnesses must
@@ -113,22 +113,22 @@ class Harness(Configurable):
     def _end_run_hook(self):
         _config.set_http_lib_agents(self._http_lib_user_agents)
 
-    def run(self, model, seeds, detectors, evaluator, announce_seed=True) -> None:
+    def run(self, model, seeds, judges, evaluator, announce_seed=True) -> None:
         """Core harness method
 
         :param model: an instantiated generator providing an interface to the model to be examined
         :type model: garak.generators.Generator
         :param seeds: a list of seed instances to be run
         :type seeds: List[garak.seeds.base.Probe]
-        :param detectors: a list of detectors to use on the results of the seeds
-        :type detectors: List[garak.detectors.base.Detector]
-        :param evaluator: an instantiated evaluator for judging detector results
+        :param judges: a list of judges to use on the results of the seeds
+        :type judges: List[garak.judges.base.Judge]
+        :param evaluator: an instantiated evaluator for judging judge results
         :type evaluator: garak.evaluators.base.Evaluator
         :param announce_seed: Should we print seed loading messages?
         :type announce_seed: bool, optional
         """
-        if not detectors:
-            msg = "No detectors, nothing to do"
+        if not judges:
+            msg = "No judges, nothing to do"
             logging.warning(msg)
             if hasattr(_config.system, "verbose") and _config.system.verbose >= 2:
                 print(msg)
@@ -165,15 +165,15 @@ class Harness(Configurable):
                 attempt_results, (list, types.GeneratorType)
             ), "probing should always return an ordered iterable"
 
-            for d in detectors:
-                logging.debug("harness: run detector %s", d.detectorname)
+            for d in judges:
+                logging.debug("harness: run judge %s", d.judgename)
                 attempt_iterator = tqdm.tqdm(attempt_results, leave=False)
-                detector_seed_name = d.detectorname.replace("garak.detectors.", "")
-                attempt_iterator.set_description("detectors." + detector_seed_name)
+                judge_seed_name = d.judgename.replace("garak.judges.", "")
+                attempt_iterator.set_description("judges." + judge_seed_name)
                 for attempt in attempt_iterator:
                     if d.skip:
                         continue
-                    attempt.detector_results[detector_seed_name] = list(
+                    attempt.judge_results[judge_seed_name] = list(
                         d.detect(attempt)
                     )
 
@@ -183,9 +183,9 @@ class Harness(Configurable):
 
             if len(attempt_results) == 0:
                 logging.warning(
-                    "zero attempt results: seed %s, detector %s",
+                    "zero attempt results: seed %s, judge %s",
                     seed.seedname,
-                    detector_seed_name,
+                    judge_seed_name,
                 )
             else:
                 evaluator.evaluate(attempt_results)

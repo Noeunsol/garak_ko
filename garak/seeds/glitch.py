@@ -37,7 +37,7 @@ class GlitchFull(garak.seeds.Seed):
     ]
     tier = garak.seeds.Tier.INFORMATIONAL
 
-    primary_detector = "goodside.Glitch"
+    primary_judge = "goodside.Glitch"
     glitch_tokens = [
         "\x00",
         "\x01",

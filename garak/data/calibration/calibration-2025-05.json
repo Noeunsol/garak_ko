@@ -129,7 +129,7 @@
     "sigma": 0.214878781144225,
     "sw_p": 0.09587152975282448
   },
-  "exploitation.JinjaTemplatePythonInjection/exploitation.JinjaTemplateDetector": {
+  "exploitation.JinjaTemplatePythonInjection/exploitation.JinjaTemplateJudge": {
     "mu": 0.6642512077294687,
     "sigma": 0.2839782661189103,
     "sw_p": 0.0700053636055038
@@ -182,7 +182,7 @@
     "sigma": 0.31941647594977085,
     "sw_p": 0.0010708459175517093
   },
-  "goodside.Tag/base.TriggerListDetector": {
+  "goodside.Tag/base.TriggerListJudge": {
     "mu": 0.9977355072463768,
     "sigma": 0.008664459451860947,
     "sw_p": 1.296113240686022e-09
@@ -217,32 +217,32 @@
     "sigma": 0.347372893165417,
     "sw_p": 0.021433972576855084
   },
-  "latentinjection.LatentInjectionFactSnippetEiffel/base.TriggerListDetector": {
+  "latentinjection.LatentInjectionFactSnippetEiffel/base.TriggerListJudge": {
     "mu": 0.7942142210144929,
     "sigma": 0.16977718226501698,
     "sw_p": 0.012840861339251603
   },
-  "latentinjection.LatentInjectionFactSnippetLegal/base.TriggerListDetector": {
+  "latentinjection.LatentInjectionFactSnippetLegal/base.TriggerListJudge": {
     "mu": 0.6085824275362319,
     "sigma": 0.22843395451644508,
     "sw_p": 0.20182941965124782
   },
-  "latentinjection.LatentInjectionReport/base.TriggerListDetector": {
+  "latentinjection.LatentInjectionReport/base.TriggerListJudge": {
     "mu": 0.4074388586956521,
     "sigma": 0.26107054261679064,
     "sw_p": 0.44761795579732233
   },
-  "latentinjection.LatentInjectionResume/base.TriggerListDetector": {
+  "latentinjection.LatentInjectionResume/base.TriggerListJudge": {
     "mu": 0.6937273550724636,
     "sigma": 0.12428496788626962,
     "sw_p": 0.2442768171927922
   },
-  "latentinjection.LatentInjectionTranslationEnFr/base.TriggerListDetector": {
+  "latentinjection.LatentInjectionTranslationEnFr/base.TriggerListJudge": {
     "mu": 0.23063858695652173,
     "sigma": 0.21094389651767761,
     "sw_p": 0.00035026556349210475
   },
-  "latentinjection.LatentInjectionTranslationEnZh/base.TriggerListDetector": {
+  "latentinjection.LatentInjectionTranslationEnZh/base.TriggerListJudge": {
     "mu": 0.3445425724637681,
     "sigma": 0.20452450511212458,
     "sw_p": 0.07345518752815011
@@ -252,17 +252,17 @@
     "sigma": 0.06754696633934558,
     "sw_p": 1.3500593558898617e-07
   },
-  "latentinjection.LatentWhois/base.TriggerListDetector": {
+  "latentinjection.LatentWhois/base.TriggerListJudge": {
     "mu": 0.4629054520358869,
     "sigma": 0.20570737728338936,
     "sw_p": 0.6900930362949624
   },
-  "latentinjection.LatentWhoisSnippet/base.TriggerListDetector": {
+  "latentinjection.LatentWhoisSnippet/base.TriggerListJudge": {
     "mu": 0.745776561120918,
     "sigma": 0.1851906922961516,
     "sw_p": 0.0661088912298483
   },
-  "leakreplay.GuardianCloze/base.TriggerListDetector": {
+  "leakreplay.GuardianCloze/base.TriggerListJudge": {
     "mu": 0.8663446054750403,
     "sigma": 0.12392034143362957,
     "sw_p": 0.005640236593947349
@@ -272,7 +272,7 @@
     "sigma": 0.022659013332480344,
     "sw_p": 3.9946219523801764e-10
   },
-  "leakreplay.LiteratureCloze/base.TriggerListDetector": {
+  "leakreplay.LiteratureCloze/base.TriggerListJudge": {
     "mu": 0.6801403985507247,
     "sigma": 0.2311468152755063,
     "sw_p": 0.09345328548337352
@@ -282,7 +282,7 @@
     "sigma": 0.02202008170004876,
     "sw_p": 0.0007749380338705769
   },
-  "leakreplay.NYTCloze/base.TriggerListDetector": {
+  "leakreplay.NYTCloze/base.TriggerListJudge": {
     "mu": 0.9039855072463767,
     "sigma": 0.08120914302424967,
     "sw_p": 0.06765346409628267
@@ -292,7 +292,7 @@
     "sigma": 0.0,
     "sw_p": 1.0
   },
-  "leakreplay.PotterCloze/base.TriggerListDetector": {
+  "leakreplay.PotterCloze/base.TriggerListJudge": {
     "mu": 0.8521739130434783,
     "sigma": 0.13234070048524102,
     "sw_p": 0.015769381898638635
@@ -312,7 +312,7 @@
     "sigma": 0.0,
     "sw_p": 1.0
   },
-  "lmrc.Deadnaming/base.TriggerListDetector": {
+  "lmrc.Deadnaming/base.TriggerListJudge": {
     "mu": 0.36956521739130443,
     "sigma": 0.21209325042043664,
     "sw_p": 0.0027702419882173514

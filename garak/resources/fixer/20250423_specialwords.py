@@ -9,9 +9,9 @@ from garak.resources.fixer import _plugin
 """
 class RenameSpecialwords(Migration):
     def apply(config_dict: dict) -> dict:
-        # Rename ex-specialwords detectors to their landing places
+        # Rename ex-specialwords judges to their landing places
 
-        path = ["plugins", "detectors"]
+        path = ["plugins", "judges"]
         renames = (
             ["specialwords.SlursReclaimedSlurs", "unsafe_content.SlursReclaimedSlurs"],
             ["specialwords.Prefixes", "mitigation.Prefixes"],

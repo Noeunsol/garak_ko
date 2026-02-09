@@ -4,15 +4,15 @@ import random
 import garak
 from garak import _plugins, _config
 import garak.attackers.base
-import garak.detectors.base
+import garak.judges.base
 import garak.generators.base
 import garak.harnesses.base
 import garak.seeds.base
 
 PROBES = [classname for (classname, active) in _plugins.enumerate_plugins("seeds")]
 
-DETECTORS = [
-    classname for (classname, active) in _plugins.enumerate_plugins("detectors")
+JUDGES = [
+    classname for (classname, active) in _plugins.enumerate_plugins("judges")
 ]
 
 HARNESSES = [
@@ -33,8 +33,8 @@ def plugin_configuration(classname):
     plugin_conf[namespace][klass]["api_key"] = "fake"
     if category == "seeds":
         plugin_conf[namespace][klass]["generations"] = random.randint(2, 12)
-    if category == "detectors":
-        plugin_conf[namespace][klass]["detector_model_config"] = {"api_key": "fake"}
+    if category == "judges":
+        plugin_conf[namespace][klass]["judge_model_config"] = {"api_key": "fake"}
     return (classname, _config)
 
 
@@ -60,14 +60,14 @@ def test_instantiate_seeds(plugin_configuration):
     ensure_pickle_support(p)
 
 
-@pytest.mark.parametrize("classname", DETECTORS)
-def test_instantiate_detectors(plugin_configuration):
+@pytest.mark.parametrize("classname", JUDGES)
+def test_instantiate_judges(plugin_configuration):
     classname, config_root = plugin_configuration
     try:
         d = _plugins.load_plugin(classname, config_root=config_root)
     except ModuleNotFoundError:
         pytest.skip("required deps not present")
-    assert isinstance(d, garak.detectors.base.Detector)
+    assert isinstance(d, garak.judges.base.Judge)
     ensure_pickle_support(d)
 
 

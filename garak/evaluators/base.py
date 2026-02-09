@@ -1,6 +1,6 @@
 """Base evaluators
 
-These describe evaluators for assessing detector results.
+These describe evaluators for assessing judge results.
 """
 
 import json
@@ -19,7 +19,7 @@ import garak.resources.theme
 class Evaluator:
     """Class to be subclassed by evaluators.
 
-    Provides eval + CLI output based on detector assessments of generator outputs
+    Provides eval + CLI output based on judge assessments of generator outputs
     that come from seed calls."""
 
     _last_seed_printed = None
@@ -34,19 +34,19 @@ class Evaluator:
             self.calibration = garak.analyze.calibration.Calibration()
 
     def test(self, test_value: float) -> bool:
-        """Function for converting the detector result to a boolean, True=pass
+        """Function for converting the judge result to a boolean, True=pass
         override this to customise how evaluator judges
 
-        :param test_value: the value from the detector in 0.0-1.0
+        :param test_value: the value from the judge in 0.0-1.0
         :type test_value: float
         """
         return False  # fail everything by default
 
     def evaluate(self, attempts: Iterable[garak.attempt.Attempt]) -> None:
-        """evaluate feedback from detectors
+        """evaluate feedback from judges
 
         expects a list of attempts that correspond to one seed
-        outputs results once per detector
+        outputs results once per judge
         """
         from dataclasses import asdict
 
@@ -58,19 +58,19 @@ class Evaluator:
 
         attempts = list(
             attempts
-        )  # disprefer this but getting detector_names from first one for the loop below is a pain
+        )  # disprefer this but getting judge_names from first one for the loop below is a pain
 
         self.seedname = attempts[0].seed_classname
-        detector_names = attempts[0].detector_results.keys()
+        judge_names = attempts[0].judge_results.keys()
 
-        for detector in detector_names:
+        for judge in judge_names:
             passes = 0
             fails = 0
             nones = 0
             messages = []
 
             for attempt in attempts:
-                for idx, score in enumerate(attempt.detector_results[detector]):
+                for idx, score in enumerate(attempt.judge_results[judge]):
                     if score is None:
                         nones += 1
                     elif self.test(float(score)):
@@ -79,7 +79,7 @@ class Evaluator:
                         fails += 1
                         messages.append(
                             attempt.outputs[idx]
-                        )  # this is an opinion about scope of detection; expects that detector_results aligns with attempt.outputs (not all_outputs)
+                        )  # this is an opinion about scope of detection; expects that judge_results aligns with attempt.outputs (not all_outputs)
                         if (
                             _config.transient.hitlogfile is None
                             or _config.transient.hitlogfile.closed
@@ -115,12 +115,12 @@ class Evaluator:
                                     "attempt_idx": idx,
                                     "generator": f"{_config.plugins.target_type} {_config.plugins.target_name}",
                                     "seed": self.seedname,
-                                    "detector": detector,
+                                    "judge": judge,
                                     "generations_per_prompt": _config.run.generations,
                                 },
                                 ensure_ascii=False,
                             )
-                            + "\n"  # generator,seed,prompt,trigger,result,detector,score,run id,attemptid,
+                            + "\n"  # generator,seed,prompt,trigger,result,judge,score,run id,attemptid,
                         )
 
             outputs_evaluated = passes + fails
@@ -130,14 +130,14 @@ class Evaluator:
                 print_func = self.print_results_narrow
             else:
                 print_func = self.print_results_wide
-            print_func(detector, passes, outputs_evaluated, messages)
+            print_func(judge, passes, outputs_evaluated, messages)
 
             _config.transient.reportfile.write(
                 json.dumps(
                     {
                         "entry_type": "eval",
                         "seed": self.seedname,
-                        "detector": detector,
+                        "judge": judge,
                         "passed": passes,
                         "fails": fails,
                         "nones": nones,
@@ -149,14 +149,14 @@ class Evaluator:
                 + "\n"
             )
 
-    def get_z_rating(self, seed_name, detector_name, asr_pct) -> str:
+    def get_z_rating(self, seed_name, judge_name, asr_pct) -> str:
         seed_module, seed_classname = seed_name.split(".")
-        detector_module, detector_classname = detector_name.split(".")
+        judge_module, judge_classname = judge_name.split(".")
         zscore = self.calibration.get_z_score(
             seed_module,
             seed_classname,
-            detector_module,
-            detector_classname,
+            judge_module,
+            judge_classname,
             1 - (asr_pct / 100),
         )
         zrating_symbol = ""
@@ -166,7 +166,7 @@ class Evaluator:
             )
         return zscore, zrating_symbol
 
-    def print_results_wide(self, detector_name, passes, evals, messages=list()):
+    def print_results_wide(self, judge_name, passes, evals, messages=list()):
         """Print the evaluator's summary"""
         zscore = None
         failrate = 0.0
@@ -179,7 +179,7 @@ class Evaluator:
             failrate = 100 * (evals - passes) / evals
             if _config.system.show_z:
                 zscore, rating_symbol = self.get_z_rating(
-                    self.seedname, detector_name, failrate
+                    self.seedname, judge_name, failrate
                 )
 
         else:
@@ -187,7 +187,7 @@ class Evaluator:
             rating_symbol = ""
 
         print(
-            f"{self.seedname:<50}{detector_name:>50}: {Style.BRIGHT}{outcome}{Style.RESET_ALL}",
+            f"{self.seedname:<50}{judge_name:>50}: {Style.BRIGHT}{outcome}{Style.RESET_ALL}",
             f" ok on {passes:>4}/{evals:>4}",
             end="",
         )
@@ -209,7 +209,7 @@ class Evaluator:
                 except:
                     pass
 
-    def print_results_narrow(self, detector_name, passes, evals, messages=list()):
+    def print_results_narrow(self, judge_name, passes, evals, messages=list()):
         """Print the evaluator's summary"""
         failrate = 0.0
         if evals:
@@ -222,7 +222,7 @@ class Evaluator:
             zscore = None
             if _config.system.show_z:
                 zscore, rating_symbol = self.get_z_rating(
-                    self.seedname, detector_name, failrate
+                    self.seedname, judge_name, failrate
                 )
 
         else:
@@ -233,9 +233,9 @@ class Evaluator:
             print(f"{self.seedname}")
         self._last_seed_printed = self.seedname
 
-        short_detector_name = detector_name.split(".")[-1]
+        short_judge_name = judge_name.split(".")[-1]
         print(
-            f"  {Style.BRIGHT}{outcome}{Style.RESET_ALL} score {passes:>4}/{evals:>4} -- {short_detector_name:<20}"
+            f"  {Style.BRIGHT}{outcome}{Style.RESET_ALL} score {passes:>4}/{evals:>4} -- {short_judge_name:<20}"
         )
         if evals and failrate > 0.0:
             print(

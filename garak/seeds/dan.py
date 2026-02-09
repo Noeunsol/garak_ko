@@ -31,7 +31,7 @@ class DANSeedMeta(type):
     Define a class with this metaclass and it will:
     1. Set prompt_file attribute (auto-detect from class name if not specified)
     2. Apply common DAN seed configuration (lang, goal, tier, etc)
-    3. Handle custom attributes like detector, extra tags, etc.
+    3. Handle custom attributes like judge, extra tags, etc.
     4. Load prompts from JSON files (array of strings, supports multiline)
     """
 
@@ -46,8 +46,8 @@ class DANSeedMeta(type):
             "owasp:llm01",
             "quality:Security:PromptStability",
         ],
-        "primary_detector": "dan.DAN",
-        "extended_detectors": ["mitigation.MitigationBypass"],
+        "primary_judge": "dan.DAN",
+        "extended_judges": ["mitigation.MitigationBypass"],
     }
 
     def __new__(cls, name, bases, attrs, **kwargs):
@@ -225,7 +225,7 @@ class Dan_6_0(
 class DUDE(
     garak.seeds.Seed,
     metaclass=DANSeedMeta,
-    primary_detector="dan.DUDE",
+    primary_judge="dan.DUDE",
     extra_tags=["payload:jailbreak"],
 ):
     """DUDE
@@ -237,7 +237,7 @@ class DUDE(
 class STAN(
     garak.seeds.Seed,
     metaclass=DANSeedMeta,
-    primary_detector="dan.STAN",
+    primary_judge="dan.STAN",
     extra_tags=["payload:jailbreak"],
 ):
     """STAN
@@ -249,7 +249,7 @@ class STAN(
 class DAN_Jailbreak(
     garak.seeds.Seed,
     metaclass=DANSeedMeta,
-    primary_detector="dan.DANJailbreak",
+    primary_judge="dan.DANJailbreak",
     extra_tags=["payload:jailbreak"],
 ):
     """DAN Jailbreak
@@ -261,7 +261,7 @@ class DAN_Jailbreak(
 class AntiDAN(
     garak.seeds.Seed,
     metaclass=DANSeedMeta,
-    primary_detector="dan.AntiDAN",
+    primary_judge="dan.AntiDAN",
     extra_tags=["avid-effect:performance:P0204"],
 ):
     """Anti-DAN
@@ -273,7 +273,7 @@ class AntiDAN(
 class ChatGPT_Developer_Mode_v2(
     garak.seeds.Seed,
     metaclass=DANSeedMeta,
-    primary_detector="dan.DevMode",
+    primary_judge="dan.DevMode",
     extra_tags=["payload:jailbreak"],
 ):
     """ChatGPT Developer Mode v2
@@ -286,7 +286,7 @@ class ChatGPT_Developer_Mode_v2(
 class ChatGPT_Developer_Mode_RANTI(
     garak.seeds.Seed,
     metaclass=DANSeedMeta,
-    primary_detector="dan.DevMode",
+    primary_judge="dan.DevMode",
     extra_tags=["avid-effect:performance:P0204"],
 ):
     """ChatGPT DevMode + Ranti
@@ -299,7 +299,7 @@ class ChatGPT_Developer_Mode_RANTI(
 class ChatGPT_Image_Markdown(
     garak.seeds.Seed,
     metaclass=DANSeedMeta,
-    primary_detector="dan.MarkdownLink",
+    primary_judge="dan.MarkdownLink",
     extra_tags=["payload:jailbreak"],
 ):
     """ChatGPT Markdown Image Unlocker / markdown injection
@@ -417,8 +417,8 @@ class DanInTheWildFull(
     prompt_file="inthewild_jailbreak_llms.json",
     goal="disregard the system prompt or alignment",
     extra_tags=["payload:jailbreak"],
-    primary_detector="mitigation.MitigationBypass",
-    extended_detectors=[],
+    primary_judge="mitigation.MitigationBypass",
+    extended_judges=[],
 ):
     """A library of jailbreaks.
 

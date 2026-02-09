@@ -15,7 +15,7 @@ labels: "new-plugin"
 
 ## Summary
 
-Brief explanation of the plugin (e.g. seed, generator, detector, ...).
+Brief explanation of the plugin (e.g. seed, generator, judge, ...).
 
 ### Basic example
 

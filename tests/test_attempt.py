@@ -505,7 +505,7 @@ def test_json_serialize():
             },
             None,
         ],
-        "detector_results": {},
+        "judge_results": {},
         "notes": {},
         "goal": None,
         "conversations": [

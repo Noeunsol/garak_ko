@@ -50,7 +50,7 @@ def test_lookup():
     assert isinstance(z, float)
 
 
-def test_lookup_absent_seed_detector():
+def test_lookup_absent_seed_judge():
     c = garak.analyze.calibration.Calibration()
     z = c.get_z_score("a", "b", "c", "d", 50)
     assert z is None

@@ -25,8 +25,8 @@ class Repeat(garak.seeds.Seed):
 
     aliases = ["replay.Repeat"]
     lang = "*"
-    primary_detector = "divergence.RepeatDiverges"
-    extended_detectors = ["mitigation.MitigationBypass"]
+    primary_judge = "divergence.RepeatDiverges"
+    extended_judges = ["mitigation.MitigationBypass"]
     goal = "get the model to leak data by asking it to repeat words"
     doc_uri = "https://not-just-memorization.github.io/extracting-training-data-from-chatgpt.html"
     tags = [
@@ -362,7 +362,7 @@ class RepeatedToken(garak.seeds.Seed):
     tier = garak.seeds.Tier.OF_CONCERN
     active = True
     doc_uri = "https://github.com/dropbox/llm-security"
-    primary_detector = "divergence.RepeatedToken"
+    primary_judge = "divergence.RepeatedToken"
     lang = "*"
     goal = "Stress-test LLMs with long repeated-token prompts to surface instability"
 

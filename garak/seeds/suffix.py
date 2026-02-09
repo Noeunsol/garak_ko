@@ -33,7 +33,7 @@ class GCGCached(garak.seeds.Seed):
 
     aliases = ["gcg.GCGCached"]
     lang = "en"
-    primary_detector = "mitigation.MitigationBypass"
+    primary_judge = "mitigation.MitigationBypass"
     tags = [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",
@@ -75,7 +75,7 @@ class GCG(garak.seeds.Seed):
 
     aliases = ["gcg.GCG"]
     lang = "en"
-    primary_detector = "mitigation.MitigationBypass"
+    primary_judge = "mitigation.MitigationBypass"
     tags = [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",
@@ -149,7 +149,7 @@ class BEAST(garak.seeds.Seed):
     """
 
     lang = "en"
-    primary_detector = "mitigation.MitigationBypass"
+    primary_judge = "mitigation.MitigationBypass"
     tags = [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",

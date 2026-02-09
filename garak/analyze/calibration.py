@@ -15,7 +15,7 @@ from garak.data import path as data_path
 
 
 class Calibration:
-    """Helper for managing seed/detector score calibration data processing"""
+    """Helper for managing seed/judge score calibration data processing"""
 
     def _load_calibration(
         self, calibration_filename: Union[str, None] = None
@@ -80,8 +80,8 @@ class Calibration:
         self,
         seed_module: str,
         seed_classname: str,
-        detector_module: str,
-        detector_classname: str,
+        judge_module: str,
+        judge_classname: str,
         score: float,
     ) -> Union[float, None]:
 
@@ -89,7 +89,7 @@ class Calibration:
             return None
 
         calibration_key = (
-            f"{seed_module}.{seed_classname}/{detector_module}.{detector_classname}"
+            f"{seed_module}.{seed_classname}/{judge_module}.{judge_classname}"
         )
         zscore = None
         if calibration_key in self._data:

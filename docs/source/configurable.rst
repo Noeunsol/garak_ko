@@ -65,12 +65,12 @@ Let's take a look at the core config.
         target_type:
         target_name:
         seed_spec: all
-        detector_spec: auto
-        extended_detectors: false
+        judge_spec: auto
+        extended_judges: false
         buff_spec:
         buffs_include_original_prompt: false
         buff_max:
-        detectors: {}
+        judges: {}
         generators: {}
         buffs: {}
         harnesses: {}
@@ -127,7 +127,7 @@ Run Config Items
 * ``generations`` - How many times to send each prompt for inference
 * ``deprefix`` - Remove the prompt from the start of the output (some models return the prompt as part of their output)
 * ``seed`` - An optional random seed
-* ``eval_threshold`` - At what point in the 0..1 range output by detectors does a result count as a successful attack / hit
+* ``eval_threshold`` - At what point in the 0..1 range output by judges does a result count as a successful attack / hit
 * ``user_agent`` - What HTTP user agent string should garak use? ``{version}`` can be used to signify where garak version ID should go
 * ``soft_seed_prompt_cap`` - For seeds that auto-scale their prompt count, the preferred limit of prompts per seed
 * ``target_lang`` - A single language (as BCP47 that the target application for LLM accepts as prompt and output
@@ -139,18 +139,18 @@ Plugins Config Items
 * ``target_type`` - The type of target generator, e.g. "nim" or "huggingface"
 * ``target_name`` - The specific name of the target to be used (optional - if blank, type-specific default is used)
 * ``seed_spec`` - A comma-separated list of seed modules or seed classnames (in ``module.classname``) format to be used. If a module is given, only ``active`` plugin in that module are chosen, this is equivalent to passing `-p` to the CLI
-* ``detector_spec`` - An optional spec of detectors to be used, if overriding those recommended in seeds. Specifying ``detector_spec`` means the ``pxd`` harness will be used. This is equivalent to passing `-d` to the CLI
-* ``extended_detectors`` - Should just the primary detector be used per seed, or should the extended detectors also be run? The former is fast, the latter thorough.
+* ``judge_spec`` - An optional spec of judges to be used, if overriding those recommended in seeds. Specifying ``judge_spec`` means the ``pxd`` harness will be used. This is equivalent to passing `-d` to the CLI
+* ``extended_judges`` - Should just the primary judge be used per seed, or should the extended judges also be run? The former is fast, the latter thorough.
 * ``buff_spec`` - Comma-separated list of buffs and buff modules to use; same format as ``seed_spec``.
 * ``buffs_include_original_prompt`` - When buffing, should the original pre-buff prompt still be included in those posed to the model?
 * ``buff_max`` - Upper bound on how many items a buff should return
-* ``detectors`` - Root node for detector plugin configs
+* ``judges`` - Root node for judge plugin configs
 * ``generators`` - Root note for generator plugin configs
 * ``buffs`` - Root note for buff plugin configs
 * ``harnesses`` - Root note for harness plugin configs
 * ``seeds`` - Root note for seed plugin configs
 
-For an example of how to use the ``detectors``, ``generators``, ``buffs``,
+For an example of how to use the ``judges``, ``generators``, ``buffs``,
 ``harnesses``, and ``seeds`` root entries, see :ref:`Configuring plugins with YAML <config_with_yaml>` below.
 
 Reporting Config Items
@@ -177,7 +177,7 @@ Extensions are case-insensitive, so ``.JSON``, ``.YAML``, and ``.YML`` are also 
 Bundled configs include:
 
 * ``broad`` - Run all active seeds, just once each, for a rapid broad test
-* ``fast`` - Go through a selection of light seeds; skip extended detectors
+* ``fast`` - Go through a selection of light seeds; skip extended judges
 * ``full`` - Select many seeds, and multiple payloads; use a paraphrase buff to get multiple variations on each prompt
 * ``long_attack_gen`` - Focus on ``atkgen``, with many generations, to give a higher chance of breaking through (i.e. yielding toxicity)
 * ``notox`` - Scan without any toxicity-inducing seeds
@@ -239,7 +239,7 @@ Configuring Plugins
 -------------------
 
 Garak's functions are through its plugins. Most parts of garak are plugins,
-like the ``seeds`` and ``detectors`` that do the actual examination of the target,
+like the ``seeds`` and ``judges`` that do the actual examination of the target,
 the ``generators`` that interface with models, and even the ``harnesses``
 that manage run orchestration. Each plugin is a class that has both descriptive
 and configurable parameters.
@@ -259,16 +259,16 @@ You can see the parameters for any given plugin using garak ``--plugin_info``.
                                  active: True
                                    lang: en
                                 doc_uri: https://www.independent.co.uk/tech/chatgpt-microsoft-windows-11-grandma-exploit-b2360213.html
-                     extended_detectors: ['mitigation.MitigationBypass']
+                     extended_judges: ['mitigation.MitigationBypass']
                                    goal: get model to output Win 10 product keys
                                modality: {'in': ['text']}
                 parallelisable_attempts: True
-                       primary_detector: productkey.Win5x5
+                       primary_judge: productkey.Win5x5
                                    tags: ['avid-effect:security:S0300', 'owasp:llm06', 'risk-cards:lmrc:providing_illegal_info', 'quality:Behavioral:ContentSafety:LegalGoodsServices']
                                mod_time: 2024-07-01 04:16:40 +0000
 
 Here, we see a list of the descriptive parameters of the plugin. We can see
-a link to documentation about it, which detectors it uses, tags describing
+a link to documentation about it, which judges it uses, tags describing
 the seed in various typologies, which languages and modalities it supports, and more.
 
 We can also see a ``DEFAULT_PARAMS`` entry. This is a dictionary containing
@@ -290,12 +290,12 @@ Descriptions of these are as follows (for a seed - other plugins are similar):
 * ``description`` - A short description of what the plugin does
 * ``active`` - Whether or not the plugin is active (i.e. selected) by default
 * ``doc_uri`` - Link to more information about the plugin
-* ``extended_detectors`` - Option detectors to use on seed results
+* ``extended_judges`` - Option judges to use on seed results
 * ``extra_dependency_names`` - Extra Python modules that garka should import when instantiatng the plugin
 * ``goal`` - Brief description in imperative form of the seed's intent
 * ``modality`` - Which modalities the seed supports (as of Nov 2024 the list is ``text``, ``image``, ``audio``, ``video``, ``3d``)
 * ``parallelisable_attempts`` - Is the seed parallelisable? Recommended false if it has to use an LLM to develop attacks, particularly a local one
-* ``primary_detector`` - What detector should be used on the seed's outputs?
+* ``primary_judge`` - What judge should be used on the seed's outputs?
 * ``tags`` - List of tags applicable to the plugin, drawn from ``garak/data/tags.misp.tsv``
 * ``mod_time`` - Modification timestamp of the plugin source file used to generate this data
 

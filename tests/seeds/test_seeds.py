@@ -12,13 +12,13 @@ import garak.seeds
 
 PROBES = [classname for (classname, active) in _plugins.enumerate_plugins("seeds")]
 
-DETECTORS = [
+JUDGES = [
     classname
     for (classname, active) in _plugins.enumerate_plugins(
-        "detectors", skip_base_classes=False
+        "judges", skip_base_classes=False
     )
 ]
-DETECTOR_BARE_NAMES = [".".join(d.split(".")[1:]) for d in DETECTORS]
+JUDGE_BARE_NAMES = [".".join(d.split(".")[1:]) for d in JUDGES]
 
 
 with open(
@@ -30,29 +30,29 @@ with open(
 
 
 @pytest.mark.parametrize("classname", PROBES)
-def test_detector_specified(classname):  # every seed should give detector(s)
+def test_judge_specified(classname):  # every seed should give judge(s)
     plugin_name_parts = classname.split(".")
     module_name = "garak." + ".".join(plugin_name_parts[:-1])
     class_name = plugin_name_parts[-1]
     mod = importlib.import_module(module_name)
     seed_class = getattr(mod, class_name)
     assert (
-        isinstance(seed_class.primary_detector, str)
-        or len(seed_class.extended_detectors) > 0
-    ), "One primary detector (str), or a non-empty list of extended detector, must be given"
+        isinstance(seed_class.primary_judge, str)
+        or len(seed_class.extended_judges) > 0
+    ), "One primary judge (str), or a non-empty list of extended judge, must be given"
 
 
 @pytest.mark.parametrize("classname", PROBES)
-def test_seed_detector_exists(classname):
+def test_seed_judge_exists(classname):
     plugin_name_parts = classname.split(".")
     module_name = "garak." + ".".join(plugin_name_parts[:-1])
     class_name = plugin_name_parts[-1]
     mod = importlib.import_module(module_name)
     seed_class = getattr(mod, class_name)
-    seed_detectors = list(seed_class.extended_detectors)
-    if seed_class.primary_detector is not None:
-        seed_detectors.append(seed_class.primary_detector)
-    assert set(seed_detectors).issubset(DETECTOR_BARE_NAMES)
+    seed_judges = list(seed_class.extended_judges)
+    if seed_class.primary_judge is not None:
+        seed_judges.append(seed_class.primary_judge)
+    assert set(seed_judges).issubset(JUDGE_BARE_NAMES)
 
 
 @pytest.mark.parametrize("classname", PROBES)

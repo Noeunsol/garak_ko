@@ -48,7 +48,7 @@ def test_repeat_token_sample():
 
 def test_repeat_token_sample_num_tokens(mocker):
     import random
-    from garak.detectors.divergence import RepeatedToken as detector
+    from garak.judges.divergence import RepeatedToken as judge
 
     mock_sample = mocker.patch.object(random, "sample", wraps=random.sample)
 

@@ -32,12 +32,12 @@ things) JSON dumps of attempts.
 
 Once the seed is done with the attempt and the generator has added its
 outputs, the outputs are examined for signs of failures. This is done in a
-detector.
+judge.
 
-detectors
+judges
 ---------
-:doc:`detectors` attempt to identify a single failure mode. This could be
-for example some unsafe contact, or failure to refuse a request. Detectors
+:doc:`judges` attempt to identify a single failure mode. This could be
+for example some unsafe contact, or failure to refuse a request. Judges
 do this by examining outputs that are stored in a prompt, looking for a
 certain phenomenon. This could be a lack of refusal, or continuation of a
 string in a certain way, or decoding an encoded prompt, for example.
@@ -52,13 +52,13 @@ have only a few, static prompts.
 
 evaluators
 ----------
-When detectors have added judgments to attempts, :doc:`evaluators` converts the results
-to an object containing pass/fail data for a specific seed and detector pair.
+When judges have added judgments to attempts, :doc:`evaluators` converts the results
+to an object containing pass/fail data for a specific seed and judge pair.
 
 harnesses
 ---------
 The :doc:`harnesses` manage orchestration of a ``garak`` run. They select seeds, then
-detectors, and co-ordinate running seeds, passing results to detectors, and
+judges, and co-ordinate running seeds, passing results to judges, and
 doing the final evaluation
 
 .. automodule:: garak._plugins

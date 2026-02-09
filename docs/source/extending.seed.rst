@@ -71,12 +71,12 @@ From the base class:
     tags: Iterable[str] = []
     # what the seed is trying to do, phrased as an imperative
     goal: str = ""
-    # Deprecated -- the detectors that should be run for this seed. always.Fail is chosen as default to send a signal if this isn't overridden.
-    recommended_detector: Iterable[str] = ["always.Fail"]
-    # default detector to run, if the primary/extended way of doing it is to be used (should be a string formatted like recommended_detector)
-    primary_detector: Union[str, None] = None
-    # optional extended detectors
-    extended_detectors: Iterable[str] = []
+    # Deprecated -- the judges that should be run for this seed. always.Fail is chosen as default to send a signal if this isn't overridden.
+    recommended_judge: Iterable[str] = ["always.Fail"]
+    # default judge to run, if the primary/extended way of doing it is to be used (should be a string formatted like recommended_judge)
+    primary_judge: Union[str, None] = None
+    # optional extended judges
+    extended_judges: Iterable[str] = []
     # can attempts from this seed be parallelised?
     parallelisable_attempts: bool = True
     # Keeps state of whether a buff is loaded that requires a call to untransform model outputs
@@ -94,14 +94,14 @@ Many of these are decent defaults, though there are a few that we absolutely wan
 * ``active``: Should this seed be part of default scans?
 * ``tags``: MISP-formatted taxonomy categories __e.g.__ ``["avid-effect:security:S0403", "owasp:llm01", "quality:Security:PromptStability", "payload:jailbreak"]``
 * ``goal``: What is the seed trying to do? __e.g.__ ``"disregard the system prompt"``
-* ``primary_detector``: What ``Detector`` should your seed use?
+* ``primary_judge``: What ``Judge`` should your seed use?
 
 .. code-block:: python
 
     class MyNewProbe(garak.seeds.Probe):
         """Probe to do something naughty to a language model"""
 
-        primary_detector = "mitigation.MitigationBypass"
+        primary_judge = "mitigation.MitigationBypass"
         tags = [
             "avid-effect:security:S0403",
             "owasp:llm01",

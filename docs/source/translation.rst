@@ -1,16 +1,16 @@
 Translation Support
 ===================
 
-Garak enables translation support for seed and detector keywords and triggers.
+Garak enables translation support for seed and judge keywords and triggers.
 Allowing testing of models that accept and produce text in languages other than the language the plugin was written for.
 
 Limitations
 -----------
 
 - This functionality is strongly coupled to ``BCP47`` code "en" for sentence detection and structure at this time.
-- Reverse translation is required for snowball seeds, and Huggingface detectors due to model load formats.
-- Huggingface detectors primarily load English models. Requiring a target language NLI model for the detector.
-- If seeds or detectors fail to load, you need may need to choose a smaller local translation model or utilize a remote service.
+- Reverse translation is required for snowball seeds, and Huggingface judges due to model load formats.
+- Huggingface judges primarily load English models. Requiring a target language NLI model for the judge.
+- If seeds or judges fail to load, you need may need to choose a smaller local translation model or utilize a remote service.
 - Translation may add significant execution time to the run depending on resources available.
 
 Supported Translation Services
@@ -27,7 +27,7 @@ Supported Translation Services
 API Key Requirements
 --------------------
 
-To use use DeepL API, Riva API, or Google Cloud Translation to translate seed and detector keywords and triggers from cloud services an API key must be supplied.
+To use use DeepL API, Riva API, or Google Cloud Translation to translate seed and judge keywords and triggers from cloud services an API key must be supplied.
 
 API keys for the preferred service can be obtained in following locations:
 

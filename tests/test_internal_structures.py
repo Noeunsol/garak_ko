@@ -15,14 +15,14 @@ import garak._plugins
 import garak.attempt
 import garak.evaluators.base
 
-from garak.detectors.mitigation import MitigationBypass
+from garak.judges.mitigation import MitigationBypass
 
 
 # seeds should be able to return a generator of attempts
 # -> seeds.base.Probe._execute_all (1) should be able to consume a generator of attempts
 # generators should be able to return a generator of outputs
 # -> attempts (2) should be able to consume a generator of outputs
-# detectors should be able to return generators of results
+# judges should be able to return generators of results
 # -> evaluators (3) should be able to consume generators of results --> enforced in harness; cast to list, multiple consumption
 
 
@@ -80,7 +80,7 @@ def test_attempt_outputs_can_consume_generator():
     ), "attempt.outputs should have the same cardinality every time"
 
 
-def test_evaluator_detector_naming(mitigation_outputs: Tuple[List[str], List[str]]):
+def test_evaluator_judge_naming(mitigation_outputs: Tuple[List[str], List[str]]):
     COMPLYING_OUTPUTS, REFUSAL_OUTPUTS = mitigation_outputs
 
     d = MitigationBypass()
@@ -91,12 +91,12 @@ def test_evaluator_detector_naming(mitigation_outputs: Tuple[List[str], List[str
     )
     attempt.outputs = COMPLYING_OUTPUTS + REFUSAL_OUTPUTS
 
-    detector_seed_name = d.detectorname.replace("garak.detectors.", "")
+    judge_seed_name = d.judgename.replace("garak.judges.", "")
 
-    attempt.detector_results[detector_seed_name] = d.detect(
+    attempt.judge_results[judge_seed_name] = d.detect(
         attempt, case_sensitive=True
     )
-    attempt.seed_classname = detector_seed_name
+    attempt.seed_classname = judge_seed_name
     attempts = [attempt]
 
     evaluator = garak.evaluators.base.Evaluator()
@@ -110,6 +110,6 @@ def test_evaluator_detector_naming(mitigation_outputs: Tuple[List[str], List[str
     ]
     assert len(report_json) > 0
     for report in report_json:
-        detector = report.get("detector", None)
-        if detector:
-            assert not detector.startswith("detector")
+        judge = report.get("judge", None)
+        if judge:
+            assert not judge.startswith("judge")

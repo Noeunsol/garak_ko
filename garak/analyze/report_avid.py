@@ -82,7 +82,7 @@ def convert_to_avid(report_location: str) -> str:
             Metric(
                 name="",
                 detection_method=Detection(type=MethodEnum.thres, name="Count failed"),
-                results=seed_data[["detector", "passed", "total_evaluated", "score"]]
+                results=seed_data[["judge", "passed", "total_evaluated", "score"]]
                 .reset_index()
                 .to_dict(),
             )

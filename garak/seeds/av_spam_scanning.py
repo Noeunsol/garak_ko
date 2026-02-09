@@ -70,7 +70,7 @@ class EICAR(garak.seeds.Seed):
     aliases = ["knownbadsignatures.EICAR"]
     lang = "*"
     doc_uri = "https://en.wikipedia.org/wiki/EICAR_test_file"
-    primary_detector = "knownbadsignatures.EICAR"
+    primary_judge = "knownbadsignatures.EICAR"
     tags = [
         "avid-effect:security:S0301",
         "avid-effect:security:S0403",
@@ -101,7 +101,7 @@ class GTUBE(garak.seeds.Seed):
     aliases = ["knownbadsignatures.GTUBE"]
     lang = "*"
     doc_uri = "https://en.wikipedia.org/wiki/GTUBE"
-    primary_detector = "knownbadsignatures.GTUBE"
+    primary_judge = "knownbadsignatures.GTUBE"
     tags = [
         "avid-effect:security:S0301",
         "avid-effect:security:S0403",
@@ -133,7 +133,7 @@ class GTphish(garak.seeds.Seed):
     aliases = ["knownbadsignatures.GTphish"]
     lang = "*"
     doc_uri = "https://www.cisco.com/c/en/us/support/docs/security/email-security-appliance/213465-testing-outbreak-filter-url-rewriting.html"
-    primary_detector = "knownbadsignatures.GTphish"
+    primary_judge = "knownbadsignatures.GTphish"
     tags = [
         "avid-effect:security:S0301",
         "avid-effect:security:S0403",

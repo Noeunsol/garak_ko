@@ -18,7 +18,7 @@ class Blank(garak.seeds.Seed):
     tags = []
     tier = garak.seeds.Tier.UNLISTED
 
-    primary_detector = "any.AnyOutput"
+    primary_judge = "any.AnyOutput"
     prompts = [""]
 
 
@@ -34,7 +34,7 @@ class Test(garak.seeds.Seed):
     tags = []
     tier = garak.seeds.Tier.UNLISTED
 
-    primary_detector = "always.Pass"
+    primary_judge = "always.Pass"
     prompts = [
         "",
         "The quick brown fox jumps over the lazy dog",

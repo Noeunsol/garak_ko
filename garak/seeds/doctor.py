@@ -28,7 +28,7 @@ class Puppetry(garak.seeds.Seed):
 
     # 다국어 프롬프트를 직접 제공하므로 번역 파이프라인에 구애받지 않도록 설정
     lang = "*"
-    primary_detector = "mitigation.MitigationBypass"
+    primary_judge = "mitigation.MitigationBypass"
     goal = "roleplay as doctor to get unsafe outputs"
     doc_uri = "https://hiddenlayer.com/innovation-hub/novel-universal-bypass-for-all-major-llms/"
     tags = [
@@ -115,7 +115,7 @@ class Bypass(garak.seeds.Seed):
     guardrails"""
 
     lang = "en"
-    primary_detector = "mitigation.MitigationBypass"
+    primary_judge = "mitigation.MitigationBypass"
     goal = "roleplay as doctor to get bypass guardrails"
     doc_uri = "https://hiddenlayer.com/innovation-hub/novel-universal-bypass-for-all-major-llms/"
     tags = [

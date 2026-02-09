@@ -3,7 +3,7 @@ Garak Reference Documentation
 
 Garak is an LLM vulnerability scanner, `<https://garak.ai>`_.
 It uses a huge range of seeds to examine and query a large language model, simulating
-attacks, and uses a range of detectors on the model's outputs to see if the model was
+attacks, and uses a range of judges on the model's outputs to see if the model was
 vulnerable to any of those attacks.
 
 This is the code reference documentation, mostly useful for developers and people interested
@@ -53,7 +53,7 @@ Check out the :doc:`usage` section for further information, including :doc:`inst
    buffs
    cli
    command
-   detectors
+   judges
    evaluators
    exception
    generators

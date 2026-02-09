@@ -94,20 +94,20 @@ OK_PAYLOADS = [
         "garak_payload_name": "test",
         "payloads": ["pay", "load"],
         "payload_types": [],
-        "detector_name": "detector",
+        "judge_name": "judge",
     },
     {
         "garak_payload_name": "test",
         "payloads": ["pay", "load"],
         "payload_types": [],
-        "detector_name": "",
+        "judge_name": "",
     },
     {
         "garak_payload_name": "test",
         "payloads": ["pay", "load"],
         "payload_types": [],
-        "detector_name": "llmaaj",
-        "detector_config": {"model": "x"},
+        "judge_name": "llmaaj",
+        "judge_config": {"model": "x"},
     },
 ]
 
@@ -121,13 +121,13 @@ BAD_PAYLOADS = [
         "payload_types": "Security circumvention instructions",
     },
     {"garak_payload_name": "test", "payloads": ["pay", "load"], "lang": "en"},
-    {"garak_payload_name": "test", "payloads": ["pay", "load"], "detector_params": {}},
-    {"garak_payload_name": "test", "payloads": ["pay", "load"], "detector_config": {}},
+    {"garak_payload_name": "test", "payloads": ["pay", "load"], "judge_params": {}},
+    {"garak_payload_name": "test", "payloads": ["pay", "load"], "judge_config": {}},
     {
         "garak_payload_name": "test",
         "payloads": ["pay", "load"],
-        "detector_name": "",
-        "detector_config": {"model": "x"},
+        "judge_name": "",
+        "judge_config": {"model": "x"},
     },
 ]
 

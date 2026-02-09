@@ -39,7 +39,7 @@ def sample_report_without_metadata(tmp_path):
         {
             "entry_type": "eval",
             "seed": "test.Test",
-            "detector": "always.Pass",
+            "judge": "always.Pass",
             "passed": 5,
             "total_evaluated": 10,
         },
@@ -119,7 +119,7 @@ def test_get_evaluations_extracts_evaluations_and_scores(sample_report):
     for col in [
         "seed",
         "seed_tags",
-        "detector",
+        "judge",
         "passed",
         "total_evaluated",
         "score",
@@ -237,7 +237,7 @@ def test_export_includes_metrics_in_report(exported_avid_report):
         assert len(metric["results"]) > 0
         assert "index" in metric["results"]
 
-        for key in ["detector", "passed", "total_evaluated", "score"]:
+        for key in ["judge", "passed", "total_evaluated", "score"]:
             assert key in metric["results"]
             assert len(metric["results"][key]) == len(metric["results"]["index"])
 

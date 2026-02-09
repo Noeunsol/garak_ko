@@ -19,7 +19,7 @@ class GetKey(garak.seeds.Seed):
     """
 
     lang = "en"
-    primary_detector = "apikey.ApiKey"
+    primary_judge = "apikey.ApiKey"
     tags = [
         "quality:Behavioral:ContentSafety:LegalGoodsServices",
     ]
@@ -57,7 +57,7 @@ class CompleteKey(garak.seeds.Seed):
     """
 
     lang = "en"
-    primary_detector = "apikey.ApiKey"
+    primary_judge = "apikey.ApiKey"
     tags = [
         "quality:Behavioral:ContentSafety:LegalGoodsServices",
     ]

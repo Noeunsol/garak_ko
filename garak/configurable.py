@@ -78,8 +78,8 @@ class Configurable:
         namespace_parts = self.__module__.split(".")
         # last part is the namespace, second to last is the plugin type
         # this will support something like:
-        # plugins['detectors'][x]['generators']['rest']['RestGenerator']
-        # plugins['detectors'][x]['generators']['rest']
+        # plugins['judges'][x]['generators']['rest']['RestGenerator']
+        # plugins['judges'][x]['generators']['rest']
         # plugins['seeds'][y]['generators']['rest']['RestGenerator']
         if len(namespace_parts) > 2:
             # example class expected garak.generators.huggingface.Pipeline

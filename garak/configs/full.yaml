@@ -8,5 +8,5 @@ plugins:
     encoding:
       payloads:
         - default,xss,slur_terms
-  extended_detectors: false
+  extended_judges: false
   attacker_spec: paraphrase.Fast

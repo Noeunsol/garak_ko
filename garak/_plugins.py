@@ -17,8 +17,8 @@ from pathlib import Path
 from garak import _config
 from garak.exception import GarakException, ConfigFailure
 
-PLUGIN_TYPES = ("seeds", "detectors", "generators", "harnesses", "attackers")
-PLUGIN_CLASSES = ("Seed", "Detector", "Generator", "Harness", "Attacker")
+PLUGIN_TYPES = ("seeds", "judges", "generators", "harnesses", "attackers")
+PLUGIN_CLASSES = ("Seed", "Judge", "Generator", "Harness", "Attacker")
 TIME_FORMAT = "%Y-%m-%d %H:%M:%S %z"
 
 
@@ -261,7 +261,7 @@ class PluginCache:
                 "prompts",
                 "triggers",
                 "post_attacker_hook",
-                "recommended_detector",
+                "recommended_judge",
             ]
 
             # description as doc string will be overwritten if provided by the class
@@ -344,7 +344,7 @@ def enumerate_plugins(
 ) -> List[tuple[str, bool]]:
     """A function for listing all modules & plugins of the specified kind.
 
-    garak's plugins are organised into four packages - seeds, detectors, generators
+    garak's plugins are organised into four packages - seeds, judges, generators
     and harnesses. Each package contains a base module defining the core plugin
     classes. The other modules in the package define classes that inherit from the
     base module's classes.
@@ -354,7 +354,7 @@ def enumerate_plugins(
     in the package and see which classes can be enumerated from these.
 
     :param category: the name of the plugin package to be scanned; should
-      be one of seeds, detectors, generators, or harnesses.
+      be one of seeds, judges, generators, or harnesses.
     :type category: str
     """
 

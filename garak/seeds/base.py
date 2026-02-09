@@ -40,12 +40,12 @@ class Seed(Configurable):
     tags: Iterable[str] = []
     # what the seed is trying to do, phrased as an imperative
     goal: str = ""
-    # Deprecated -- the detectors that should be run for this seed. always.Fail is chosen as default to send a signal if this isn't overridden.
-    recommended_detector: Iterable[str] = ["always.Fail"]
-    # default detector to run, if the primary/extended way of doing it is to be used (should be a string formatted like recommended_detector)
-    primary_detector: Union[str, None] = None
-    # optional extended detectors
-    extended_detectors: Iterable[str] = []
+    # Deprecated -- the judges that should be run for this seed. always.Fail is chosen as default to send a signal if this isn't overridden.
+    recommended_judge: Iterable[str] = ["always.Fail"]
+    # default judge to run, if the primary/extended way of doing it is to be used (should be a string formatted like recommended_judge)
+    primary_judge: Union[str, None] = None
+    # optional extended judges
+    extended_judges: Iterable[str] = []
     # can attempts from this seed be parallelised?
     parallelisable_attempts: bool = True
     # Keeps state of whether a attacker is loaded that requires a call to untransform model outputs
@@ -76,26 +76,26 @@ class Seed(Configurable):
         self._load_config(config_root)
         self.seedname = str(self.__class__).split("'")[1]
 
-        # Handle deprecated recommended_detector migration
+        # Handle deprecated recommended_judge migration
         if (
-            self.primary_detector is None
-            and self.recommended_detector != ["always.Fail"]
-            and len(self.recommended_detector) > 0
+            self.primary_judge is None
+            and self.recommended_judge != ["always.Fail"]
+            and len(self.recommended_judge) > 0
         ):
             from garak import command
 
             command.deprecation_notice(
-                f"recommended_detector in seed {self.seedname}",
+                f"recommended_judge in seed {self.seedname}",
                 "0.9.0.6",
                 logging=logging,
             )
-            self.primary_detector = self.recommended_detector[0]
-            if len(self.recommended_detector) > 1:
+            self.primary_judge = self.recommended_judge[0]
+            if len(self.recommended_judge) > 1:
                 existing_extended = (
-                    list(self.extended_detectors) if self.extended_detectors else []
+                    list(self.extended_judges) if self.extended_judges else []
                 )
-                self.extended_detectors = existing_extended + list(
-                    self.recommended_detector[1:]
+                self.extended_judges = existing_extended + list(
+                    self.recommended_judge[1:]
                 )
 
         if hasattr(_config.system, "verbose") and _config.system.verbose > 0:
@@ -527,7 +527,7 @@ class TreeSearchSeed(Seed):
         surface_forms_seedd = set()
 
         self.generator = generator
-        detector = garak._plugins.load_plugin(f"detectors.{self.primary_detector}")
+        judge = garak._plugins.load_plugin(f"judges.{self.primary_judge}")
 
         all_completed_attempts: Iterable[garak.attempt.Attempt] = []
 
@@ -598,13 +598,13 @@ class TreeSearchSeed(Seed):
 
             attempts_completed = self._execute_all(attempts_todo)
 
-            # now we call the detector 🙃
+            # now we call the judge 🙃
             node_results = []
             for attempt in attempts_completed:
-                attempt.detector_results[self.primary_detector] = detector.detect(
+                attempt.judge_results[self.primary_judge] = judge.detect(
                     attempt
                 )
-                node_results += attempt.detector_results[self.primary_detector]
+                node_results += attempt.judge_results[self.primary_judge]
                 attempt.status = garak.attempt.ATTEMPT_COMPLETE
                 _config.transient.reportfile.write(
                     json.dumps(attempt.as_dict(), ensure_ascii=False) + "\n"
@@ -636,7 +636,7 @@ class TreeSearchSeed(Seed):
             node_info = {
                 "entry_type": "tree_data",
                 "seed": self.__class__.__name__,
-                "detector": self.primary_detector,
+                "judge": self.primary_judge,
                 "node_id": self._get_node_id(current_node),
                 "node_parent": (
                     self._get_node_id(parent) if parent is not None else None
@@ -677,8 +677,8 @@ class TreeSearchSeed(Seed):
         tree_bar.close()
 
         # we've done detection, so let's skip the main one
-        self.primary_detector_real = self.primary_detector
-        self.primary_detector = "always.Passthru"
+        self.primary_judge_real = self.primary_judge
+        self.primary_judge = "always.Passthru"
 
         return all_completed_attempts
 
@@ -699,14 +699,14 @@ class IterativeSeed(Seed):
     This can continue until one of:
 
     - ``max_calls_per_conv`` is reached.
-    - The seed chooses to run the detector on the target response and stops when the detector detects a success.
-    - The seed has a function, different from the detector for deciding when the seed thinks an attack will be successful and stops at that point.
+    - The seed chooses to run the judge on the target response and stops when the judge detects a success.
+    - The seed has a function, different from the judge for deciding when the seed thinks an attack will be successful and stops at that point.
 
     Additional design considerations:
 
     1. Not all multiturn seeds need this base class. A seed could directly construct a multiturn input where it only cares about how the target responds to the last turn (eg: prefill attacks) can just subclass Seed.
     2. Seeds that inherit from IterativeSeed are allowed to manipulate the history in addition to generating new turns based on a target's response. For example if the response to the initial turn was a refusal, the seed can in the next attempt either pass in that history of old init turn + refusal + next turn or just pass a new init turn.
-    3. An Attempt is created at every turn when the history is passed to the target. All these Attempts are collected and passed to the detector. The seed can use Attempt.notes to tell the detector to skip certain attempts but a special detector needs to be written that will pay attention to this value.
+    3. An Attempt is created at every turn when the history is passed to the target. All these Attempts are collected and passed to the judge. The seed can use Attempt.notes to tell the judge to skip certain attempts but a special judge needs to be written that will pay attention to this value.
     4. If num_generations > 1 , for every attempt at every turn, we obtain num_generations responses from the target, reduce to the unique ones and generate next turns based on each of them. This means that as the turn number increases, the number of attempts has the potential to grow exponentially. Currently, when we have processed (# init turns * self.soft_prompt_seed_cap) attempts, the seed will exit.
     5. Currently the expansion of attempts happens in a BFS fashion.
     """
@@ -718,7 +718,7 @@ class IterativeSeed(Seed):
 
     def __init__(self, config_root=_config):
         super().__init__(config_root)
-        if self.end_condition not in ("detector", "verify"):
+        if self.end_condition not in ("judge", "verify"):
             raise ValueError(f"Unsupported end condition '{self.end_condition}'")
         self.attempt_queue = list()
 

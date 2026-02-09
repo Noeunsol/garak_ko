@@ -26,13 +26,13 @@ def test_seed_list(capsys):
         ) or line.startswith(f"{__app__} {__description__}")
 
 
-def test_detector_list(capsys):
-    cli.main(["--list_detectors"])
+def test_judge_list(capsys):
+    cli.main(["--list_judges"])
     result = capsys.readouterr()
     output = ANSI_ESCAPE.sub("", result.out)
     for line in output.strip().split("\n"):
         assert re.match(
-            r"^detectors: [a-z0-9_]+(\.[A-Za-z0-9_]+)?( 🌟)?( 💤)?$", line
+            r"^judges: [a-z0-9_]+(\.[A-Za-z0-9_]+)?( 🌟)?( 💤)?$", line
         ) or line.startswith(f"{__app__} {__description__}")
 
 
@@ -65,7 +65,7 @@ def test_run_all_active_seeds(capsys):
     assert re.match("^✔️  garak run complete in [0-9]+\\.[0-9]+s$", last_line)
 
 
-def test_run_all_active_detectors(capsys):
+def test_run_all_active_judges(capsys):
     cli.main(
         [
             "-m",
