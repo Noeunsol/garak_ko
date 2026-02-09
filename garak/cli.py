@@ -3,7 +3,7 @@
 
 """Flow for invoking garak from the command line"""
 
-command_options = "list_detectors list_probes list_generators list_buffs list_config plugin_info interactive report version fix".split()
+command_options = "list_detectors list_probes list_probe_groups list_generators list_buffs list_config plugin_info interactive report version fix".split()
 
 
 def parse_cli_plugin_config(plugin_type, args):
@@ -34,6 +34,195 @@ def parse_cli_plugin_config(plugin_type, args):
                 logging.warning("Failed to parse JSON %s: %s", opts_file, {e.args[0]})
                 raise e
     return opts_cli_config
+
+
+def _load_probe_groups_file(groups_file):
+    """Load probe groups from YAML.
+
+    The YAML can be either:
+    - {probe_groups: {name: spec, ...}}
+    - {probe_groups: [{id: ..., run: {probes: [...]}, ...}, ...]}
+    - {groups: [{id: ..., run: {probes: [...]}, ...}, ...]}
+    - {name: spec, ...}
+    Where spec is a string (comma-separated probe_spec) or a list[str].
+    """
+    import os
+    import yaml
+
+    if groups_file is None:
+        raise ValueError("probe groups file path is None")
+    if not os.path.exists(groups_file):
+        raise FileNotFoundError(f"Probe groups file not found: {groups_file}")
+
+    with open(groups_file, "r", encoding="utf-8") as f:
+        data = yaml.safe_load(f) or {}
+
+    if not isinstance(data, dict):
+        raise ValueError(f"Probe groups file must be a YAML mapping, got: {type(data)}")
+
+    if "groups" in data or (
+        "probe_groups" in data and isinstance(data.get("probe_groups"), list)
+    ):
+        groups_list = data.get("groups")
+        if groups_list is None:
+            groups_list = data.get("probe_groups")
+        groups_list = groups_list or []
+        if not isinstance(groups_list, list):
+            raise ValueError(
+                f"'groups'/'probe_groups' must be a list, got: {type(groups_list)}"
+            )
+        groups = {}
+        for entry in groups_list:
+            if not isinstance(entry, dict):
+                raise ValueError(
+                    f"Each group entry must be a mapping, got: {type(entry)}"
+                )
+            gid = entry.get("id")
+            if not isinstance(gid, str) or not gid.strip():
+                raise ValueError("Each group entry must have a non-empty string 'id'")
+            if gid in groups:
+                raise ValueError(f"Duplicate probe group id: {gid}")
+            groups[gid] = entry
+        return groups
+
+    groups = data.get("probe_groups", data)
+    if groups is None:
+        return {}
+    if not isinstance(groups, dict):
+        raise ValueError(
+            f"'probe_groups' must be a mapping of name->spec, got: {type(groups)}"
+        )
+    return groups
+
+
+def _spec_from_group_value(v) -> str:
+    # New-style group descriptor: {id, name?, run: {probes: [...]}, ...}
+    if isinstance(v, dict):
+        run = v.get("run", {}) if isinstance(v.get("run", {}), dict) else {}
+        probes = run.get("probes", [])
+        if isinstance(probes, list):
+            probe_names = []
+            for p in probes:
+                if isinstance(p, str):
+                    probe_names.append(p.strip())
+                elif isinstance(p, dict) and isinstance(p.get("probe"), str):
+                    probe_names.append(p["probe"].strip())
+            return ",".join([p for p in probe_names if p])
+        return ""
+    if isinstance(v, str):
+        return v.strip()
+    if isinstance(v, list) and all(isinstance(i, str) for i in v):
+        return ",".join([i.strip() for i in v if i.strip()])
+    raise ValueError(
+        f"Probe group spec must be a string or list[str], got: {type(v)}"
+    )
+
+
+def _merge_probe_specs(base_spec: str | None, extra_spec: str | None) -> str:
+    base = (base_spec or "").strip()
+    extra = (extra_spec or "").strip()
+    if extra == "":
+        return base
+    if base == "" or base.lower() in ("auto", "none"):
+        return extra
+    if base.lower() in ("all", "*"):
+        return base
+
+    base_items = [i.strip() for i in base.split(",") if i.strip()]
+    extra_items = [i.strip() for i in extra.split(",") if i.strip()]
+
+    seen = set()
+    merged = []
+    for item in base_items + extra_items:
+        if item in seen:
+            continue
+        seen.add(item)
+        merged.append(item)
+    return ",".join(merged)
+
+
+def _apply_group_run_overrides(group_desc: dict):
+    """Apply run/probe overrides from a new-style probe group descriptor."""
+    from garak import _config
+
+    run = group_desc.get("run", {})
+    if not isinstance(run, dict):
+        return
+
+    # Basic run-level knobs
+    for k, v in run.items():
+        if k == "probes":
+            continue
+        # only set known run attrs; ignore unknown keys to keep groups future-proof
+        if hasattr(_config.run, k):
+            setattr(_config.run, k, v)
+
+    # Per-probe params
+    probes = run.get("probes", [])
+    if not isinstance(probes, list):
+        return
+    for p in probes:
+        if not isinstance(p, dict):
+            continue
+        probe_name = p.get("probe")
+        params = p.get("params", {})
+        if not isinstance(probe_name, str) or not probe_name.strip():
+            continue
+        if params is None:
+            params = {}
+        if not isinstance(params, dict):
+            raise ValueError(
+                f"Probe params for {probe_name} must be a dict, got: {type(params)}"
+            )
+        # Config schema: plugins.probes.<namespace>.<ClassName>.<param>
+        if "." not in probe_name:
+            # module-only; no class-level params supported here
+            continue
+        namespace, classname = probe_name.split(".", 1)
+        namespace = namespace.strip()
+        classname = classname.strip()
+        if not namespace or not classname:
+            continue
+        if namespace not in _config.plugins.probes:
+            _config.plugins.probes[namespace] = {}
+        if classname not in _config.plugins.probes[namespace]:
+            _config.plugins.probes[namespace][classname] = {}
+        if not isinstance(_config.plugins.probes[namespace][classname], dict):
+            _config.plugins.probes[namespace][classname] = {}
+        _config.plugins.probes[namespace][classname].update(params)
+
+
+def _expand_matrix(matrix: dict) -> list[dict]:
+    """Expand a matrix mapping into a list of override dicts (cartesian product).
+
+    Example:
+      {"target_lang": ["ko", "en"], "soft_probe_prompt_cap": [1, 5]}
+    """
+    if matrix is None:
+        return []
+    if not isinstance(matrix, dict):
+        raise ValueError(f"matrix must be a mapping, got: {type(matrix)}")
+    items = []
+    for k, v in matrix.items():
+        if isinstance(v, list):
+            items.append((k, v))
+        else:
+            raise ValueError(f"matrix values must be lists; {k} was {type(v)}")
+
+    if not items:
+        return []
+
+    # iterative cartesian product
+    combos = [dict()]
+    for k, vals in items:
+        new_combos = []
+        for c in combos:
+            for val in vals:
+                cc = dict(c)
+                cc[k] = val
+                new_combos.append(cc)
+        combos = new_combos
+    return combos
 
 
 def main(arguments=None) -> None:
@@ -165,6 +354,18 @@ def main(arguments=None) -> None:
         help="list of probe names to use, or 'all' for all (default).",
     )
     parser.add_argument(
+        "--probe_group",
+        type=str,
+        default=None,
+        help="probe group id(s) to run; comma-separated (e.g. 'smoke_ko,fast_sanity_check'). Groups are defined in probe_groups.yaml; see --list_probe_groups.",
+    )
+    parser.add_argument(
+        "--probe_groups_file",
+        type=str,
+        default=None,
+        help="path to a YAML file defining probe_groups (defaults to garak/resources/probe_groups.yaml). New-style schema: probe_groups: [{id,name,run:{target_lang,generations,soft_probe_prompt_cap,probes:[{probe,params}]},matrix:{...}}, ...].",
+    )
+    parser.add_argument(
         "--probe_tags",
         default=_config.run.probe_tags,
         type=str,
@@ -236,6 +437,11 @@ def main(arguments=None) -> None:
         "--list_probes",
         action="store_true",
         help="list all available probes. Usage: combine with --probes/-p to filter for probes that will be activated based on a `probe_spec`, e.g. '--list_probes -p dan' to show only active 'dan' family probes.",
+    )
+    parser.add_argument(
+        "--list_probe_groups",
+        action="store_true",
+        help="list probe groups available from the probe groups file (see --probe_groups_file).",
     )
     parser.add_argument(
         "--list_detectors",
@@ -384,6 +590,48 @@ def main(arguments=None) -> None:
     if "target_lang" in args:
         _config.run.target_lang = args.target_lang
 
+    # expand probe groups (CLI convenience) into the probe_spec used by the run
+    if getattr(args, "probe_group", None):
+        from pathlib import Path
+
+        groups_file = (
+            Path(args.probe_groups_file)
+            if getattr(args, "probe_groups_file", None)
+            else (_config.transient.package_dir / "resources" / "probe_groups.yaml")
+        )
+        groups = _load_probe_groups_file(str(groups_file))
+        group_names = [g.strip() for g in str(args.probe_group).split(",") if g.strip()]
+        missing = [g for g in group_names if g not in groups]
+        if missing:
+            available = ", ".join(sorted(groups.keys()))
+            raise ValueError(
+                f"Unknown probe group(s): {', '.join(missing)}. Available: {available}"
+            )
+        # apply new-style run overrides and collect matrix (if any)
+        matrices = []
+        for g in group_names:
+            if isinstance(groups[g], dict):
+                _apply_group_run_overrides(groups[g])
+                if "matrix" in groups[g]:
+                    matrices.append((g, groups[g].get("matrix")))
+
+        if len(matrices) > 1:
+            raise ValueError(
+                "Multiple selected probe groups define 'matrix'. Select one matrix group at a time."
+            )
+        if len(matrices) == 1:
+            setattr(args, "_probe_group_matrix", matrices[0][1])
+            setattr(args, "_probe_group_matrix_id", matrices[0][0])
+
+        group_spec = ",".join([_spec_from_group_value(groups[g]) for g in group_names])
+        # If the user didn't explicitly pass --probes, treat it as empty so groups act
+        # like a selector instead of being merged with the configured default.
+        base_spec = getattr(args, "probes", None) if ("probes" in args) else ""
+        merged_spec = _merge_probe_specs(base_spec, group_spec)
+        _config.plugins.probe_spec = merged_spec
+        # also reflect into args for downstream command handlers
+        setattr(args, "probes", merged_spec)
+
     # base config complete
 
     # post-config validation
@@ -467,6 +715,35 @@ def main(arguments=None) -> None:
             if probe_spec and probe_spec.lower() not in ("", "auto", "all", "*"):
                 selected_probes, _ = _config.parse_plugin_spec(probe_spec, "probes")
             command.print_probes(selected_probes)
+
+        elif args.list_probe_groups:
+            from pathlib import Path
+
+            groups_file = (
+                Path(args.probe_groups_file)
+                if getattr(args, "probe_groups_file", None)
+                else (_config.transient.package_dir / "resources" / "probe_groups.yaml")
+            )
+            groups = _load_probe_groups_file(str(groups_file))
+            print(f"Probe groups from {groups_file}:")
+            for name in sorted(groups.keys()):
+                desc = groups[name]
+                if isinstance(desc, dict):
+                    label = desc.get("name", "")
+                    label = f" ({label})" if isinstance(label, str) and label else ""
+                    run = desc.get("run", {}) if isinstance(desc.get("run", {}), dict) else {}
+                    run_bits = []
+                    for k in ("target_lang", "soft_probe_prompt_cap", "generations"):
+                        if k in run:
+                            run_bits.append(f"{k}={run[k]}")
+                    run_str = f" [{' '.join(run_bits)}]" if run_bits else ""
+                    matrix = desc.get("matrix", None)
+                    matrix_str = " [matrix]" if matrix else ""
+                    print(
+                        f"  {name}{label}:{run_str}{matrix_str} {_spec_from_group_value(desc)}"
+                    )
+                else:
+                    print(f"  {name}: {_spec_from_group_value(desc)}")
 
         elif args.list_detectors:
             selected_detectors = None
@@ -618,23 +895,60 @@ def main(arguments=None) -> None:
                     logging=logging,
                 )
 
-            command.start_run()  # start the run now that all config validation is complete
-            print(f"📜 reporting to {_config.transient.report_filename}")
+            def _run_once():
+                command.start_run()  # start the run now that all config validation is complete
+                print(f"📜 reporting to {_config.transient.report_filename}")
 
-            if parsed_specs["detector"] == []:
-                command.probewise_run(
-                    generator, parsed_specs["probe"], evaluator, parsed_specs["buff"]
-                )
+                if parsed_specs["detector"] == []:
+                    command.probewise_run(
+                        generator, parsed_specs["probe"], evaluator, parsed_specs["buff"]
+                    )
+                else:
+                    command.pxd_run(
+                        generator,
+                        parsed_specs["probe"],
+                        parsed_specs["detector"],
+                        evaluator,
+                        parsed_specs["buff"],
+                    )
+
+                command.end_run()
+
+            matrix = getattr(args, "_probe_group_matrix", None)
+            if matrix:
+                import datetime
+
+                base_prefix = _config.reporting.report_prefix
+                matrix_id = getattr(args, "_probe_group_matrix_id", "matrix")
+                combos = _expand_matrix(matrix)
+                if not combos:
+                    _run_once()
+                else:
+                    for combo in combos:
+                        # Ensure probes/detectors reload with current _config (esp target_lang)
+                        _plugins.PluginProvider.clear_cache()
+
+                        # Apply matrix overrides to run config
+                        for k, v in combo.items():
+                            if hasattr(_config.run, k):
+                                setattr(_config.run, k, v)
+
+                        # Make report filename deterministic and unique per combo
+                        suffix = ".".join([f"{k}-{v}" for k, v in combo.items()])
+                        if base_prefix:
+                            _config.reporting.report_prefix = f"{base_prefix}.{matrix_id}.{suffix}"
+                        else:
+                            _config.reporting.report_prefix = f"{matrix_id}.{suffix}"
+
+                        _config.transient.starttime = datetime.datetime.now()
+                        _config.transient.starttime_iso = _config.transient.starttime.isoformat()
+
+                        _run_once()
+
+                    # restore
+                    _config.reporting.report_prefix = base_prefix
             else:
-                command.pxd_run(
-                    generator,
-                    parsed_specs["probe"],
-                    parsed_specs["detector"],
-                    evaluator,
-                    parsed_specs["buff"],
-                )
-
-            command.end_run()
+                _run_once()
         else:
             print("nothing to do 🤷  try --help")
             if _config.plugins.target_name and not _config.plugins.target_type:

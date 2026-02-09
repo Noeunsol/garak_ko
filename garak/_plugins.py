@@ -324,6 +324,16 @@ class PluginProvider:
             PluginProvider._instance_cache[plugin.__class__] = klass_instances
         klass_instances[str(config_root)] = plugin
 
+    @staticmethod
+    def clear_cache():
+        """Clear cached plugin instances.
+
+        Useful when running multiple scans with different runtime config (e.g. target_lang)
+        in the same Python process.
+        """
+        with PluginProvider._mutex:
+            PluginProvider._instance_cache = {}
+
 
 def plugin_info(plugin: Union[Callable, str]) -> dict:
     return PluginCache.plugin_info(plugin)
