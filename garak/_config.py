@@ -50,10 +50,10 @@ class GarakSubConfig:
 
 
 @dataclass
-class BuffManager:
-    """class to store instantiated buffs"""
+class AttackerManager:
+    """class to store instantiated attackers"""
 
-    buffs = []
+    attackers = []
 
 
 @dataclass
@@ -89,7 +89,7 @@ reporting = GarakSubConfig()
 
 def _lock_config_as_dict():
     global plugins
-    for plugin_type in ("probes", "generators", "buffs", "detectors", "harnesses"):
+    for plugin_type in ("probes", "generators", "attackers", "detectors", "harnesses"):
         setattr(plugins, plugin_type, _crystallise(getattr(plugins, plugin_type)))
 
 
@@ -109,11 +109,11 @@ nested_dict = _nested_dict
 plugins.probes = nested_dict()
 plugins.generators = nested_dict()
 plugins.detectors = nested_dict()
-plugins.buffs = nested_dict()
+plugins.attackers = nested_dict()
 plugins.harnesses = nested_dict()
 reporting.taxonomy = None  # set here to enable report_digest to be called directly
 
-buffmanager = BuffManager()
+attackermanager = AttackerManager()
 
 config_files = []
 
@@ -124,7 +124,7 @@ run.target_lang = "en"
 run.langproviders = []
 
 # placeholder
-# generator, probe, detector, buff = {}, {}, {}, {}
+# generator, probe, detector, attacker = {}, {}, {}, {}
 
 
 def _key_exists(d: dict, key: str) -> bool:

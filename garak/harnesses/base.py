@@ -65,34 +65,46 @@ class Harness(Configurable):
 
         logging.info("harness init: %s", self)
 
-    def _load_buffs(self, buff_names: List) -> None:
-        """Instantiate specified buffs into global config
+    def _load_attackers(self, attacker_names: List) -> None:
+        """Instantiate specified attackers into global config
 
-        Inheriting classes call _load_buffs in their run() methods. They then call
-        garak.harness.base.Harness.run themselves, and so if _load_buffs() is called
-        from this base class, we'll end up w/ inefficient reinstantiation of buff
-        objects. If one wants to use buffs directly with this harness without
+        Inheriting classes call _load_attackers in their run() methods. They then call
+        garak.harness.base.Harness.run themselves, and so if _load_attackers() is called
+        from this base class, we'll end up w/ inefficient reinstantiation of attacker
+        objects. If one wants to use attackers directly with this harness without
         subclassing, then call this method instance directly.
 
         Don't use this in the base class's run method, garak.harness.base.Harness.run;
-        harnesses should be explicit about how they expect to deal with buffs.
+        harnesses should be explicit about how they expect to deal with attackers.
         """
 
-        _config.buffmanager.buffs = []
-        for buff_name in buff_names:
+        _config.attackermanager.attackers = []
+        for attacker_name in attacker_names:
             err_msg = None
             try:
-                _config.buffmanager.buffs.append(_plugins.load_plugin(buff_name))
-                logging.debug("loaded %s", buff_name)
+                name = (str(attacker_name) or "").strip()
+                if name.startswith("garak."):
+                    name = name[len("garak.") :]
+                # Allow legacy "attackers.*" specs, but load as attackers.
+                if name.startswith("attackers."):
+                    name = "attackers." + name[len("attackers.") :]
+                if not name.startswith("attackers."):
+                    name = "attackers." + name
+                _config.attackermanager.attackers.append(_plugins.load_plugin(name))
+                logging.debug("loaded %s", name)
             except ValueError as ve:
-                err_msg = f"❌🦾 buff load error:❌ {ve}"
+                err_msg = f"❌🦾 attacker load error:❌ {ve}"
             except Exception as e:
-                err_msg = f"❌🦾 failed to load buff {buff_name}:❌ {e}"
+                err_msg = f"❌🦾 failed to load attacker {attacker_name}:❌ {e}"
             finally:
                 if err_msg is not None:
                     print(err_msg)
                     logging.warning(err_msg)
                     continue
+
+    # Back-compat alias while other harnesses migrate.
+    def load_attackers(self, attacker_names: List) -> None:
+        self._load_attackers(attacker_names)
 
     def _start_run_hook(self):
         self._http_lib_user_agents = _config.get_http_lib_agents()

@@ -31,12 +31,12 @@ plugins:
   probe_spec: all
   detector_spec: auto
   extended_detectors: true
-  buff_spec:
-  buffs_include_original_prompt: false
-  buff_max: 
+  attacker_spec:
+  attackers_include_original_prompt: false
+  attacker_max: 
   detectors: {}
   generators: {}
-  buffs: {}
+  attackers: {}
   harnesses: {}
 
 reporting:

@@ -3,7 +3,7 @@ import random
 
 import garak
 from garak import _plugins, _config
-import garak.buffs.base
+import garak.attackers.base
 import garak.detectors.base
 import garak.generators.base
 import garak.harnesses.base
@@ -19,7 +19,7 @@ HARNESSES = [
     classname for (classname, active) in _plugins.enumerate_plugins("harnesses")
 ]
 
-BUFFS = [classname for (classname, active) in _plugins.enumerate_plugins("buffs")]
+ATTACKERS = [classname for (classname, active) in _plugins.enumerate_plugins("attackers")]
 
 GENERATORS = [
     "generators.test.Blank"
@@ -82,14 +82,14 @@ def test_instantiate_harnesses(plugin_configuration):
     ensure_pickle_support(h)
 
 
-@pytest.mark.parametrize("classname", BUFFS)
-def test_instantiate_buffs(plugin_configuration):
+@pytest.mark.parametrize("classname", ATTACKERS)
+def test_instantiate_attackers(plugin_configuration):
     classname, config_root = plugin_configuration
     try:
         b = _plugins.load_plugin(classname, config_root=config_root)
     except ModuleNotFoundError:
         pytest.skip("required deps not present")
-    assert isinstance(b, garak.buffs.base.Buff)
+    assert isinstance(b, garak.attackers.base.Attacker)
     ensure_pickle_support(b)
 
 

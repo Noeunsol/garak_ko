@@ -45,7 +45,7 @@ plugins:
                     device: cuda:1
                 Pipeline:
                   dtype: for_detector
-  buffs:
+  attackers:
       test:
         Blank:
           generators:
@@ -81,7 +81,7 @@ OPTIONS_PARAM = [
 OPTIONS_SPEC = [
     ("probes", "3,elim,gul.dukat", "probe_spec"),
     ("detectors", "all", "detector_spec"),
-    ("buffs", "polymorph", "buff_spec"),
+    ("attackers", "polymorph", "attacker_spec"),
 ]
 
 param_locs = {}
@@ -701,12 +701,12 @@ def test_probespec_loading():
     ) == ([], ["long.test.class", "another.long.test.class"])
 
 
-def test_buff_config_assertion():
+def test_attacker_config_assertion():
     import garak._plugins
 
     test_value = 9001
-    _config.plugins.buffs["paraphrase"] = {"Fast": {"num_beams": test_value}}
-    p = garak._plugins.load_plugin("buffs.paraphrase.Fast")
+    _config.plugins.attackers["paraphrase"] = {"Fast": {"num_beams": test_value}}
+    p = garak._plugins.load_plugin("attackers.paraphrase.Fast")
     assert p.num_beams == test_value
 
 

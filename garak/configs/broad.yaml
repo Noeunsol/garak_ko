@@ -14,10 +14,8 @@ run:
 plugins:
   extended_detectors: true
   probe_spec: all
-  buff_spec: paraphrase.Fast
+  attacker_spec: paraphrase.Fast
   probes:
     encoding:
       payloads:
         - default,xss,slur_terms  
-
-

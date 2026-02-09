@@ -27,7 +27,7 @@ class ProbewiseHarness(Harness):
             logging.error(f" detector load failed: {detector_name}, skipping >>")
         return False
 
-    def run(self, model, probenames, evaluator, buff_names=None):
+    def run(self, model, probenames, evaluator, attacker_names=None):
         """Execute a probe-by-probe scan
 
         Probes are executed in name order. For each probe, the detectors
@@ -50,12 +50,12 @@ class ProbewiseHarness(Harness):
         :type probenames: List[str]
         :param evaluator: an instantiated evaluator for judging detector results
         :type evaluator: garak.evaluators.base.Evaluator
-        :param buff_names: a list of buff names to be used this run
-        :type buff_names: List[str]
+        :param attacker_names: a list of attacker names to be used this run
+        :type attacker_names: List[str]
         """
 
-        if buff_names is None:
-            buff_names = []
+        if attacker_names is None:
+            attacker_names = []
 
         if not probenames:
             msg = "No probes, nothing to do"
@@ -64,7 +64,7 @@ class ProbewiseHarness(Harness):
                 print(msg)
             raise ValueError(msg)
 
-        self._load_buffs(buff_names)
+        self._load_attackers(attacker_names)
 
         probenames = sorted(probenames)
         print(

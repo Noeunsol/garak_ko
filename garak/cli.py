@@ -3,7 +3,7 @@
 
 """Flow for invoking garak from the command line"""
 
-command_options = "list_detectors list_probes list_probe_groups list_generators list_buffs list_config plugin_info interactive report version fix".split()
+command_options = "list_detectors list_probes list_probe_groups list_generators list_attackers list_attackers list_config plugin_info interactive report version fix".split()
 
 
 def parse_cli_plugin_config(plugin_type, args):
@@ -294,7 +294,7 @@ def main(arguments=None) -> None:
     parser.add_argument(
         "--skip_unknown",
         action="store_true",
-        help="allow skip of unknown probes, detectors, or buffs",
+        help="allow skip of unknown probes, detectors, or attackers",
     )
 
     ## RUN
@@ -384,13 +384,15 @@ def main(arguments=None) -> None:
         action="store_true",
         help="If detectors aren't specified on the command line, should we run all detectors? (default is just the primary detector, if given, else everything)",
     )
-    # buffs
+    # attackers (formerly "attackers")
     parser.add_argument(
-        "--buffs",
-        "-b",
+        "--attackers",
+        "-attack",
         type=str,
-        default=_config.plugins.buff_spec,
-        help="list of buffs to use. Default is none",
+        default=getattr(
+            _config.plugins, "attacker_spec", getattr(_config.plugins, "attacker_spec", "")
+        ),
+        help="list of attackers to use. Default is none",
     )
     ## Language
     parser.add_argument(
@@ -454,9 +456,9 @@ def main(arguments=None) -> None:
         help="list available generation model interfaces",
     )
     parser.add_argument(
-        "--list_buffs",
+        "--list_attackers",
         action="store_true",
-        help="list available buffs/fuzzes",
+        help="list available attackers (formerly attackers/fuzzes)",
     )
     parser.add_argument(
         "--list_config",
@@ -585,8 +587,8 @@ def main(arguments=None) -> None:
         _config.plugins.probe_spec = args.probes
     if "detectors" in args:
         _config.plugins.detector_spec = args.detectors
-    if "buffs" in args:
-        _config.plugins.buff_spec = args.buffs
+    if "attackers" in args:
+        _config.plugins.attacker_spec = args.attackers
     if "target_lang" in args:
         _config.run.target_lang = args.target_lang
 
@@ -754,8 +756,8 @@ def main(arguments=None) -> None:
                 )
             command.print_detectors(selected_detectors)
 
-        elif args.list_buffs:
-            command.print_buffs()
+        elif getattr(args, "list_attackers", False) or getattr(args, "list_attackers", False):
+            command.print_attackers()
 
         elif args.list_generators:
             command.print_generators()
@@ -854,7 +856,7 @@ def main(arguments=None) -> None:
                 logging.error(message)
                 raise ValueError(message)
 
-            parsable_specs = ["probe", "detector", "buff"]
+            parsable_specs = ["probe", "detector", "attacker"]
             parsed_specs = {}
             for spec_type in parsable_specs:
                 spec_namespace = f"{spec_type}s"
@@ -901,7 +903,10 @@ def main(arguments=None) -> None:
 
                 if parsed_specs["detector"] == []:
                     command.probewise_run(
-                        generator, parsed_specs["probe"], evaluator, parsed_specs["buff"]
+                        generator,
+                        parsed_specs["probe"],
+                        evaluator,
+                        parsed_specs["attacker"],
                     )
                 else:
                     command.pxd_run(
@@ -909,7 +914,7 @@ def main(arguments=None) -> None:
                         parsed_specs["probe"],
                         parsed_specs["detector"],
                         evaluator,
-                        parsed_specs["buff"],
+                        parsed_specs["attacker"],
                     )
 
                 command.end_run()

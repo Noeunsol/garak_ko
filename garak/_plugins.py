@@ -17,8 +17,8 @@ from pathlib import Path
 from garak import _config
 from garak.exception import GarakException, ConfigFailure
 
-PLUGIN_TYPES = ("probes", "detectors", "generators", "harnesses", "buffs")
-PLUGIN_CLASSES = ("Probe", "Detector", "Generator", "Harness", "Buff")
+PLUGIN_TYPES = ("probes", "detectors", "generators", "harnesses", "attackers")
+PLUGIN_CLASSES = ("Probe", "Detector", "Generator", "Harness", "Attacker")
 TIME_FORMAT = "%Y-%m-%d %H:%M:%S %z"
 
 
@@ -260,7 +260,7 @@ class PluginCache:
             skip_fields = [
                 "prompts",
                 "triggers",
-                "post_buff_hook",
+                "post_attacker_hook",
                 "recommended_detector",
             ]
 

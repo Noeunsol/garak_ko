@@ -47,3 +47,12 @@ def test_harness_modality_match():
     assert garak.harnesses.base._modality_match(t, tvi, False) is True
     assert garak.harnesses.base._modality_match(ti, tvi, False) is True
     assert garak.harnesses.base._modality_match(t, ti, False) is True
+
+
+def test_harness_load_attackers_loads():
+    from garak import _config
+
+    h = object.__new__(garak.harnesses.base.Harness)
+    garak.harnesses.base.Harness._load_attackers(h, ["attackers.paraphrase.Fast"])
+
+    assert len(_config.attackermanager.attackers) == 1

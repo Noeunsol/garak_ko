@@ -9,4 +9,4 @@ plugins:
       payloads:
         - default,xss,slur_terms
   extended_detectors: false
-  buff_spec: paraphrase.Fast
+  attacker_spec: paraphrase.Fast

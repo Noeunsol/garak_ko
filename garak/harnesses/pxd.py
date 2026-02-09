@@ -20,9 +20,9 @@ import garak._plugins as _plugins
 
 
 class PxD(Harness):
-    def run(self, model, probe_names, detector_names, evaluator, buff_names=None):
-        if buff_names is None:
-            buff_names = []
+    def run(self, model, probe_names, detector_names, evaluator, attacker_names=None):
+        if attacker_names is None:
+            attacker_names = []
         probe_names = sorted(probe_names)
         detector_names = sorted(detector_names)
         print(
@@ -34,7 +34,7 @@ class PxD(Harness):
             + ", ".join([name.replace("detectors.", "") for name in detector_names])
         )
         logging.info("probe queue: %s", " ".join(probe_names))
-        self._load_buffs(buff_names)
+        self._load_attackers(attacker_names)
         for probename in probe_names:
             try:
                 probe = _plugins.load_plugin(probename)

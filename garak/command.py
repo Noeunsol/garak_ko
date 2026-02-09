@@ -50,7 +50,7 @@ def start_run():
 
     logging.info("run started at %s", _config.transient.starttime_iso)
     # print("ASSIGN UUID", args)
-    if _config.system.lite and "probes" not in _config.transient.cli_args and not _config.transient.cli_args.list_probes and not _config.transient.cli_args.list_detectors and not _config.transient.cli_args.list_generators and not _config.transient.cli_args.list_buffs and not _config.transient.cli_args.list_config and not _config.transient.cli_args.plugin_info and not _config.run.interactive:  # type: ignore
+    if _config.system.lite and "probes" not in _config.transient.cli_args and not _config.transient.cli_args.list_probes and not _config.transient.cli_args.list_detectors and not _config.transient.cli_args.list_generators and not getattr(_config.transient.cli_args, "list_attackers", False) and not getattr(_config.transient.cli_args, "list_attackers", False) and not _config.transient.cli_args.list_config and not _config.transient.cli_args.plugin_info and not _config.run.interactive:  # type: ignore
         hint(
             "The current/default config is optimised for speed rather than thoroughness. Try e.g. --config full for a stronger test, or specify some probes.",
             logging=logging,
@@ -162,10 +162,10 @@ def end_run():
 
 def print_plugins(prefix: str, color, selected_plugins=None):
     """
-    Print plugins for a category (probes/detectors/generators/buffs).
+    Print plugins for a category (probes/detectors/generators/attackers).
 
     Args:
-        prefix: Plugin category (probes/detectors/generators/buffs)
+        prefix: Plugin category (probes/detectors/generators/attackers)
         color: Color for output formatting
         selected_plugins: Optional list of specific plugins to show. If None, shows all.
     """
@@ -219,10 +219,15 @@ def print_generators():
     print_plugins("generators", Fore.LIGHTMAGENTA_EX)
 
 
-def print_buffs():
+def print_attackers():
     from colorama import Fore
 
-    print_plugins("buffs", Fore.LIGHTGREEN_EX)
+    print_plugins("attackers", Fore.LIGHTGREEN_EX)
+
+
+def print_attackers():
+    # Deprecated alias kept for a transition period.
+    print_attackers()
 
 
 # describe plugin
@@ -252,14 +257,14 @@ def plugin_info(plugin_name):
 
 
 # do a run
-def probewise_run(generator, probe_names, evaluator, buffs):
+def probewise_run(generator, probe_names, evaluator, attackers):
     import garak.harnesses.probewise
 
     probewise_h = garak.harnesses.probewise.ProbewiseHarness()
-    probewise_h.run(generator, probe_names, evaluator, buffs)
+    probewise_h.run(generator, probe_names, evaluator, attackers)
 
 
-def pxd_run(generator, probe_names, detector_names, evaluator, buffs):
+def pxd_run(generator, probe_names, detector_names, evaluator, attackers):
     import garak.harnesses.pxd
 
     pxd_h = garak.harnesses.pxd.PxD()
@@ -268,7 +273,7 @@ def pxd_run(generator, probe_names, detector_names, evaluator, buffs):
         probe_names,
         detector_names,
         evaluator,
-        buffs,
+        attackers,
     )
 
 

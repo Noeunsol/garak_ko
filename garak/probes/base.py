@@ -48,8 +48,8 @@ class Probe(Configurable):
     extended_detectors: Iterable[str] = []
     # can attempts from this probe be parallelised?
     parallelisable_attempts: bool = True
-    # Keeps state of whether a buff is loaded that requires a call to untransform model outputs
-    post_buff_hook: bool = False
+    # Keeps state of whether a attacker is loaded that requires a call to untransform model outputs
+    post_attacker_hook: bool = False
     # support mainstream any-to-any large models
     # legal element for str list `modality['in']`: 'text', 'image', 'audio', 'video', '3d'
     # refer to Table 1 in https://arxiv.org/abs/2401.13601
@@ -162,39 +162,39 @@ class Probe(Configurable):
         attempt generation and posing prompts to the model"""
         pass
 
-    def _buff_hook(
+    def _attacker_hook(
         self, attempts: Iterable[garak.attempt.Attempt]
     ) -> Iterable[garak.attempt.Attempt]:
         """this is where we do the buffing, if there's any to do"""
-        if len(_config.buffmanager.buffs) == 0:
+        if len(_config.attackermanager.attackers) == 0:
             return attempts
-        buffed_attempts = []
-        buffed_attempts_added = 0
-        if _config.plugins.buffs_include_original_prompt:
+        attackered_attempts = []
+        attackered_attempts_added = 0
+        if _config.plugins.attackers_include_original_prompt:
             for attempt in attempts:
-                buffed_attempts.append(attempt)
-        for buff in _config.buffmanager.buffs:
+                attackered_attempts.append(attempt)
+        for attacker in _config.attackermanager.attackers:
             if (
-                _config.plugins.buff_max is not None
-                and buffed_attempts_added >= _config.plugins.buff_max
+                _config.plugins.attacker_max is not None
+                and attackered_attempts_added >= _config.plugins.attacker_max
             ):
                 break
-            if buff.post_buff_hook:
-                self.post_buff_hook = True
-            for buffed_attempt in buff.buff(
+            if attacker.post_attacker_hook:
+                self.post_attacker_hook = True
+            for attackered_attempt in attacker.attacker(
                 attempts, probename=".".join(self.probename.split(".")[-2:])
             ):
-                buffed_attempts.append(buffed_attempt)
-                buffed_attempts_added += 1
-        return buffed_attempts
+                attackered_attempts.append(attackered_attempt)
+                attackered_attempts_added += 1
+        return attackered_attempts
 
     @staticmethod
-    def _postprocess_buff(attempt: garak.attempt.Attempt) -> garak.attempt.Attempt:
+    def _postprocess_attacker(attempt: garak.attempt.Attempt) -> garak.attempt.Attempt:
         """hook called immediately after an attempt has been to the generator,
-        buff de-transformation; gated on self.post_buff_hook"""
-        for buff in _config.buffmanager.buffs:
-            if buff.post_buff_hook:
-                attempt = buff.untransform(attempt)
+        attacker de-transformation; gated on self.post_attacker_hook"""
+        for attacker in _config.attackermanager.attackers:
+            if attacker.post_attacker_hook:
+                attempt = attacker.untransform(attempt)
         return attempt
 
     def _generator_cleanup(self):
@@ -302,8 +302,8 @@ class Probe(Configurable):
         this_attempt.outputs = self.generator.generate(
             this_attempt.prompt, generations_this_call=self.generations
         )
-        if self.post_buff_hook:
-            this_attempt = self._postprocess_buff(this_attempt)
+        if self.post_attacker_hook:
+            this_attempt = self._postprocess_attacker(this_attempt)
         this_attempt = self._postprocess_hook(this_attempt)
         self._generator_cleanup()
         return copy.deepcopy(this_attempt)
@@ -375,9 +375,26 @@ class Probe(Configurable):
 
         # build list of attempts
         attempts_todo: Iterable[garak.attempt.Attempt] = []
-        prompts = copy.deepcopy(
-            self.prompts
-        )  # make a copy to avoid mutating source list
+        # Apply soft prompt cap centrally for probes that use the default `Probe.probe`
+        # implementation. This avoids needing per-probe pruning logic and, importantly,
+        # avoids mutating `self.prompts` (some probes keep parallel arrays keyed by the
+        # original prompt index).
+        all_prompt_indices = list(range(len(getattr(self, "prompts", []))))
+        if (
+            getattr(self, "soft_probe_prompt_cap", None)
+            and isinstance(self.soft_probe_prompt_cap, int)
+            and self.soft_probe_prompt_cap > 0
+            and len(all_prompt_indices) > self.soft_probe_prompt_cap
+        ):
+            all_prompt_indices = random.sample(
+                all_prompt_indices, self.soft_probe_prompt_cap
+            )
+
+        prompts = [copy.deepcopy(self.prompts[i]) for i in all_prompt_indices]
+        if len(prompts) == 0:
+            logging.info("No prompts for %s, skipping", self.probename)
+            return []
+
         preparation_bar = tqdm.tqdm(
             total=len(prompts),
             leave=False,
@@ -410,10 +427,10 @@ class Probe(Configurable):
                         msg.lang = self.langprovider.target_lang
         lang = self.langprovider.target_lang
         preparation_bar.close()
-        for seq, prompt in enumerate(prompts):
+        for orig_seq, prompt in zip(all_prompt_indices, prompts):
             notes = None
             if lang != self.lang:
-                pre_translation_prompt = copy.deepcopy(self.prompts[seq])
+                pre_translation_prompt = copy.deepcopy(self.prompts[orig_seq])
                 if isinstance(pre_translation_prompt, str):
                     notes = {
                         "pre_translation_prompt": garak.attempt.Conversation(
@@ -439,11 +456,11 @@ class Probe(Configurable):
                         turn.context.lang = self.lang
                     notes = {"pre_translation_prompt": pre_translation_prompt}
 
-            attempts_todo.append(self._mint_attempt(prompt, seq, notes, lang))
+            attempts_todo.append(self._mint_attempt(prompt, orig_seq, notes, lang))
 
-        # buff hook
-        if len(_config.buffmanager.buffs) > 0:
-            attempts_todo = self._buff_hook(attempts_todo)
+        # attacker hook
+        if len(_config.attackermanager.attackers) > 0:
+            attempts_todo = self._attacker_hook(attempts_todo)
 
         # iterate through attempts
         attempts_completed = self._execute_all(attempts_todo)
@@ -575,9 +592,9 @@ class TreeSearchProbe(Probe):
                 tree_bar.refresh()
                 continue
 
-            # buff hook
-            if len(_config.buffmanager.buffs) > 0:
-                attempts_todo = self._buff_hook(attempts_todo)
+            # attacker hook
+            if len(_config.attackermanager.attackers) > 0:
+                attempts_todo = self._attacker_hook(attempts_todo)
 
             attempts_completed = self._execute_all(attempts_todo)
 
@@ -707,7 +724,7 @@ class IterativeProbe(Probe):
 
     def _create_attempt(self, prompt) -> garak.attempt.Attempt:
         """Create an attempt from a prompt. Prompt can be of type str if this is an initial turn or garak.attempt.Conversation if this is a subsequent turn.
-        Note: Is it possible for _mint_attempt in class Probe to have this functionality? The goal here is to abstract out translation and buffs from how turns are processed.
+        Note: Is it possible for _mint_attempt in class Probe to have this functionality? The goal here is to abstract out translation and attackers from how turns are processed.
         """
         notes = None
         if self.langprovider.target_lang != self.lang:
@@ -787,8 +804,8 @@ class IterativeProbe(Probe):
                 attempts_todo = copy.deepcopy(self.attempt_queue)
                 self.attempt_queue = list()
 
-                if len(_config.buffmanager.buffs) > 0:
-                    attempts_todo = self._buff_hook(attempts_todo)
+                if len(_config.attackermanager.attackers) > 0:
+                    attempts_todo = self._attacker_hook(attempts_todo)
 
                 attempts_completed = self._execute_all(attempts_todo)
                 all_attempts_completed.extend(attempts_completed)
