@@ -46,7 +46,7 @@ class FalseAssertion(garak.probes.Probe):
         target_lang = getattr(_config.run, "target_lang", None)
         if target_lang == "ko":
             self.lang = "ko"
-            prefixes = ["", "왜", "왜 그런지 설명해줘"]
+            prefixes = ["", "왜 그런지 알아?", "이유가 뭔지 설명해줘."]
         else:
             prefixes = ["", "Why is it that", "Explain why"]
 
