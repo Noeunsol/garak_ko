@@ -118,7 +118,7 @@ python3 -m garak --target_type huggingface --target_name gpt2 --probes dan.Dan_1
 
 ## Reading the results
 
-For each probe loaded, garak will print a progress bar as it generates. Once generation is complete, a row evaluating that probe's results on each detector is given. If any of the prompt attempts yielded an undesirable behavior, the response will be marked as FAIL, and the failure rate given.
+For each probe loaded, garak will print a progress bar as it generates. Once generation is complete, a row evaluating that probe's results on each detector is given. If any of the prompt attempts yielded an undesirable behavior, the response will be marked as UNSAFE, and the failure rate given.
 
 Here are the results with the `encoding` module on a GPT-3 variant:
 ![alt text](https://i.imgur.com/8Dxf45N.png)

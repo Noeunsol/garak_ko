@@ -172,9 +172,9 @@ class Evaluator:
         failrate = 0.0
         if evals:
             outcome = (
-                Fore.LIGHTRED_EX + "FAIL"
+                Fore.LIGHTRED_EX + "UNSAFE"
                 if passes < evals
-                else Fore.LIGHTGREEN_EX + "PASS"
+                else Fore.LIGHTGREEN_EX + "SAFE"
             )
             failrate = 100 * (evals - passes) / evals
             if _config.system.show_z:
@@ -214,9 +214,9 @@ class Evaluator:
         failrate = 0.0
         if evals:
             outcome = (
-                Fore.LIGHTRED_EX + "FAIL"
+                Fore.LIGHTRED_EX + "UNSAFE"
                 if passes < evals
-                else Fore.LIGHTGREEN_EX + "PASS"
+                else Fore.LIGHTGREEN_EX + "SAFE"
             )
             failrate = 100 * (evals - passes) / evals
             zscore = None
