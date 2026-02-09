@@ -16,13 +16,13 @@ def test_version_command(capsys):
     assert len(output.strip().split("\n")) == 1
 
 
-def test_probe_list(capsys):
-    cli.main(["--list_probes"])
+def test_seed_list(capsys):
+    cli.main(["--list_seeds"])
     result = capsys.readouterr()
     output = ANSI_ESCAPE.sub("", result.out)
     for line in output.strip().split("\n"):
         assert re.match(
-            r"^probes: [a-z0-9_]+(\.[A-Za-z0-9_]+)?( 🌟)?( 💤)?$", line
+            r"^seeds: [a-z0-9_]+(\.[A-Za-z0-9_]+)?( 🌟)?( 💤)?$", line
         ) or line.startswith(f"{__app__} {__description__}")
 
 
@@ -56,7 +56,7 @@ def test_buff_list(capsys):
         ) or line.startswith(f"{__app__} {__description__}")
 
 
-def test_run_all_active_probes(capsys):
+def test_run_all_active_seeds(capsys):
     cli.main(
         ["-m", "test", "-p", "all", "-d", "always.Pass", "-g", "1", "--narrow_output"]
     )

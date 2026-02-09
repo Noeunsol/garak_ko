@@ -3,7 +3,7 @@
 
 """pxd harness
 
-The pxd (probes x detectors) harness runs all specified probes and analyses
+The pxd (seeds x detectors) harness runs all specified seeds and analyses
 results using all specified detectors.
 
 It's thorough, and might end up doing some comparisons that don't make so
@@ -20,31 +20,31 @@ import garak._plugins as _plugins
 
 
 class PxD(Harness):
-    def run(self, model, probe_names, detector_names, evaluator, attacker_names=None):
+    def run(self, model, seed_names, detector_names, evaluator, attacker_names=None):
         if attacker_names is None:
             attacker_names = []
-        probe_names = sorted(probe_names)
+        seed_names = sorted(seed_names)
         detector_names = sorted(detector_names)
         print(
-            f"🕵️  queue of {Style.BRIGHT}{Fore.LIGHTYELLOW_EX}probes:{Style.RESET_ALL} "
-            + ", ".join([name.replace("probes.", "") for name in probe_names])
+            f"🕵️  queue of {Style.BRIGHT}{Fore.LIGHTYELLOW_EX}seeds:{Style.RESET_ALL} "
+            + ", ".join([name.replace("seeds.", "") for name in seed_names])
         )
         print(
             f"🔎 queue of {Style.RESET_ALL}{Fore.LIGHTBLUE_EX}detectors:{Style.RESET_ALL} "
             + ", ".join([name.replace("detectors.", "") for name in detector_names])
         )
-        logging.info("probe queue: %s", " ".join(probe_names))
+        logging.info("seed queue: %s", " ".join(seed_names))
         self._load_attackers(attacker_names)
-        for probename in probe_names:
+        for seedname in seed_names:
             try:
-                probe = _plugins.load_plugin(probename)
+                seed = _plugins.load_plugin(seedname)
             except Exception as e:
-                message = f"{probename} load exception 🛑, skipping >>"
+                message = f"{seedname} load exception 🛑, skipping >>"
                 print(message, str(e))
                 logging.error("%s %s", message, str(e))
                 continue
-            if not probe:
-                message = f"{probename} load failed ⚠️, skipping >>"
+            if not seed:
+                message = f"{seedname} load failed ⚠️, skipping >>"
                 print(message)
                 logging.warning(message)
                 continue
@@ -57,5 +57,5 @@ class PxD(Harness):
                     msg = f" detector load failed: {detector_name}, skipping >>"
                     print(msg)
                     logging.error(msg)
-            super().run(model, [probe], detectors, evaluator, announce_probe=False)
-            # del probe, h, detectors
+            super().run(model, [seed], detectors, evaluator, announce_seed=False)
+            # del seed, h, detectors

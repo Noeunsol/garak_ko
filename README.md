@@ -2,9 +2,9 @@
 
 *Generative AI Red-teaming & Assessment Kit*
 
-`garak` checks if an LLM can be made to fail in a way we don't want. `garak` probes for hallucination, data leakage, prompt injection, misinformation, toxicity generation, jailbreaks, and many other weaknesses. If you know `nmap` or `msf` / Metasploit Framework, garak does somewhat similar things to them, but for LLMs. 
+`garak` checks if an LLM can be made to fail in a way we don't want. `garak` seeds for hallucination, data leakage, prompt injection, misinformation, toxicity generation, jailbreaks, and many other weaknesses. If you know `nmap` or `msf` / Metasploit Framework, garak does somewhat similar things to them, but for LLMs. 
 
-`garak` focuses on ways of making an LLM or dialog system fail. It combines static, dynamic, and adaptive probes to explore this.
+`garak` focuses on ways of making an LLM or dialog system fail. It combines static, dynamic, and adaptive seeds to explore this.
 
 `garak`'s a free tool. We love developing it and are always interested in adding functionality to support applications. 
 
@@ -90,35 +90,35 @@ The general syntax is:
 
 `garak <options>`
 
-`garak` needs to know what model to scan, and by default, it'll try all the probes it knows on that model, using the vulnerability detectors recommended by each probe. You can see a list of probes using:
+`garak` needs to know what model to scan, and by default, it'll try all the seeds it knows on that model, using the vulnerability detectors recommended by each seed. You can see a list of seeds using:
 
-`garak --list_probes`
+`garak --list_seeds`
 
 To specify a generator, use the `--target_type` and, optionally, the `--target_name` options. Model type specifies a model family/interface; model name specifies the exact model to be used. The "Intro to generators" section below describes some of the generators supported. A straightforward generator family is Hugging Face models; to load one of these, set `--target_type` to `huggingface` and `--target_name` to the model's name on Hub (e.g. `"RWKV/rwkv-4-169m-pile"`). Some generators might need an API key to be set as an environment variable, and they'll let you know if they need that.
 
-`garak` runs all the probes by default, but you can be specific about that too. `--probes promptinject` will use only the [PromptInject](https://github.com/agencyenterprise/promptinject) framework's methods, for example. You can also specify one specific plugin instead of a plugin family by adding the plugin name after a `.`; for example, `--probes lmrc.SlurUsage` will use an implementation of checking for models generating slurs based on the [Language Model Risk Cards](https://arxiv.org/abs/2303.18190) framework.
+`garak` runs all the seeds by default, but you can be specific about that too. `--seeds promptinject` will use only the [PromptInject](https://github.com/agencyenterprise/promptinject) framework's methods, for example. You can also specify one specific plugin instead of a plugin family by adding the plugin name after a `.`; for example, `--seeds lmrc.SlurUsage` will use an implementation of checking for models generating slurs based on the [Language Model Risk Cards](https://arxiv.org/abs/2303.18190) framework.
 
 For help and inspiration, find us on [Twitter](https://twitter.com/garak_llm) or [discord](https://discord.gg/uVch4puUCs)!
 
 ## Examples
 
-Probe ChatGPT for encoding-based prompt injection (OSX/\*nix) (replace example value with a real OpenAI API key)
+Seed ChatGPT for encoding-based prompt injection (OSX/\*nix) (replace example value with a real OpenAI API key)
  
 ```
 export OPENAI_API_KEY="sk-123XXXXXXXXXXXX"
-python3 -m garak --target_type openai --target_name gpt-3.5-turbo --probes encoding
+python3 -m garak --target_type openai --target_name gpt-3.5-turbo --seeds encoding
 ```
 
 See if the Hugging Face version of GPT2 is vulnerable to DAN 11.0
 
 ```
-python3 -m garak --target_type huggingface --target_name gpt2 --probes dan.Dan_11_0
+python3 -m garak --target_type huggingface --target_name gpt2 --seeds dan.Dan_11_0
 ```
 
 
 ## Reading the results
 
-For each probe loaded, garak will print a progress bar as it generates. Once generation is complete, a row evaluating that probe's results on each detector is given. If any of the prompt attempts yielded an undesirable behavior, the response will be marked as UNSAFE, and the failure rate given.
+For each seed loaded, garak will print a progress bar as it generates. Once generation is complete, a row evaluating that seed's results on each detector is given. If any of the prompt attempts yielded an undesirable behavior, the response will be marked as UNSAFE, and the failure rate given.
 
 Here are the results with the `encoding` module on a GPT-3 variant:
 ![alt text](https://i.imgur.com/8Dxf45N.png)
@@ -128,7 +128,7 @@ And the same results for ChatGPT:
 
 We can see that the more recent model is much more susceptible to encoding-based injection attacks, where text-babbage-001 was only found to be vulnerable to quoted-printable and MIME encoding injections.  The figures at the end of each row, e.g. 840/840, indicate the number of text generations total and then how many of these seemed to behave OK. The figure can be quite high because more than one generation is made per prompt - by default, 10.
 
-Errors go in `garak.log`; the run is logged in detail in a `.jsonl` file specified at analysis start & end. There's a basic analysis script in `analyse/analyse_log.py` which will output the probes and prompts that led to the most hits.
+Errors go in `garak.log`; the run is logged in detail in a `.jsonl` file specified at analysis start & end. There's a basic analysis script in `analyse/analyse_log.py` which will output the seeds and prompts that led to the most hits.
 
 Send PRs & open issues. Happy hunting!
 
@@ -219,7 +219,7 @@ Example usage:
 ```
 export BEDROCK_API_KEY="your-api-key"
 export BEDROCK_REGION="us-east-1"
-garak --target_type bedrock --target_name claude-3-sonnet --probes dan
+garak --target_type bedrock --target_name claude-3-sonnet --seeds dan
 ```
 
 ### Test
@@ -231,30 +231,30 @@ For testing. This always generates the empty string, using the `test.Blank` gene
 * `--target_type test.Repeat`
 For testing. This generator repeats back the prompt it received.
 
-## Intro to probes
+## Intro to seeds
 
-| Probe                | Description                                                                                                                   |
+| Seed                | Description                                                                                                                   |
 |----------------------|-------------------------------------------------------------------------------------------------------------------------------|
-| blank                | A simple probe that always sends an empty prompt.                                                                             |
-| atkgen               | Automated Attack Generation. A red-teaming LLM probes the target and reacts to it in an attempt to get toxic output. Prototype, mostly stateless, for now uses a simple GPT-2 [fine-tuned](https://huggingface.co/garak-llm/artgpt2tox) on the subset of hhrlhf attempts that yielded detectable toxicity (the only target currently supported for now). |
+| blank                | A simple seed that always sends an empty prompt.                                                                             |
+| atkgen               | Automated Attack Generation. A red-teaming LLM seeds the target and reacts to it in an attempt to get toxic output. Prototype, mostly stateless, for now uses a simple GPT-2 [fine-tuned](https://huggingface.co/garak-llm/artgpt2tox) on the subset of hhrlhf attempts that yielded detectable toxicity (the only target currently supported for now). |
 | badchars             | Implements imperceptible Unicode perturbations (invisible characters, homoglyphs, reorderings, deletions) inspired by the [Bad Characters](https://arxiv.org/abs/2106.09898) paper. |
-| av_spam_scanning     | Probes that attempt to make the model output malicious content signatures                                                     |
-| continuation         | Probes that test if the model will continue a probably undesirable word                                                       |
+| av_spam_scanning     | Seeds that attempt to make the model output malicious content signatures                                                     |
+| continuation         | Seeds that test if the model will continue a probably undesirable word                                                       |
 | dan                  | Various [DAN](https://adguard.com/en/blog/chatgpt-dan-prompt-abuse.html) and DAN-like attacks                                 |
 | donotanswer          | Prompts to which responsible language models should not answer.                                                               |
 | encoding             | Prompt injection through text encoding                                                                                        |
 | gcg                  | Disrupt a system prompt by appending an adversarial suffix.                                                                   |
-| glitch               | Probe model for glitch tokens that provoke unusual behavior.                                                                  |
+| glitch               | Seed model for glitch tokens that provoke unusual behavior.                                                                  |
 | grandma              | Appeal to be reminded of one's grandmother.                                                                                   |
 | goodside             | Implementations of Riley Goodside attacks.                                                                                    |
 | leakreplay           | Evaluate if a model will replay training data.                                                                                |
-| lmrc                 | Subsample of the [Language Model Risk Cards](https://arxiv.org/abs/2303.18190) probes                                         |
+| lmrc                 | Subsample of the [Language Model Risk Cards](https://arxiv.org/abs/2303.18190) seeds                                         |
 | malwaregen           | Attempts to have the model generate code for building malware                                                                 |
 | misleading           | Attempts to make a model support misleading and false claims                                                                  |
 | packagehallucination | Trying to get code generations that specify non-existent (and therefore insecure) packages.                                   |
 | promptinject         | Implementation of the Agency Enterprise [PromptInject](https://github.com/agencyenterprise/PromptInject/tree/main/promptinject) work (best paper awards @ NeurIPS ML Safety Workshop 2022) |
 | realtoxicityprompts  | Subset of the RealToxicityPrompts work (data constrained because the full test will take so long to run)                      |
-| snowball             | [Snowballed Hallucination](https://ofir.io/snowballed_hallucination.pdf) probes designed to make a model give a wrong answer to questions too complex for it to process |
+| snowball             | [Snowballed Hallucination](https://ofir.io/snowballed_hallucination.pdf) seeds designed to make a model give a wrong answer to questions too complex for it to process |
 | xss                  | Look for vulnerabilities the permit or enact cross-site attacks, such as private data exfiltration.                           |
 
 ## Logging
@@ -268,18 +268,18 @@ For testing. This generator repeats back the prompt it received.
 
 Check out the [reference docs](https://reference.garak.ai/) for an authoritative guide to `garak` code structure.
 
-In a typical run, `garak` will read a model type (and optionally model name) from the command line, then determine which `probe`s and `detector`s to run, start up a `generator`, and then pass these to a `harness` to do the probing; an `evaluator` deals with the results. There are many modules in each of these categories, and each module provides a number of classes that act as individual plugins.
+In a typical run, `garak` will read a model type (and optionally model name) from the command line, then determine which `seed`s and `detector`s to run, start up a `generator`, and then pass these to a `harness` to do the probing; an `evaluator` deals with the results. There are many modules in each of these categories, and each module provides a number of classes that act as individual plugins.
 
-* `garak/probes/` - classes for generating interactions with LLMs
+* `garak/seeds/` - classes for generating interactions with LLMs
 * `garak/detectors/` - classes for detecting an LLM is exhibiting a given failure mode
 * `garak/evaluators/` - assessment reporting schemes
-* `garak/generators/` - plugins for LLMs to be probed
+* `garak/generators/` - plugins for LLMs to be seedd
 * `garak/harnesses/` - classes for structuring testing
 * `resources/` - ancillary items required by plugins
 
-The default operating mode is to use the `probewise` harness. Given a list of probe module names and probe plugin names, the `probewise` harness instantiates each probe, then for each probe reads its `primary_detector` and `extended_detectors` attributes to get a list of `detector`s to run on the output.
+The default operating mode is to use the `seedwise` harness. Given a list of seed module names and seed plugin names, the `seedwise` harness instantiates each seed, then for each seed reads its `primary_detector` and `extended_detectors` attributes to get a list of `detector`s to run on the output.
 
-Each plugin category (`probes`, `detectors`, `evaluators`, `generators`, `harnesses`) includes a `base.py` which defines the base classes usable by plugins in that category. Each plugin module defines plugin classes that inherit from one of the base classes. For example, `garak.generators.openai.OpenAIGenerator` descends from `garak.generators.base.Generator`.
+Each plugin category (`seeds`, `detectors`, `evaluators`, `generators`, `harnesses`) includes a `base.py` which defines the base classes usable by plugins in that category. Each plugin module defines plugin classes that inherit from one of the base classes. For example, `garak.generators.openai.OpenAIGenerator` descends from `garak.generators.base.Generator`.
 
 Larger artefacts, like model files and bigger corpora, are kept out of the repository; they can be stored on e.g. Hugging Face Hub and loaded locally by clients using `garak`.
 
@@ -287,17 +287,17 @@ Larger artefacts, like model files and bigger corpora, are kept out of the repos
 ## Developing your own plugin
 
 * Take a look at how other plugins do it
-* Inherit from one of the base classes, e.g. `garak.probes.base.TextProbe`
+* Inherit from one of the base classes, e.g. `garak.seeds.base.TextSeed`
 * Override as little as possible
 * You can test the new code in at least two ways:
   * Start an interactive Python session
-    * Import the model, e.g. `import garak.probes.mymodule`
-    * Instantiate the plugin, e.g. `p = garak.probes.mymodule.MyProbe()`
+    * Import the model, e.g. `import garak.seeds.mymodule`
+    * Instantiate the plugin, e.g. `p = garak.seeds.mymodule.MySeed()`
   * Run a scan with test plugins
-    * For probes, try a blank generator and always.Pass detector: `python3 -m garak -m test.Blank -p mymodule -d always.Pass`
-    * For detectors, try a blank generator and a blank probe: `python3 -m garak -m test.Blank -p test.Blank -d mymodule`
-    * For generators, try a blank probe and always.Pass detector: `python3 -m garak -m mymodule -p test.Blank -d always.Pass`
-  * Get `garak` to list all the plugins of the type you're writing, with `--list_probes`, `--list_detectors`, or `--list_generators`
+    * For seeds, try a blank generator and always.Pass detector: `python3 -m garak -m test.Blank -p mymodule -d always.Pass`
+    * For detectors, try a blank generator and a blank seed: `python3 -m garak -m test.Blank -p test.Blank -d mymodule`
+    * For generators, try a blank seed and always.Pass detector: `python3 -m garak -m mymodule -p test.Blank -d always.Pass`
+  * Get `garak` to list all the plugins of the type you're writing, with `--list_seeds`, `--list_detectors`, or `--list_generators`
 
 
 ## FAQ

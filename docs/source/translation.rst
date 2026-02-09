@@ -1,16 +1,16 @@
 Translation Support
 ===================
 
-Garak enables translation support for probe and detector keywords and triggers.
+Garak enables translation support for seed and detector keywords and triggers.
 Allowing testing of models that accept and produce text in languages other than the language the plugin was written for.
 
 Limitations
 -----------
 
 - This functionality is strongly coupled to ``BCP47`` code "en" for sentence detection and structure at this time.
-- Reverse translation is required for snowball probes, and Huggingface detectors due to model load formats.
+- Reverse translation is required for snowball seeds, and Huggingface detectors due to model load formats.
 - Huggingface detectors primarily load English models. Requiring a target language NLI model for the detector.
-- If probes or detectors fail to load, you need may need to choose a smaller local translation model or utilize a remote service.
+- If seeds or detectors fail to load, you need may need to choose a smaller local translation model or utilize a remote service.
 - Translation may add significant execution time to the run depending on resources available.
 
 Supported Translation Services
@@ -27,7 +27,7 @@ Supported Translation Services
 API Key Requirements
 --------------------
 
-To use use DeepL API, Riva API, or Google Cloud Translation to translate probe and detector keywords and triggers from cloud services an API key must be supplied.
+To use use DeepL API, Riva API, or Google Cloud Translation to translate seed and detector keywords and triggers from cloud services an API key must be supplied.
 
 API keys for the preferred service can be obtained in following locations:
 
@@ -130,7 +130,7 @@ You use the following yaml config.
 .. code-block:: bash
 
    export DEEPL_API_KEY=xxxx
-   python3 -m garak --target_type nim --target_name meta/llama-3.1-8b-instruct --probes encoding --config <path-to-your-yaml-config-file>
+   python3 -m garak --target_type nim --target_name meta/llama-3.1-8b-instruct --seeds encoding --config <path-to-your-yaml-config-file>
 
 
 Riva
@@ -152,7 +152,7 @@ You use the following yaml config.
 .. code-block:: bash
 
    export RIVA_API_KEY=xxxx
-   python3 -m garak --target_type nim --target_name meta/llama-3.1-8b-instruct --probes encoding --config <path-to-your-yaml-config-file>
+   python3 -m garak --target_type nim --target_name meta/llama-3.1-8b-instruct --seeds encoding --config <path-to-your-yaml-config-file>
 
 
 Google Cloud Translation
@@ -175,7 +175,7 @@ You use the following yaml config.
 .. code-block:: bash
 
     export GOOGLE_APPLICATION_CREDENTIALS=<path to credential configuration json file>
-    python3 -m garak --target_type nim --target_name meta/llama-3.1-8b-instruct --probes encoding --config <path-to-your-yaml-config-file>
+    python3 -m garak --target_type nim --target_name meta/llama-3.1-8b-instruct --seeds encoding --config <path-to-your-yaml-config-file>
 
 
 Local
@@ -196,7 +196,7 @@ You use the following yaml config.
 
 .. code-block:: bash
 
-   python3 -m garak --target_type nim --target_name meta/llama-3.1-8b-instruct --probes encoding --config <path-to-your-yaml-config-file>
+   python3 -m garak --target_type nim --target_name meta/llama-3.1-8b-instruct --seeds encoding --config <path-to-your-yaml-config-file>
 
 The default configuration will load `Helsinki-NLP MarianMT <https://huggingface.co/docs/transformers/model_doc/marian>`_ models for local translation.
 
@@ -218,4 +218,4 @@ contain ``m2m100`` to be loaded by garak.
 
 .. code-block:: bash
 
-   python3 -m garak --target_type nim --target_name meta/llama-3.1-8b-instruct --probes encoding --config <path-to-your-yaml-config-file>
+   python3 -m garak --target_type nim --target_name meta/llama-3.1-8b-instruct --seeds encoding --config <path-to-your-yaml-config-file>

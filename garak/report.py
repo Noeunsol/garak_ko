@@ -21,9 +21,9 @@ class Report:
     :type records: List[dict]
     :param metadata: report metadata, storing information about scanned model
     :type metadata: dict
-    :param evaluations: evaluation information at probe level
+    :param evaluations: evaluation information at seed level
     :type evaluations: pd.DataFrame
-    :param scores: average pass percentage per probe
+    :param scores: average pass percentage per seed
     :type scores: pd.DataFrame
     :param write_location: location where the output is written out.
     :type write_location: str
@@ -68,12 +68,12 @@ class Report:
 
         # preprocess
         for i in range(len(evals)):
-            module_name, plugin_class_name = evals[i]["probe"].split(".")
-            mod = importlib.import_module(f"garak.probes.{module_name}")
+            module_name, plugin_class_name = evals[i]["seed"].split(".")
+            mod = importlib.import_module(f"garak.seeds.{module_name}")
 
-            evals[i]["probe"] = f"{module_name}.{plugin_class_name}"
+            evals[i]["seed"] = f"{module_name}.{plugin_class_name}"
             plugin_instance = getattr(mod, plugin_class_name)()
-            evals[i]["probe_tags"] = plugin_instance.tags
+            evals[i]["seed_tags"] = plugin_instance.tags
 
         self.evaluations = pd.DataFrame.from_dict(evals)
         self.evaluations["score"] = np.where(
@@ -81,7 +81,7 @@ class Report:
             100 * self.evaluations["passed"] / self.evaluations["total_evaluated"],
             0,
         )
-        self.scores = self.evaluations[["probe", "score"]].groupby("probe").mean()
+        self.scores = self.evaluations[["seed", "score"]].groupby("seed").mean()
         return self
 
     def export(self):  # TODO: add html format
@@ -112,19 +112,19 @@ class Report:
 
         # now build all the reports
         all_reports = []
-        for probe in self.scores.index:
+        for seed in self.scores.index:
             report = (
                 report_template.model_copy()
             )  # replaced copy() with model_copy() to avoid deprecation warning
-            probe_data = self.evaluations.query(f"probe=='{probe}'")
+            seed_data = self.evaluations.query(f"seed=='{seed}'")
 
-            description_value = f"A model was evaluated by the Garak LLM Vulnerability scanner using the probe `{probe}`."
+            description_value = f"A model was evaluated by the Garak LLM Vulnerability scanner using the seed `{seed}`."
             if self.metadata is not None:
                 target_type = self.metadata.get("plugins.target_type")
                 target_name = self.metadata.get("plugins.target_name")
 
                 if target_name and target_type:
-                    description_value = f"The model {target_name} from {target_type} was evaluated by the Garak LLM Vulnerability scanner using the probe `{probe}`."
+                    description_value = f"The model {target_name} from {target_type} was evaluated by the Garak LLM Vulnerability scanner using the seed `{seed}`."
 
             report.description = ac.LangValue(
                 lang="eng",
@@ -141,14 +141,14 @@ class Report:
                     detection_method=ac.Detection(
                         type=ae.MethodEnum.thres, name="Count failed"
                     ),
-                    results=probe_data[
+                    results=seed_data[
                         ["detector", "passed", "total_evaluated", "score"]
                     ]
                     .reset_index()
                     .to_dict(),
                 )
             ]
-            all_tags = probe_data.iloc[0]["probe_tags"]
+            all_tags = seed_data.iloc[0]["seed_tags"]
             if all_tags == all_tags:  # check for NaN
                 tags_split = [
                     tag.split(":") for tag in all_tags if tag.startswith("avid")

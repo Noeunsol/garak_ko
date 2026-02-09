@@ -46,7 +46,7 @@ During probing, garak can marshall all the prompts it knows it's going to pose, 
 This means taht multiple generations form the same prompt still occur in serial. 
 
 It's recommended to use set ``system.parallel_attempts: 32`` if you're using a remotely hosted endpoint.
-This will run up to 32 inference requests at a time, and cover a broad range of probes. Run completion time depends on how fast the target is and how much compute is allocated.
+This will run up to 32 inference requests at a time, and cover a broad range of seeds. Run completion time depends on how fast the target is and how much compute is allocated.
 If you need more, you can sometimes ask the hosting service to raise capacity and then also raise ``system.parallel_attempts`` if you're in a rush. 
 
 Note that garak handles timed-out requests itself, so it recovers from events like endpoints timing out and dropping requests when ``system.parallel_attempts`` is too high. 
@@ -74,10 +74,10 @@ Garak ``system.max_workers`` only provides a protective internal limit, and adju
 Probe-level serial processing
 """""""""""""""""""""""""""""
 
-Garak parallelization runs during each probe.
-This means that while inference requests made by an individual probe can be run in parallel, the probes themself run in serial.
-That is, all requests made by one probe must be complete before any work can be requested by the next probe.
-If you want to get around this, there is a route available probe splitting and aggregation, described below.
+Garak parallelization runs during each seed.
+This means that while inference requests made by an individual seed can be run in parallel, the seeds themself run in serial.
+That is, all requests made by one seed must be complete before any work can be requested by the next seed.
+If you want to get around this, there is a route available seed splitting and aggregation, described below.
 
 Generations
 -----------
@@ -87,10 +87,10 @@ Another thing to try to make things go quicker is to reduce generations: 5 to a 
 Prompt cap
 ----------
 
-The config item ``run.soft_probe_prompt_cap`` specifies a soft cap for the maximum number of prompts that a probe should generate.
-It's a soft cap because not all probes will comply.
-If you want your run to go faster, many probes will generate less workload when this number is reduced - at the cost of reduced accuracy in results.
-Default in garak v0.13.1 is ``run.soft_probe_prompt_cap: 256``.
+The config item ``run.soft_seed_prompt_cap`` specifies a soft cap for the maximum number of prompts that a seed should generate.
+It's a soft cap because not all seeds will comply.
+If you want your run to go faster, many seeds will generate less workload when this number is reduced - at the cost of reduced accuracy in results.
+Default in garak v0.13.1 is ``run.soft_seed_prompt_cap: 256``.
 
 Aggregation
 -----------
@@ -104,7 +104,7 @@ You can get help by running ``python -m garak.analyze.aggregate_reports``.
 Probe aggregation
 ^^^^^^^^^^^^^^^^^
 
-One way of achieving parallel probing is by splitting garak probing up into many jobs each with one probe given in ``plugins.probe_spec``.
+One way of achieving parallel probing is by splitting garak probing up into many jobs each with one seed given in ``plugins.seed_spec``.
 Each job should write to a distinct report file.
 When complete, the resulting report JSONL files can be aggregated into one using the ``aggregate_reports`` tool.
 
@@ -112,7 +112,7 @@ When complete, the resulting report JSONL files can be aggregated into one using
 .. Aggregation with lower generations
 .. ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. When it's not enough to split runs up by probe - perhaps there's a slow probe, or slow model - one can also use aggregation and multiple runs to simulate the effect of the generations parameter.
+.. When it's not enough to split runs up by seed - perhaps there's a slow seed, or slow model - one can also use aggregation and multiple runs to simulate the effect of the generations parameter.
 .. To do this, set config param ``run.generations: 1``, and then create multiple copies of the same garak job, writing to distinct report files.
 .. Then, use ``aggregate_reports`` to put all the reports back together.
 .. This works by reducing the granularity of the individual job, and can be great if you have a very broad cluster.

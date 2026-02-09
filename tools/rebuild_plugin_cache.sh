@@ -29,7 +29,7 @@ echo "`date` Post-dating core plugin cache"
 touch -d "2024-07-01" garak/resources/plugin_cache.json
 
 echo "`date` Rebuilding user plugin cache"
-python -m garak --list_probes > /dev/null
+python -m garak --list_seeds > /dev/null
 
 echo "`date` Copying user plugin cache over core plugin cache"
 cp $HOME/.cache/garak/resources/plugin_cache.json garak/resources/

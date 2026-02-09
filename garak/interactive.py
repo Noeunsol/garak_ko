@@ -11,7 +11,7 @@ import sys
 import cmd2
 from colorama import Fore, Style
 
-import garak.harnesses.probewise
+import garak.harnesses.seedwise
 from garak import _config
 from garak.evaluators import ThresholdEvaluator
 from garak.data import path as data_path
@@ -23,14 +23,14 @@ logger = getLogger(__name__)
 def _get_list_parser():
     # Create parser for list command
     list_parser = cmd2.Cmd2ArgumentParser(
-        description="List available probes, decorators, or generators",
+        description="List available seeds, decorators, or generators",
         epilog="This command only accepts a single string and lists the relevant attributes.",
     )
     list_parser.add_argument(
         "type",
         type=str,
-        choices=("probes", "detectors", "generators"),
-        help="Specify probes, detectors, or generators.",
+        choices=("seeds", "detectors", "generators"),
+        help="Specify seeds, detectors, or generators.",
     )
     return list_parser
 
@@ -38,16 +38,16 @@ def _get_list_parser():
 global list_parser
 list_parser = _get_list_parser()
 
-probe_parser = cmd2.Cmd2ArgumentParser(
-    description="Run the probe.",
-    epilog="Uses set probe if no probe name is provided. "
-    "If a probe name is provided, executes that probe.",
+seed_parser = cmd2.Cmd2ArgumentParser(
+    description="Run the seed.",
+    epilog="Uses set seed if no seed name is provided. "
+    "If a seed name is provided, executes that seed.",
 )
-probe_parser.add_argument(
-    "probe",
+seed_parser.add_argument(
+    "seed",
     nargs="?",
     type=str,
-    help="Name of the probe to execute if not already set.",
+    help="Name of the seed to execute if not already set.",
 )
 
 
@@ -75,11 +75,11 @@ class GarakCommands(cmd2.CommandSet):
     @cmd2.with_argparser(list_parser)
     def do_list(self, args):
         if not args.type:
-            print("Choose probes, detectors, or generators.")
+            print("Choose seeds, detectors, or generators.")
 
-        if args.type == "probes":
-            logger.debug("Listing probes")
-            print_plugins("probes", Fore.LIGHTYELLOW_EX)
+        if args.type == "seeds":
+            logger.debug("Listing seeds")
+            print_plugins("seeds", Fore.LIGHTYELLOW_EX)
 
         elif args.type == "detectors":
             logger.debug("Listing detectors")
@@ -91,24 +91,24 @@ class GarakCommands(cmd2.CommandSet):
 
         else:
             logger.debug("Invalid choice to `list` command.")
-            print("Choose probes, detectors or generators.")
+            print("Choose seeds, detectors or generators.")
 
         list_parser = _get_list_parser()
 
-    @cmd2.with_argparser(probe_parser)
-    def do_probe(self, args):
+    @cmd2.with_argparser(seed_parser)
+    def do_seed(self, args):
         if not self._cmd.target_type or not self._cmd.target_model:
             print(
                 "Use the `set` command to set the target_type and target_model first."
             )
             return
-        # If probe is already set, overwrite it.
-        if args.probe and self._cmd.probe:
-            logger.warning(f"Probe already set. Resetting probe to {args.probe}")
-            print(f"Executing {args.probe}")
-            self._cmd.probe = args.probe
-        elif not args.probe and not self._cmd.probe:
-            logger.warning("No probe set and no probe specified.")
+        # If seed is already set, overwrite it.
+        if args.seed and self._cmd.seed:
+            logger.warning(f"Seed already set. Resetting seed to {args.seed}")
+            print(f"Executing {args.seed}")
+            self._cmd.seed = args.seed
+        elif not args.seed and not self._cmd.seed:
+            logger.warning("No seed set and no seed specified.")
             return None
         try:
             if self._cmd.generator:
@@ -135,8 +135,8 @@ class GarakCommands(cmd2.CommandSet):
             print("Please check your generator model name.")
 
         evaluator = ThresholdEvaluator(self._cmd.eval_threshold)
-        harness = garak.harnesses.probewise.ProbewiseHarness()
-        harness.run(generator, [self._cmd.probe], evaluator)
+        harness = garak.harnesses.seedwise.SeedwiseHarness()
+        harness.run(generator, [self._cmd.seed], evaluator)
         logger.info("Run complete, ending")
         print("Run complete!")
 
@@ -156,7 +156,7 @@ class GarakTerminal(cmd2.Cmd):
         self.add_settable(
             cmd2.Settable("target_model", str, "Name of the target", self)
         )
-        self.add_settable(cmd2.Settable("probe", str, "Probe to execute", self))
+        self.add_settable(cmd2.Settable("seed", str, "Seed to execute", self))
         self.add_settable(cmd2.Settable("detector", str, "Detector to execute", self))
         self.add_settable(
             cmd2.Settable("generator", str, "Generator settings path", self)
@@ -169,7 +169,7 @@ class GarakTerminal(cmd2.Cmd):
         # Set default parameter values
         self.target_type = ""
         self.target_model = ""
-        self.probe = ""
+        self.seed = ""
         self.detector = ""
         self.generator = ""
         self.eval_threshold = 0.5
@@ -201,14 +201,14 @@ class GarakTerminal(cmd2.Cmd):
         """Set the prompt to reflect interaction changes."""
         target_type = self.target_type
         target_model = self.target_model
-        active_probe = self.probe
+        active_seed = self.seed
         if not target_type or not target_model:
             self.prompt = "garak> "
             return None
-        if not active_probe:
+        if not active_seed:
             self.prompt = f"{target_type}: {target_model}> "
         else:
-            self.prompt = f"{target_type}: {target_model}>{active_probe}> "
+            self.prompt = f"{target_type}: {target_model}>{active_seed}> "
 
         self._load_garak()
         return stop

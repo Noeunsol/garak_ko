@@ -9,7 +9,7 @@ Finally, an evaluator makes judgments of these scores, and writes hits out to th
 
 Within this, ``Converastion``, ``Turn``, and ``Message`` objects encapsulate conversational turns either sent to models (i.e. prompts)
 or returned from models (i.e. model output). 
-garak uses an object to encapsulate this to allow easy switching with multimodal probes and generators.
+garak uses an object to encapsulate this to allow easy switching with multimodal seeds and generators.
 
 garak.attempt
 -------------

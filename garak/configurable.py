@@ -80,7 +80,7 @@ class Configurable:
         # this will support something like:
         # plugins['detectors'][x]['generators']['rest']['RestGenerator']
         # plugins['detectors'][x]['generators']['rest']
-        # plugins['probes'][y]['generators']['rest']['RestGenerator']
+        # plugins['seeds'][y]['generators']['rest']['RestGenerator']
         if len(namespace_parts) > 2:
             # example class expected garak.generators.huggingface.Pipeline
             # spec_type = generators
@@ -99,7 +99,7 @@ class Configurable:
             if namespace in plugins_config:
                 # example values:
                 # generators: `nim`/`openai`/`huggingface`
-                # probes: `dan`/`gcg`/`xss`/`tap`/`promptinject`
+                # seeds: `dan`/`gcg`/`xss`/`tap`/`promptinject`
                 attributes = plugins_config[namespace]
                 self._apply_config(attributes)
                 if classname in attributes:

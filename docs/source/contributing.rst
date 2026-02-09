@@ -34,7 +34,7 @@ We'd love to help, and we're always interested to hear how you're using garak.
 Coding your contribution
 ------------------------
 
-This reference documentation includes a section on :doc:`extending garak <extending>`, including walkthroughs of how a custom :doc:`probe <extending.probe>` and custom :doc:`generator <extending.generator>` can be built.
+This reference documentation includes a section on :doc:`extending garak <extending>`, including walkthroughs of how a custom :doc:`seed <extending.seed>` and custom :doc:`generator <extending.generator>` can be built.
 
 
 Checklist for contributing
@@ -43,7 +43,7 @@ Checklist for contributing
 #. Set up a `Github <https://github.com/>`_ account, if you don't have one already. We develop in the open and the public repository is the authoritative one.
 #. Fork the ``garak`` repository - `<https://github.com/NVIDIA/garak/fork>`_
 #. Work out what you're doing. If it's from a good first issue (`see the list <https://github.com/NVIDIA/garak/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22>`_), drop a note on that issue so that we know you're working on it, and so that nobody else also starts working on it.
-#. Before you code anything: create a new branch for your work, e.g. ``git checkout -b feature/spicy_probe``
+#. Before you code anything: create a new branch for your work, e.g. ``git checkout -b feature/spicy_seed``
 #. Check out the rest of this page which includes links to detailed step-by-step guides to developing garak plugins
 #. Code!
 #. Run ``black`` on your code, so that it's well-formatted. Our github commit hook can refuse to accept ``black``-passing code.

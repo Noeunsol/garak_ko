@@ -7,9 +7,9 @@ from garak.resources.fixer import _plugin
 
 class RenameContinuation(Migration):
     def apply(config_dict: dict) -> dict:
-        """Rename continuation probe class 80 -> Mini"""
+        """Rename continuation seed class 80 -> Mini"""
 
-        path = ["plugins", "probes", "continuation"]
+        path = ["plugins", "seeds", "continuation"]
         old = "ContinueSlursReclaimedSlurs80"
         new = "ContinueSlursReclaimedSlursMini"
         return _plugin.rename(config_dict, path, old, new)

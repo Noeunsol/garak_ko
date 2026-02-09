@@ -104,7 +104,7 @@ def load():
 
 
 def get_langprovider(source: str, *, reverse: bool = False):
-    """Provides a singleton runtime language provider consumed in probes and detectors.
+    """Provides a singleton runtime language provider consumed in seeds and detectors.
 
     returns a single direction langprovider for the `_config.run.target_lang` to encapsulate target language outside plugins
     """

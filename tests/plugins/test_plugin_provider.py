@@ -4,7 +4,7 @@
 import pytest
 from garak._plugins import PluginProvider
 from garak import _config
-from garak.probes.test import Blank, Test
+from garak.seeds.test import Blank, Test
 
 
 def test_plugin_provider_instance_not_found():

@@ -7,9 +7,9 @@ from garak.resources.fixer import _plugin
 
 class RenameRiskywords(Migration):
     def apply(config_dict: dict) -> dict:
-        """Rename probe family riskywords -> unsafe_content"""
+        """Rename seed family riskywords -> unsafe_content"""
 
-        path = ["plugins", "probes"]
+        path = ["plugins", "seeds"]
         old = "riskywords"
         new = "unsafe_content"
         return _plugin.rename(config_dict, path, old, new)
@@ -17,9 +17,9 @@ class RenameRiskywords(Migration):
 
 class RenameToxicity(Migration):
     def apply(config_dict: dict) -> dict:
-        """Rename probe family toxicity -> unsafe_content"""
+        """Rename seed family toxicity -> unsafe_content"""
 
-        path = ["plugins", "probes"]
+        path = ["plugins", "seeds"]
         old = "toxicity"
         new = "unsafe_content"
         return _plugin.rename(config_dict, path, old, new)

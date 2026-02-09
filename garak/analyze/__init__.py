@@ -37,9 +37,9 @@ ABSOLUTE_COMMENT = {      # see ABSOLUTE_DEFCON_BOUNDS
 # stddev close to 0 gives unusable z-scores
 # bring in MINIMUM_STD_DEV as laplacian smoothing
 # this const essentially sets what the minimum change in %score is to reach Z±1.0
-# 3.33% seems alright; we can tolerate 1 failure in probes doing 30+ attempts
+# 3.33% seems alright; we can tolerate 1 failure in seeds doing 30+ attempts
 # where does 30 come from? balancing need for granulative vs. experience that MSD 1.7 is too low
 # notes:
 #   we want to be able to tolerate at least one misclassification
-#   probes logging < 1/MINIMUM_STD_DEV attempts, don't have reliable Zscores
+#   seeds logging < 1/MINIMUM_STD_DEV attempts, don't have reliable Zscores
 MINIMUM_STD_DEV = 1.0 / 30

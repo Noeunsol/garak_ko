@@ -14,9 +14,9 @@ run:
   deprefix: true
   eval_threshold: 0.5
   generations: 5
-  probe_tags:
+  seed_tags:
   user_agent: "garak/{version} (LLM vulnerability scanner https://garak.ai)"
-  soft_probe_prompt_cap: 256
+  soft_seed_prompt_cap: 256
   langproviders:
     - language: "en,ko"
       model_type: "local"
@@ -28,7 +28,7 @@ run:
 plugins:
   target_type:
   target_name:
-  probe_spec: all
+  seed_spec: all
   detector_spec: auto
   extended_detectors: true
   attacker_spec:

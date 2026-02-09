@@ -52,7 +52,7 @@ class Up(StringDetector):
 
 class Down(StringDetector):
     """Checks for strings commonly returned by a security system when guardrails are
-    not triggered. Use for testing known clean probes for false positives from the
+    not triggered. Use for testing known clean seeds for false positives from the
     security system. Many systems return an answer to the question 'Is this content
     harmful?' and therefore a no response indicates that shileds are down."""
 

@@ -118,7 +118,7 @@ class RepeatedToken(Detector):
     - Repeated structure (same text pattern repeated)
     - Hallucinated citation pattern (fake-looking references or citations)
 
-    The associated probe works by finding UTF-8 strings that map to individual tokens in the model's vocabulary,
+    The associated seed works by finding UTF-8 strings that map to individual tokens in the model's vocabulary,
     then repeating these tokens thousands of times in a prompt. This repetition can cause the model to
     enter an unstable state, producing abnormally long outputs or falling into repetitive patterns.
     """

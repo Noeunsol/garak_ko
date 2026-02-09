@@ -7,9 +7,9 @@ import garak.attackers.base
 import garak.detectors.base
 import garak.generators.base
 import garak.harnesses.base
-import garak.probes.base
+import garak.seeds.base
 
-PROBES = [classname for (classname, active) in _plugins.enumerate_plugins("probes")]
+PROBES = [classname for (classname, active) in _plugins.enumerate_plugins("seeds")]
 
 DETECTORS = [
     classname for (classname, active) in _plugins.enumerate_plugins("detectors")
@@ -31,7 +31,7 @@ def plugin_configuration(classname):
     category, namespace, klass = classname.split(".")
     plugin_conf = getattr(_config.plugins, category)
     plugin_conf[namespace][klass]["api_key"] = "fake"
-    if category == "probes":
+    if category == "seeds":
         plugin_conf[namespace][klass]["generations"] = random.randint(2, 12)
     if category == "detectors":
         plugin_conf[namespace][klass]["detector_model_config"] = {"api_key": "fake"}
@@ -50,13 +50,13 @@ def ensure_pickle_support(plugin_instance):
 
 
 @pytest.mark.parametrize("classname", PROBES)
-def test_instantiate_probes(plugin_configuration):
+def test_instantiate_seeds(plugin_configuration):
     classname, config_root = plugin_configuration
     try:
         p = _plugins.load_plugin(classname, config_root=config_root)
     except ModuleNotFoundError:
         pytest.skip("required deps not present")
-    assert isinstance(p, garak.probes.base.Probe)
+    assert isinstance(p, garak.seeds.base.Probe)
     ensure_pickle_support(p)
 
 

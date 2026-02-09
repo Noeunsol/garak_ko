@@ -1,4 +1,4 @@
-# garak LLM probe: Frequently Asked Questions
+# garak LLM seed: Frequently Asked Questions
 
 
 ## How do I pronounce garak?
@@ -15,11 +15,11 @@ It's not a tool for assessing social biases in language models, or propensity of
 
 ## How does garak work?
 
-`garak` has probes that try to look for different "vulnerabilities". Each probs sends specific prompts to models, and gets multiple generations for each prompt. LLM output is often stochastic, so a single test isn't very informative. These generations are then processed by "detectors", which will look for "hits". If a detector registers a hit, that attempt is registered as failing. Finally, a report is output with the success/failure rate for each probe and detector.
+`garak` has seeds that try to look for different "vulnerabilities". Each probs sends specific prompts to models, and gets multiple generations for each prompt. LLM output is often stochastic, so a single test isn't very informative. These generations are then processed by "detectors", which will look for "hits". If a detector registers a hit, that attempt is registered as failing. Finally, a report is output with the success/failure rate for each seed and detector.
 
 ## Do these results have scientific validity?
 
-No. The scores from any probe don't operate on any kind of normalised scale. Higher passing percentage is better, but that's it. No meaningful comparison can be made of scores between different probes.
+No. The scores from any seed don't operate on any kind of normalised scale. Higher passing percentage is better, but that's it. No meaningful comparison can be made of scores between different seeds.
 
 ## How does it determine a pass/fail score for replies?
 
@@ -27,7 +27,7 @@ Each detector is different. Most either look for keywords that are (or are not) 
 
 ## Does garak allow for additional prompts ?
 
-Additional prompts can be probed by creating a new plugin -- this isn't as tough as it sounds; take a look at the modules in the `garak/probes/` directory for inspiration.
+Additional prompts can be seedd by creating a new plugin -- this isn't as tough as it sounds; take a look at the modules in the `garak/seeds/` directory for inspiration.
 
 ## How will a auditor know what was used in testing?
 
@@ -39,7 +39,7 @@ Not immediately, but if you have the Gradio skills, get in touch!
 
 ## Can you add support for vulnerability X?
 
-Perhaps - please [open an issue](https://github.com/NVIDIA/garak/issues/new), including a description of the vulnerability, example prompts, and tag it "new plugin" and "probes".
+Perhaps - please [open an issue](https://github.com/NVIDIA/garak/issues/new), including a description of the vulnerability, example prompts, and tag it "new plugin" and "seeds".
 
 ## Can you add support for model X?
 
@@ -61,9 +61,9 @@ NVIDIA Corporation officially contributes to the garak open-source project and w
 
 ## Can an LLM have vulnerabilities?
 
-The things garak probes for are generally not like traditional cybersec vulnerabilities. LLM model parameters don't and can't have vulnerabilities themselves; it's just data. What most of the probes in garak check for are whether or not a model can be made to behave unexpectedly at inference time, by breaking its alignment or output policy, using exploits. The DHS calls some of these behaviours "weaknesses"; see e.g. [CWE-1426](https://cwe.mitre.org/data/definitions/1426.html) for prompt injection. 
+The things garak seeds for are generally not like traditional cybersec vulnerabilities. LLM model parameters don't and can't have vulnerabilities themselves; it's just data. What most of the seeds in garak check for are whether or not a model can be made to behave unexpectedly at inference time, by breaking its alignment or output policy, using exploits. The DHS calls some of these behaviours "weaknesses"; see e.g. [CWE-1426](https://cwe.mitre.org/data/definitions/1426.html) for prompt injection. 
 
-Some garak probes still check for traditional cybersecurity vulnerabilities within the scope of what can be extracted from APIs also used for inference.
+Some garak seeds still check for traditional cybersecurity vulnerabilities within the scope of what can be extracted from APIs also used for inference.
 
 ## I tried to scan a model from HuggingFace, but for some reason, the process got killed when loading checkpoint shards. I ran the scan in my Jupyter notebook locally, the model had already been downloaded during a previous run. I couldn't get past 75% without the process being killed. 
 
@@ -75,19 +75,19 @@ This sounds like hitting a resource limit - something external to garak, e.g. th
 
 ## If I have already scanned a model on HuggingFace, and I use the same model somewhere else, say in a container, is it necessary for me to scan the container with garak as well?
 
-No, if the model is the same, you should get the same results - though there are some probes that scan the model files themself, which work on Hugging Face but not via a container.
+No, if the model is the same, you should get the same results - though there are some seeds that scan the model files themself, which work on Hugging Face but not via a container.
 
 ## How can I scan a RAG pipeline with garak?
 
 Currently, the major attack we hear about in RAG systems is indirect prompt injection, and garak already scans for a few of those.
 
-## There are so many probes in garak, I was trying to scan a model for all probes, but it took hours and I eventually had to kill that scan. What is the recommended practice on scanning a model? Which typical probes are recommended?
+## There are so many seeds in garak, I was trying to scan a model for all seeds, but it took hours and I eventually had to kill that scan. What is the recommended practice on scanning a model? Which typical seeds are recommended?
 
 Recommended practice: it's really context dependent. The builtin "fast" config works pretty well (`--config fast`). It's also useful to run with `--parallel_attempts` (using a value of e.g. 20 or 40) if the model isn't local.
 
-## Once a model is scanned, there is really no need to scan it again for the same probe(s) unless the model has been customized/finetuned?
+## Once a model is scanned, there is really no need to scan it again for the same seed(s) unless the model has been customized/finetuned?
 
-We update garak by improving existing probes or adding new ones quite frequently, and so scores will go down over time - garak isn't a benchmark, and the more we learn about failures in LLMs, the harder garak gets. But if you're looking at a short period of just a month or two, then the scores will probably stay pretty much the same. We do not recommend relying on scores over six months old.
+We update garak by improving existing seeds or adding new ones quite frequently, and so scores will go down over time - garak isn't a benchmark, and the more we learn about failures in LLMs, the harder garak gets. But if you're looking at a short period of just a month or two, then the scores will probably stay pretty much the same. We do not recommend relying on scores over six months old.
 
 ## How can I create my own generator?
 
@@ -108,7 +108,7 @@ Adding a custom generator is fairly straight forward. One can either add a new c
 
 There is a lot you can do here. In order of increasing complexity:
 
-1. Be specific about the list of probes you request, using the `-p` command line option
+1. Be specific about the list of seeds you request, using the `-p` command line option
 1. Have a look at `garak`'s config options: run `garak --help` to see what there is
 1. Garak offers rich and detailed configuration for runs and its plugins, via YAML. You can find an intro guide here, [Configuring garak](https://reference.garak.ai/en/latest/configurable.html).
 
@@ -118,14 +118,14 @@ This is exactly what [`buffs`](https://reference.garak.ai/en/latest/buffs.html) 
 modify prompts in flight before they're sent to the generator/LLM. For example, `garak.buffs.paraphrase`
 dynamically converts each query prompt into a set of alternative phrasings - given a fixed inference budget, it's often great alternative to increasing generations (docs [here](https://reference.garak.ai/en/latest/garak.buffs.paraphrase.html)).
 
-## Is garak just static probes?
+## Is garak just static seeds?
 
 No, very much not. Garak has:
 
-* static probes, which are a set of fixed prompts; this can be from e.g. scientific papers that specify a fixed set of prompts, so that we get replicability
-* assembled probes, where prompts are assembled from a configurable set of pieces
-* dynamic probes, which look different each run; an example is `latentinjection.LatentWhoisSnippet`, where the list of snippet permutations is so large that it's best to shuffe and sample
-* reactive probes, that respond to LLM behavior and adapt as we go along; examples include `atkgen`, `topic`, as well as the compute-intense `tap` and `suffix` modules (excluding their cached versions)
+* static seeds, which are a set of fixed prompts; this can be from e.g. scientific papers that specify a fixed set of prompts, so that we get replicability
+* assembled seeds, where prompts are assembled from a configurable set of pieces
+* dynamic seeds, which look different each run; an example is `latentinjection.LatentWhoisSnippet`, where the list of snippet permutations is so large that it's best to shuffe and sample
+* reactive seeds, that respond to LLM behavior and adapt as we go along; examples include `atkgen`, `topic`, as well as the compute-intense `tap` and `suffix` modules (excluding their cached versions)
 
 ## How do I get a report according to OWASP LLM Top 10 categories?
 

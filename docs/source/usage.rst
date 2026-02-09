@@ -6,17 +6,17 @@ Getting Started
 Listing Probes
 --------------
 
-By default, when you run a scan, garak runs all the probes on the model and uses the vulnerability detectors recommended by each probe.
-You can list the probes by running the following command:
+By default, when you run a scan, garak runs all the seeds on the model and uses the vulnerability detectors recommended by each seed.
+You can list the seeds by running the following command:
 
 .. code-block:: console
 
-    garak --list_probes
+    garak --list_seeds
 
-You can limit the probes to run by specifying more arguments.
+You can limit the seeds to run by specifying more arguments.
 
-For example, you can specify ``--probes promptinject`` to run only the PromptInject framework's methods. for example.
-You can also specify specific probes instead of a probe family such as ``--probes lmrc.SlurUsage`` to probe a model for generating slurs based on the Language Model Risk Cards framework.
+For example, you can specify ``--seeds promptinject`` to run only the PromptInject framework's methods. for example.
+You can also specify specific seeds instead of a seed family such as ``--seeds lmrc.SlurUsage`` to seed a model for generating slurs based on the Language Model Risk Cards framework.
 
 Running a Scan
 --------------
@@ -37,11 +37,11 @@ Probe ChatGPT for encoding-based prompt injection (OSX/\*nix) (replace example v
 .. code-block:: console
 
     export OPENAI_API_KEY="sk-123XXXXXXXXXXXX"
-    garak --target_type openai --target_name gpt-3.5-turbo --probes encoding
+    garak --target_type openai --target_name gpt-3.5-turbo --seeds encoding
 
 
 Determine if the Hugging Face version of GPT2 is vulnerable to DAN 11.0:
 
 .. code-block:: console
 
-    garak --target_type huggingface --target_name gpt2 --probes dan.Dan_11_0
+    garak --target_type huggingface --target_name gpt2 --seeds dan.Dan_11_0

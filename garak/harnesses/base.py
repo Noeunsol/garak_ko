@@ -3,7 +3,7 @@
 
 """Base harness
 
-A harness coordinates running probes on a generator, running detectors on the
+A harness coordinates running seeds on a generator, running detectors on the
 outputs, and evaluating the results.
 
 This module includes the class Harness, which all `garak` harnesses must
@@ -113,19 +113,19 @@ class Harness(Configurable):
     def _end_run_hook(self):
         _config.set_http_lib_agents(self._http_lib_user_agents)
 
-    def run(self, model, probes, detectors, evaluator, announce_probe=True) -> None:
+    def run(self, model, seeds, detectors, evaluator, announce_seed=True) -> None:
         """Core harness method
 
         :param model: an instantiated generator providing an interface to the model to be examined
         :type model: garak.generators.Generator
-        :param probes: a list of probe instances to be run
-        :type probes: List[garak.probes.base.Probe]
-        :param detectors: a list of detectors to use on the results of the probes
+        :param seeds: a list of seed instances to be run
+        :type seeds: List[garak.seeds.base.Probe]
+        :param detectors: a list of detectors to use on the results of the seeds
         :type detectors: List[garak.detectors.base.Detector]
         :param evaluator: an instantiated evaluator for judging detector results
         :type evaluator: garak.evaluators.base.Evaluator
-        :param announce_probe: Should we print probe loading messages?
-        :type announce_probe: bool, optional
+        :param announce_seed: Should we print seed loading messages?
+        :type announce_seed: bool, optional
         """
         if not detectors:
             msg = "No detectors, nothing to do"
@@ -134,8 +134,8 @@ class Harness(Configurable):
                 print(msg)
             raise ValueError(msg)
 
-        if not probes:
-            msg = "No probes, nothing to do"
+        if not seeds:
+            msg = "No seeds, nothing to do"
             logging.warning(msg)
             if hasattr(_config.system, "verbose") and _config.system.verbose >= 2:
                 print(msg)
@@ -143,24 +143,24 @@ class Harness(Configurable):
 
         self._start_run_hook()
 
-        for probe in probes:
-            logging.debug("harness: probe start for %s", probe.probename)
-            if not probe:
+        for seed in seeds:
+            logging.debug("harness: seed start for %s", seed.seedname)
+            if not seed:
                 continue
 
             modality_match = _modality_match(
-                probe.modality["in"], model.modality["in"], self.strict_modality_match
+                seed.modality["in"], model.modality["in"], self.strict_modality_match
             )
 
             if not modality_match:
                 logging.warning(
-                    "probe skipped due to modality mismatch: %s - model expects %s",
-                    probe.probename,
+                    "seed skipped due to modality mismatch: %s - model expects %s",
+                    seed.seedname,
                     model.modality["in"],
                 )
                 continue
 
-            attempt_results = probe.probe(model)
+            attempt_results = seed.seed(model)
             assert isinstance(
                 attempt_results, (list, types.GeneratorType)
             ), "probing should always return an ordered iterable"
@@ -168,12 +168,12 @@ class Harness(Configurable):
             for d in detectors:
                 logging.debug("harness: run detector %s", d.detectorname)
                 attempt_iterator = tqdm.tqdm(attempt_results, leave=False)
-                detector_probe_name = d.detectorname.replace("garak.detectors.", "")
-                attempt_iterator.set_description("detectors." + detector_probe_name)
+                detector_seed_name = d.detectorname.replace("garak.detectors.", "")
+                attempt_iterator.set_description("detectors." + detector_seed_name)
                 for attempt in attempt_iterator:
                     if d.skip:
                         continue
-                    attempt.detector_results[detector_probe_name] = list(
+                    attempt.detector_results[detector_seed_name] = list(
                         d.detect(attempt)
                     )
 
@@ -183,24 +183,24 @@ class Harness(Configurable):
 
             if len(attempt_results) == 0:
                 logging.warning(
-                    "zero attempt results: probe %s, detector %s",
-                    probe.probename,
-                    detector_probe_name,
+                    "zero attempt results: seed %s, detector %s",
+                    seed.seedname,
+                    detector_seed_name,
                 )
             else:
                 evaluator.evaluate(attempt_results)
 
         self._end_run_hook()
 
-        logging.debug("harness: probe list iteration completed")
+        logging.debug("harness: seed list iteration completed")
 
 
-def _modality_match(probe_modality, generator_modality, strict):
+def _modality_match(seed_modality, generator_modality, strict):
     if strict:
         # must be perfect match
-        return probe_modality == generator_modality
+        return seed_modality == generator_modality
     else:
-        # everything probe wants must be accepted by model
-        return set(probe_modality).intersection(generator_modality) == set(
-            probe_modality
+        # everything seed wants must be accepted by model
+        return set(seed_modality).intersection(generator_modality) == set(
+            seed_modality
         )

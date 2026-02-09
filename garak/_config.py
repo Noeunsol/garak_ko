@@ -35,7 +35,7 @@ from garak import __version__ as version
 system_params = (
     "verbose narrow_output parallel_requests parallel_attempts skip_unknown".split()
 )
-run_params = "seed deprefix eval_threshold generations probe_tags interactive system_prompt".split()
+run_params = "seed deprefix eval_threshold generations seed_tags interactive system_prompt".split()
 plugins_params = "target_type target_name extended_detectors".split()
 reporting_params = "taxonomy report_prefix".split()
 project_dir_name = "garak"
@@ -89,7 +89,7 @@ reporting = GarakSubConfig()
 
 def _lock_config_as_dict():
     global plugins
-    for plugin_type in ("probes", "generators", "attackers", "detectors", "harnesses"):
+    for plugin_type in ("seeds", "generators", "attackers", "detectors", "harnesses"):
         setattr(plugins, plugin_type, _crystallise(getattr(plugins, plugin_type)))
 
 
@@ -106,7 +106,7 @@ def _nested_dict():
 
 nested_dict = _nested_dict
 
-plugins.probes = nested_dict()
+plugins.seeds = nested_dict()
 plugins.generators = nested_dict()
 plugins.detectors = nested_dict()
 plugins.attackers = nested_dict()
@@ -119,12 +119,12 @@ config_files = []
 
 # this is so popular, let's set a default. what other defaults are worth setting? what's the policy?
 run.seed = None
-run.soft_probe_prompt_cap = 64
+run.soft_seed_prompt_cap = 64
 run.target_lang = "en"
 run.langproviders = []
 
 # placeholder
-# generator, probe, detector, attacker = {}, {}, {}, {}
+# generator, seed, detector, attacker = {}, {}, {}, {}
 
 
 def _key_exists(d: dict, key: str) -> bool:
@@ -296,7 +296,7 @@ def load_base_config() -> None:
 def load_config(
     site_config_filename="garak.site.yaml", run_config_filename=None
 ) -> None:
-    # would be good to bubble up things from run_config, e.g. generator, probe(s), detector(s)
+    # would be good to bubble up things from run_config, e.g. generator, seed(s), detector(s)
     # and then not have cli be upset when these are not given as cli params
     global loaded
 
@@ -405,7 +405,7 @@ def load_config(
 
 
 def parse_plugin_spec(
-    spec: str, category: str, probe_tag_filter: str = ""
+    spec: str, category: str, seed_tag_filter: str = ""
 ) -> tuple[List[str], List[str]]:
     from garak._plugins import enumerate_plugins
 
@@ -443,14 +443,14 @@ def parse_plugin_spec(
                 else:
                     unknown_plugins += [clause]
 
-    if probe_tag_filter is not None and len(probe_tag_filter) > 1:
+    if seed_tag_filter is not None and len(seed_tag_filter) > 1:
         plugins_to_skip = []
         for plugin_name in plugin_names:
             plugin_module_name = ".".join(plugin_name.split(".")[:-1])
             plugin_class_name = plugin_name.split(".")[-1]
             m = importlib.import_module(f"garak.{plugin_module_name}")
             c = getattr(m, plugin_class_name)
-            if not any([tag.startswith(probe_tag_filter) for tag in c.tags]):
+            if not any([tag.startswith(seed_tag_filter) for tag in c.tags]):
                 plugins_to_skip.append(
                     plugin_name
                 )  # using list.remove doesn't update for-loop position

@@ -1,7 +1,7 @@
 """Snowball detector
 
 Passes responses if they don't begin with a yes/no; designed to work best
-with responses to queries posed in the snowball probe
+with responses to queries posed in the snowball seed
 """
 
 import re

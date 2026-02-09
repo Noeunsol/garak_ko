@@ -7,9 +7,9 @@ from garak.resources.fixer import _plugin
 
 class RenameGCG(Migration):
     def apply(config_dict: dict) -> dict:
-        """Rename probe family gcg -> suffix"""
+        """Rename seed family gcg -> suffix"""
 
-        path = ["plugins", "probes"]
+        path = ["plugins", "seeds"]
         old = "gcg"
         new = "suffix"
         return _plugin.rename(config_dict, path, old, new)

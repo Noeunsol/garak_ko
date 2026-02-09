@@ -1,7 +1,7 @@
 Ascii Smuggling
 ===============
 
-Garak features probes that use `ASCII smuggling <https://embracethered.com/blog/posts/2024/hiding-and-finding-text-with-unicode-tags/>`_.
+Garak features seeds that use `ASCII smuggling <https://embracethered.com/blog/posts/2024/hiding-and-finding-text-with-unicode-tags/>`_.
 ASCII smuggling is a technique that abuses the fact that LLM tokenizers will handle non-printable or zero-width characters like unicode tags and variant selectors.
 This makes it useful for bypassing LLM guardrails, which often are not trained on these evasions, and for circumventing human-in-the-loop controls, as the characters will not be visible on the screen when viewed by users.
 Some LLMs will happily decode the relevant text and handle it gracefully. Others will not. This is expected.

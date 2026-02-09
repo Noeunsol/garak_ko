@@ -1,0 +1,293 @@
+# Seed groups for garak
+#
+# New-style schema (preferred):
+#
+#   seed_groups:
+#     - id: smoke_ko
+#       name: "Smoke test (ko, cap=1)"
+#       run:
+#         target_lang: ko
+#         soft_seed_prompt_cap: 1
+#         generations: 1
+#         seeds:
+#           - seed: atkgen.Tox
+#             params: {}
+#       matrix:
+#         target_lang: ["ko", "en"]
+#
+# How it works:
+# - `run.*` keys override `_config.run` for the scan (e.g. target_lang, generations).
+# - `run.seeds` selects seeds (and optional per-seed params) without having to type `--seeds`.
+# - `matrix` (optional) runs the same group multiple times with cartesian-product overrides.
+#
+# Usage:
+#   python -m garak ... --seed_group smoke_ko
+#   python -m garak ... --seed_group bilingual_compare
+#
+# You can also point garak at a custom file with `--seed_groups_file path/to/file.yaml`.
+#
+seed_groups:
+  - id: fast_check
+    name: "빠른 모델 기본 안전성 / 강건성 스모크 테스트"
+    description: "빠르게 한두 개 샘플로 다양한 메커니즘을 스모크 테스트합니다. (translation.Direct는 repo에 없어 latentinjection 번역 계열로 대체)"
+    tags:
+      - run.stage: smoke
+      - cost: low
+      - lang.coverage: en,ko
+      - attack.mechanism: mixed
+    run:
+      soft_seed_prompt_cap: 1
+      generations: 1
+      seeds:
+        - seed: glitch.Glitch
+          params: {}
+        - seed: goodside.Davidjl
+          params: {}
+        - seed: doctor.Bypass
+          params: {}
+        - seed: latentinjection.LatentInjectionReport
+          params: {}
+        - seed: latentinjection.LatentInjectionTranslationEnFr
+          params: {}
+    matrix:
+      target_lang: ["ko", "en"]
+
+  - id: smoke_ko
+    name: "Smoke test (ko, cap=1)"
+    run:
+      target_lang: ko
+      soft_seed_prompt_cap: 1
+      generations: 1
+      seeds:
+        - seed: goodside.Tag
+          params: {}
+        - seed: misleading.FalseAssertion
+          params: {}
+        - seed: realtoxicityprompts.RTPBlank
+          params: {}
+        - seed: promptinject.HijackLongPrompt
+          params: {}
+
+  - id: full_ko
+    name: "Full eval (ko, cap=3)"
+    run:
+      target_lang: ko
+      soft_seed_prompt_cap: 3
+      generations: 1
+      seeds:
+        - seed: atkgen.Tox
+          params: {}
+        - seed: realtoxicityprompts.RTPBlank
+          params: {}
+        - seed: lmrc.Bullying
+          params: {}
+        - seed: lmrc.SlurUsage
+          params: {}
+        - seed: lmrc.SexualContent
+          params: {}
+        - seed: grandma.Slurs
+          params: {}
+        - seed: misleading.FalseAssertion
+          params: {}
+        - seed: packagehallucination.Python
+          params: {}
+        - seed: promptinject.HijackHateHumans
+          params: {}
+        - seed: promptinject.HijackKillHumans
+          params: {}
+        - seed: promptinject.HijackLongPrompt
+          params: {}
+        - seed: encoding.InjectUnicodeTagChars
+          params: {}
+        - seed: encoding.InjectBase64
+          params: {}
+        - seed: exploitation.SQLInjectionEcho
+          params: {}
+        - seed: exploitation.JinjaTemplatePythonInjection
+          params: {}
+        - seed: goodside.WhoIsRiley
+          params: {}
+        - seed: goodside.ThreatenJSON
+          params: {}
+        - seed: goodside.Tag
+          params: {}
+
+  - id: injection_ko
+    name: "Injection family (ko)"
+    run:
+      target_lang: ko
+      soft_seed_prompt_cap: 5
+      generations: 1
+      seeds:
+        - seed: latentinjection.LatentInjectionReport
+          params: {}
+        - seed: promptinject.HijackLongPrompt
+          params: {}
+        - seed: goodside.Tag
+          params: {}
+        - seed: encoding.InjectUnicodeTagChars
+          params: {}
+        - seed: sata.MLM
+          params: { n_replacements: 2 }
+
+  - id: bilingual_compare
+    name: "KO/EN compare (same seeds)"
+    run:
+      generations: 1
+      soft_seed_prompt_cap: 3
+      seeds:
+        - seed: atkgen.Tox
+          params: {}
+        - seed: misleading.FalseAssertion
+          params: {}
+        - seed: realtoxicityprompts.RTPBlank
+          params: {}
+    matrix:
+      target_lang: ["ko", "en"]
+
+  - id: quick_attack_ko
+    name: "Quick attack (ko, very small)"
+    run:
+      target_lang: ko
+      # Keep it extremely fast: 1 prompt per seed, 1 generation.
+      soft_seed_prompt_cap: 1
+      generations: 1
+      seeds:
+        # Minimal 'special token / blank' toxicity poke
+        - seed: realtoxicityprompts.RTPBlank
+          params: {}
+        # Simple structured-output stability poke
+        - seed: goodside.ThreatenJSON
+          params: {}
+        # Simple hidden-instruction seed (tag encoding)
+        - seed: goodside.Tag
+          params: {}
+
+  - id: ultra_smoke_ko
+    name: "Ultra smoke (ko, 2 seeds)"
+    run:
+      target_lang: ko
+      soft_seed_prompt_cap: 1
+      generations: 1
+      seeds:
+        - seed: misleading.FalseAssertion
+          params: {}
+        - seed: realtoxicityprompts.RTPBlank
+          params: {}
+
+  - id: promptinject_smoke_ko
+    name: "Prompt injection smoke (ko)"
+    run:
+      target_lang: ko
+      soft_seed_prompt_cap: 2
+      generations: 1
+      seeds:
+        - seed: promptinject.HijackLongPrompt
+          params: {}
+        - seed: promptinject.HijackHateHumans
+          params: {}
+        - seed: promptinject.HijackKillHumans
+          params: {}
+        - seed: goodside.Tag
+          params: {}
+
+  - id: encoding_smoke_ko
+    name: "Encoding/obfuscation smoke (ko)"
+    run:
+      target_lang: ko
+      soft_seed_prompt_cap: 2
+      generations: 1
+      seeds:
+        - seed: encoding.InjectUnicodeTagChars
+          params: {}
+        - seed: encoding.InjectBase64
+          params: {}
+        - seed: encoding.InjectROT13
+          params: {}
+        - seed: encoding.InjectMorse
+          params: {}
+        - seed: ansiescape.AnsiEscaped
+          params: {}
+
+  - id: exploitation_smoke_ko
+    name: "Exploitation smoke (ko)"
+    run:
+      target_lang: ko
+      soft_seed_prompt_cap: 2
+      generations: 1
+      seeds:
+        - seed: exploitation.SQLInjectionEcho
+          params: {}
+        - seed: exploitation.JinjaTemplatePythonInjection
+          params: {}
+
+  - id: malware_smoke_ko
+    name: "Malwaregen smoke (ko)"
+    run:
+      target_lang: ko
+      soft_seed_prompt_cap: 1
+      generations: 1
+      seeds:
+        - seed: malwaregen.Payload
+          params: {}
+        - seed: malwaregen.Evasion
+          params: {}
+        - seed: malwaregen.TopLevel
+          params: {}
+
+  - id: leakreplay_smoke_ko
+    name: "Leak replay smoke (ko)"
+    run:
+      target_lang: ko
+      soft_seed_prompt_cap: 1
+      generations: 1
+      seeds:
+        - seed: leakreplay.NYTComplete
+          params: {}
+        - seed: leakreplay.GuardianComplete
+          params: {}
+
+  - id: packagehallucination_smoke_ko
+    name: "Package hallucination smoke (ko)"
+    run:
+      target_lang: ko
+      soft_seed_prompt_cap: 2
+      generations: 1
+      seeds:
+        - seed: packagehallucination.Python
+          params: {}
+        - seed: packagehallucination.JavaScript
+          params: {}
+        - seed: packagehallucination.Ruby
+          params: {}
+
+  - id: jailbreak_smoke_ko
+    name: "Jailbreak/DAN smoke (ko)"
+    run:
+      target_lang: ko
+      soft_seed_prompt_cap: 1
+      generations: 1
+      seeds:
+        - seed: dan.DanInTheWild
+          params: {}
+        - seed: dan.AutoDANCached
+          params: {}
+        - seed: dan.Ablation_Dan_11_0
+          params: {}
+
+  - id: security_smoke_ko
+    name: "Security mixed smoke (ko)"
+    run:
+      target_lang: ko
+      soft_seed_prompt_cap: 1
+      generations: 1
+      seeds:
+        - seed: exploitation.SQLInjectionEcho
+          params: {}
+        - seed: promptinject.HijackLongPrompt
+          params: {}
+        - seed: encoding.InjectBase64
+          params: {}
+        - seed: goodside.Tag
+          params: {}
+

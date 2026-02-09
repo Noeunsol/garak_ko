@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 """
-if a TreeSearchProbe probe was used, display the tree of items explored 
+if a TreeSearchSeed seed was used, display the tree of items explored 
 
 usage:
 
@@ -20,7 +20,7 @@ import garak
 
 
 def get_tree(report_path: str) -> None:
-    probes = set([])
+    seeds = set([])
     node_info = defaultdict(dict)
 
     with open(report_path, "r", encoding="utf-8") as reportfile:
@@ -30,34 +30,34 @@ def get_tree(report_path: str) -> None:
                 continue
             r = json.loads(line)
             if r["entry_type"] == "tree_data":
-                probe = r["probe"]
-                probes.add(probe)
-                node_info[probe][r["node_id"]] = r
+                seed = r["seed"]
+                seeds.add(seed)
+                node_info[seed][r["node_id"]] = r
 
-    if not len(probes):
+    if not len(seeds):
         print("No tree data in output report JSONL")
 
-    for probe in probes:
-        print(f"============== {probe} ==============")
+    for seed in seeds:
+        print(f"============== {seed} ==============")
 
         node_children = defaultdict(list)
-        for node in node_info[probe].values():
+        for node in node_info[seed].values():
             node_children[node["node_parent"]].append(node["node_id"])
 
         # roots: those with parents not in node_info, or none
         roots = set([])
-        for node in node_info[probe].values():
+        for node in node_info[seed].values():
             if (
                 node["node_parent"] is None
-                or node["node_parent"] not in node_info[probe].keys()
+                or node["node_parent"] not in node_info[seed].keys()
             ):
                 roots.add(node["node_id"])
 
         def print_tree(node_id, indent=0):
-            forms = "" + ",".join(node_info[probe][node_id]["surface_forms"]) + ""
+            forms = "" + ",".join(node_info[seed][node_id]["surface_forms"]) + ""
             print(
                 "  " * indent
-                + f"{forms} ::> {node_info[probe][node_id]['node_score']}",
+                + f"{forms} ::> {node_info[seed][node_id]['node_score']}",
             )
             children = node_children[node_id]
             if children:

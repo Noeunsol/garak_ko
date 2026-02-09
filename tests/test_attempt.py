@@ -475,8 +475,8 @@ def test_json_serialize():
         "entry_type": "attempt",
         "seq": -1,
         "status": 0,
-        "probe_classname": None,
-        "probe_params": {},
+        "seed_classname": None,
+        "seed_params": {},
         "targets": [],
         "prompt": {
             "turns": [

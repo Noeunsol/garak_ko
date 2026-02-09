@@ -6,4 +6,4 @@ run:
   generations: 100
 
 plugins:
-  probe_spec: atkgen.Tox
+  seed_spec: atkgen.Tox

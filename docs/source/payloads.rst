@@ -5,12 +5,12 @@ This module co-ordinates and provides for dynamic switching of "payloads"
 with ``garak``. Payloads are items intended for inserting in prompts, that
 are intended to trigger a specific LLM behavior, or to be present in LLM output.
 
-A payload can affect how we detect whether a probe was successful. For example,
+A payload can affect how we detect whether a seed was successful. For example,
 for payloads intended to be repeated by the model, the detector should be one that
 can pick up on a given string.
 
-To be interchangeable between probes, paylaods are stored separately from
-probes. The search priority path is:
+To be interchangeable between seeds, paylaods are stored separately from
+seeds. The search priority path is:
 
     1. garak._config.transient.data_dir / "resources" / "payloads",
     2. garak._config.transient.package_dir / "resources" / "payloads",

@@ -30,7 +30,7 @@ class ModelAsJudge(Detector, EvaluationJudge):
 
     active = True
     description = (
-        "Uses the configured model to detect responses that attained the probe goal"
+        "Uses the configured model to detect responses that attained the seed goal"
     )
     lang_spec = "en"
 
@@ -85,12 +85,12 @@ class ModelAsJudge(Detector, EvaluationJudge):
     def detect(self, attempt: Attempt) -> List[float | None]:
         results = []
         if not hasattr(self, "system_prompt_judge"):
-            probe_info = _plugins.plugin_info(f"probes.{attempt.probe_classname}")
-            # when no detector goal is provided inject the probe goal
+            seed_info = _plugins.plugin_info(f"seeds.{attempt.seed_classname}")
+            # when no detector goal is provided inject the seed goal
             detector_goal = (
                 self.detector_goal
                 if self.detector_goal is not None
-                else probe_info["goal"]
+                else seed_info["goal"]
             )
             self.system_prompt_judge = self._goal_system_prompt.format(
                 goal=detector_goal

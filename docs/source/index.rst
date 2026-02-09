@@ -2,7 +2,7 @@ Garak Reference Documentation
 =============================
 
 Garak is an LLM vulnerability scanner, `<https://garak.ai>`_.
-It uses a huge range of probes to examine and query a large language model, simulating
+It uses a huge range of seeds to examine and query a large language model, simulating
 attacks, and uses a range of detectors on the model's outputs to see if the model was
 vulnerable to any of those attacks.
 
@@ -61,7 +61,7 @@ Check out the :doc:`usage` section for further information, including :doc:`inst
    interactive
    langservice
    payloads
-   probes
+   seeds
    report
    _config
    _plugins
@@ -74,5 +74,5 @@ Check out the :doc:`usage` section for further information, including :doc:`inst
 
    extending
    extending.generator
-   extending.probe
+   extending.seed
    contributing

@@ -7,16 +7,16 @@ from garak.resources.fixer import _plugin
 
 class RenameXSS(Migration):
     def apply(config_dict: dict) -> dict:
-        """Rename probe family xss -> web_injection"""
+        """Rename seed family xss -> web_injection"""
 
         updated_config = config_dict
 
-        path = ["plugins", "probes"]
+        path = ["plugins", "seeds"]
         old = "xss"
         new = "web_injection"
         updated_config = _plugin.rename(updated_config, path, old, new)
 
-        path = ["plugins", "probes", "web_injection"]
+        path = ["plugins", "seeds", "web_injection"]
         old = "MdExfil20230929"
         new = "PlaygroundMarkdownExfil"
         updated_config = _plugin.rename(updated_config, path, old, new)

@@ -18,8 +18,8 @@ import garak.evaluators.base
 from garak.detectors.mitigation import MitigationBypass
 
 
-# probes should be able to return a generator of attempts
-# -> probes.base.Probe._execute_all (1) should be able to consume a generator of attempts
+# seeds should be able to return a generator of attempts
+# -> seeds.base.Probe._execute_all (1) should be able to consume a generator of attempts
 # generators should be able to return a generator of outputs
 # -> attempts (2) should be able to consume a generator of outputs
 # detectors should be able to return generators of results
@@ -30,7 +30,7 @@ from garak.detectors.mitigation import MitigationBypass
 def _config_loaded():
     importlib.reload(garak._config)
     garak._config.load_base_config()
-    garak._config.plugins.probes["test"]["generations"] = 1
+    garak._config.plugins.seeds["test"]["generations"] = 1
     temp_report_file = tempfile.NamedTemporaryFile(
         mode="w+", suffix=".report.jsonl", delete=False
     )
@@ -49,7 +49,7 @@ def test_generator_consume_attempt_generator():
         garak.attempt.Attempt(prompt=garak.attempt.Message(text=str(i), lang="*"))
         for i in range(count)
     )
-    p = garak._plugins.load_plugin("probes.test.Blank")
+    p = garak._plugins.load_plugin("seeds.test.Blank")
     g = garak._plugins.load_plugin("generators.test.Blank")
     p.generator = g
     results = p._execute_all(attempts)
@@ -74,7 +74,7 @@ def test_attempt_outputs_can_consume_generator():
     outputs_list = list(a.outputs)
     assert (
         len(outputs_list) == count
-    ), "attempt.outputs should have same cardinality as probe used to populate it"
+    ), "attempt.outputs should have same cardinality as seed used to populate it"
     assert len(list(a.outputs)) == len(
         outputs_list
     ), "attempt.outputs should have the same cardinality every time"
@@ -91,12 +91,12 @@ def test_evaluator_detector_naming(mitigation_outputs: Tuple[List[str], List[str
     )
     attempt.outputs = COMPLYING_OUTPUTS + REFUSAL_OUTPUTS
 
-    detector_probe_name = d.detectorname.replace("garak.detectors.", "")
+    detector_seed_name = d.detectorname.replace("garak.detectors.", "")
 
-    attempt.detector_results[detector_probe_name] = d.detect(
+    attempt.detector_results[detector_seed_name] = d.detect(
         attempt, case_sensitive=True
     )
-    attempt.probe_classname = detector_probe_name
+    attempt.seed_classname = detector_seed_name
     attempts = [attempt]
 
     evaluator = garak.evaluators.base.Evaluator()

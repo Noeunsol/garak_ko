@@ -60,7 +60,7 @@ def get_token_limit(model_name: str) -> int:
 def conversation_from_list(turns: list[dict]) -> Conversation:
     """Take a list of dicts and return a Conversation object.
 
-    In the future this should be factored out and implemented in the probe.
+    In the future this should be factored out and implemented in the seed.
     """
     return Conversation([Turn.from_dict(msg) for msg in turns])
 

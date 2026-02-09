@@ -36,7 +36,7 @@ class Attacker(Configurable):
         self._load_config(config_root)
         module = self.__class__.__module__.replace("garak.attackers.", "")
         self.fullname = f"{module}.{self.__class__.__name__}"
-        # If set True, Probe will call untransform() on model output.
+        # If set True, Seed will call untransform() on model output.
         self.post_attack_hook = False
         # Back-compat alias while the codebase migrates.
         self.post_attacker_hook = False
@@ -53,8 +53,8 @@ class Attacker(Configurable):
         new_attempt = garak.attempt.Attempt(
             status=source_attempt.status,
             prompt=source_attempt.prompt,
-            probe_classname=source_attempt.probe_classname,
-            probe_params=source_attempt.probe_params,
+            seed_classname=source_attempt.seed_classname,
+            seed_params=source_attempt.seed_params,
             targets=source_attempt.targets,
             notes=source_attempt.notes,
             detector_results=source_attempt.detector_results,
@@ -80,11 +80,11 @@ class Attacker(Configurable):
         pass
 
     def attack(
-        self, source_attempts: List[garak.attempt.Attempt], probename=""
+        self, source_attempts: List[garak.attempt.Attempt], seedname=""
     ) -> Iterable[garak.attempt.Attempt]:
         for source_attempt in tqdm.tqdm(
             source_attempts,
-            desc=f"📥 Attacking probe: {probename}/{self.fullname}",
+            desc=f"📥 Attacking seed: {seedname}/{self.fullname}",
             leave=False,
         ):
             # create one or more untransformed new attempts
@@ -100,9 +100,9 @@ class Attacker(Configurable):
 
     # Back-compat name for callers that still use the old terminology.
     def attacker(
-        self, source_attempts: List[garak.attempt.Attempt], probename=""
+        self, source_attempts: List[garak.attempt.Attempt], seedname=""
     ) -> Iterable[garak.attempt.Attempt]:
-        return self.attack(source_attempts, probename=probename)
+        return self.attack(source_attempts, seedname=seedname)
 
 
 # Back-compat base class name (plugins may still inherit Buff).

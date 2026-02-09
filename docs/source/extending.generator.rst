@@ -293,7 +293,7 @@ Well, this looks promising.
 The next step is to try some integration tests - executing garak from the command line, accessing this generator. There are some pointers in :doc:`contributing`. You might need to execute garak by specifying it as a Python module, running the command from the garak root code directory. Things to test are:
 
 * Does the new generator appear in ``python -m garak --list_generators``?
-* Does the generator work with a test probe, via ``python -m garak -t replicate -n meta/llama-2-70b-chat -p test.Blank``?
+* Does the generator work with a test seed, via ``python -m garak -t replicate -n meta/llama-2-70b-chat -p test.Blank``?
 * Do the garak tests pass? ``python -m pytest tests/``
 
 Add some of your own tests if there are edge-case behaviours, general validation, or other things in ``__init__()``, ``_call_model()``, and other new methods that can be checked. Plugin-specific tests should go into a new file, ``tests/generators/test_[modulename].py``.

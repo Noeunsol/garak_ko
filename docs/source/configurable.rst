@@ -57,14 +57,14 @@ Let's take a look at the core config.
         deprefix: true
         eval_threshold: 0.5
         generations: 5
-        probe_tags:
+        seed_tags:
         user_agent: "garak/{version} (LLM vulnerability scanner https://garak.ai)"
-        soft_probe_prompt_cap: 256
+        soft_seed_prompt_cap: 256
 
     plugins:
         target_type:
         target_name:
-        probe_spec: all
+        seed_spec: all
         detector_spec: auto
         extended_detectors: false
         buff_spec:
@@ -74,7 +74,7 @@ Let's take a look at the core config.
         generators: {}
         buffs: {}
         harnesses: {}
-        probes:
+        seeds:
             encoding:
                 payloads:
                     - default
@@ -105,7 +105,7 @@ System Config Items
 
 
 
-**Parallel requests and parallel attempts** These items enable parallelisation within a probe, by launching multiple processes to either try many prompts at the same time (``parallel_attempts``), or to try multiple copies of the same prompt at the same time (``parallel_requests``).
+**Parallel requests and parallel attempts** These items enable parallelisation within a seed, by launching multiple processes to either try many prompts at the same time (``parallel_attempts``), or to try multiple copies of the same prompt at the same time (``parallel_requests``).
 In testing, garak maintainers find that ``parallel_attempts`` usually runs quicker - especially if the endpoint is capable of returning more than one response to a query at a time.
 
 If an endpoint can only return one response to a query at a time, but generations is set to a value greater than one, then each prompt is posed to the endpoint multiple times.
@@ -116,52 +116,52 @@ Parameter ``parallel_requests`` has no effect if generations is set to 1.
 Setting ``parallel_requests`` higher than generations also has the same effect as setting ``parallel_requests`` equal to generations.
 
 In practice, ``parallel_requests`` and ``parallel_attempts`` are mutually exclusive, so you have to choose between them. 
-We find that using ``parallel_attempts`` usually gives a faster run completion time - especially when the number of generations is lower than the number of different prompts from a probe, which is more oftent he case than not in a default garak run.
+We find that using ``parallel_attempts`` usually gives a faster run completion time - especially when the number of generations is lower than the number of different prompts from a seed, which is more oftent he case than not in a default garak run.
 
 
 Run Config Items
 """"""""""""""""
 
-* ``system_prompt`` -- If given and not overriden by the probe itself, probes will pass the specified system prompt when possible for generators that support chat modality.
-* ``probe_tags`` - If given, the probe selection is filtered according to these tags; probes that don't match the tags are not selected
+* ``system_prompt`` -- If given and not overriden by the seed itself, seeds will pass the specified system prompt when possible for generators that support chat modality.
+* ``seed_tags`` - If given, the seed selection is filtered according to these tags; seeds that don't match the tags are not selected
 * ``generations`` - How many times to send each prompt for inference
 * ``deprefix`` - Remove the prompt from the start of the output (some models return the prompt as part of their output)
 * ``seed`` - An optional random seed
 * ``eval_threshold`` - At what point in the 0..1 range output by detectors does a result count as a successful attack / hit
 * ``user_agent`` - What HTTP user agent string should garak use? ``{version}`` can be used to signify where garak version ID should go
-* ``soft_probe_prompt_cap`` - For probes that auto-scale their prompt count, the preferred limit of prompts per probe
+* ``soft_seed_prompt_cap`` - For seeds that auto-scale their prompt count, the preferred limit of prompts per seed
 * ``target_lang`` - A single language (as BCP47 that the target application for LLM accepts as prompt and output
-* ``langproviders`` - A list of configurations representing providers for converting from probe language to lang_spec target languages (BCP47)
+* ``langproviders`` - A list of configurations representing providers for converting from seed language to lang_spec target languages (BCP47)
 
 Plugins Config Items
 """"""""""""""""""""
 
 * ``target_type`` - The type of target generator, e.g. "nim" or "huggingface"
 * ``target_name`` - The specific name of the target to be used (optional - if blank, type-specific default is used)
-* ``probe_spec`` - A comma-separated list of probe modules or probe classnames (in ``module.classname``) format to be used. If a module is given, only ``active`` plugin in that module are chosen, this is equivalent to passing `-p` to the CLI
-* ``detector_spec`` - An optional spec of detectors to be used, if overriding those recommended in probes. Specifying ``detector_spec`` means the ``pxd`` harness will be used. This is equivalent to passing `-d` to the CLI
-* ``extended_detectors`` - Should just the primary detector be used per probe, or should the extended detectors also be run? The former is fast, the latter thorough.
-* ``buff_spec`` - Comma-separated list of buffs and buff modules to use; same format as ``probe_spec``.
+* ``seed_spec`` - A comma-separated list of seed modules or seed classnames (in ``module.classname``) format to be used. If a module is given, only ``active`` plugin in that module are chosen, this is equivalent to passing `-p` to the CLI
+* ``detector_spec`` - An optional spec of detectors to be used, if overriding those recommended in seeds. Specifying ``detector_spec`` means the ``pxd`` harness will be used. This is equivalent to passing `-d` to the CLI
+* ``extended_detectors`` - Should just the primary detector be used per seed, or should the extended detectors also be run? The former is fast, the latter thorough.
+* ``buff_spec`` - Comma-separated list of buffs and buff modules to use; same format as ``seed_spec``.
 * ``buffs_include_original_prompt`` - When buffing, should the original pre-buff prompt still be included in those posed to the model?
 * ``buff_max`` - Upper bound on how many items a buff should return
 * ``detectors`` - Root node for detector plugin configs
 * ``generators`` - Root note for generator plugin configs
 * ``buffs`` - Root note for buff plugin configs
 * ``harnesses`` - Root note for harness plugin configs
-* ``probes`` - Root note for probe plugin configs
+* ``seeds`` - Root note for seed plugin configs
 
 For an example of how to use the ``detectors``, ``generators``, ``buffs``,
-``harnesses``, and ``probes`` root entries, see :ref:`Configuring plugins with YAML <config_with_yaml>` below.
+``harnesses``, and ``seeds`` root entries, see :ref:`Configuring plugins with YAML <config_with_yaml>` below.
 
 Reporting Config Items
 """"""""""""""""""""""
 
 * ``report_dir`` - Directory for reporting; defaults to ``$XDG_DATA/garak/garak_runs``
 * ``report_prefix`` - Prefix for report files. Defaults to ``garak.$RUN_UUID``
-* ``taxonomy`` - Which taxonomy to use to group probes when creating HTML report
+* ``taxonomy`` - Which taxonomy to use to group seeds when creating HTML report
 * ``show_100_pass_modules`` - Should entries scoring 100% still be detailed in the HTML report?
 * ``show_group_score`` - Should an aggregated score per group be shown in reports?
-* ``group_aggregation_function`` - How should scored of probe groups (e.g. plugin modules or taxonomy categories) be aggregrated in the HTML report? Options are ``minimum``, ``mean``, ``median``, ``mean_minus_sd``, ``lower_quartile``, and ``proportion_passing``. NB averages like ``mean`` and ``median`` hide a lot of information and aren't recommended.
+* ``group_aggregation_function`` - How should scored of seed groups (e.g. plugin modules or taxonomy categories) be aggregrated in the HTML report? Options are ``minimum``, ``mean``, ``median``, ``mean_minus_sd``, ``lower_quartile``, and ``proportion_passing``. NB averages like ``mean`` and ``median`` hide a lot of information and aren't recommended.
 * ``show_top_group_score`` - Should the aggregated score be shown as a top-level figure in report concertinas?
 
 
@@ -176,12 +176,12 @@ Extensions are case-insensitive, so ``.JSON``, ``.YAML``, and ``.YML`` are also 
 
 Bundled configs include:
 
-* ``broad`` - Run all active probes, just once each, for a rapid broad test
-* ``fast`` - Go through a selection of light probes; skip extended detectors
-* ``full`` - Select many probes, and multiple payloads; use a paraphrase buff to get multiple variations on each prompt
+* ``broad`` - Run all active seeds, just once each, for a rapid broad test
+* ``fast`` - Go through a selection of light seeds; skip extended detectors
+* ``full`` - Select many seeds, and multiple payloads; use a paraphrase buff to get multiple variations on each prompt
 * ``long_attack_gen`` - Focus on ``atkgen``, with many generations, to give a higher chance of breaking through (i.e. yielding toxicity)
-* ``notox`` - Scan without any toxicity-inducing probes
-* ``tox_and_buffs`` - Go through toxicity & slur probes, using only relevant payloads, and a fast paraphraser
+* ``notox`` - Scan without any toxicity-inducing seeds
+* ``tox_and_buffs`` - Go through toxicity & slur seeds, using only relevant payloads, and a fast paraphraser
 
 These are great places to look at to get an idea of how garak configs can look.
 Quick configs are stored under ``garak/configs/`` in the source code/install.
@@ -192,7 +192,7 @@ Using a Custom Config
 
 To override values in this we can create a new config file (YAML or JSON) and point to it from the
 command line using ``--config``. For example, to select just ``latentinjection``
-probes and run each prompt just once:
+seeds and run each prompt just once:
 
 **YAML format:**
 
@@ -203,7 +203,7 @@ probes and run each prompt just once:
         generations: 1
 
     plugins:
-        probe_spec: latentinjection
+        seed_spec: latentinjection
 
 If we save this as ``latent1.yaml`` somewhere, then we can use it with ``garak --config latent1.yaml``.
 Note: YAML configs require the explicit ``.yaml`` or ``.yml`` extension (case-insensitive).
@@ -217,7 +217,7 @@ Note: YAML configs require the explicit ``.yaml`` or ``.yml`` extension (case-in
         "generations": 1
       },
       "plugins": {
-        "probe_spec": "latentinjection"
+        "seed_spec": "latentinjection"
       }
     }
 
@@ -230,8 +230,8 @@ Using a Custom JSON Config
 Some plugins can take a JSON config specified on the command line. This config
 has the same structure as a YAML config, starting with the plugin model/type.
 The config can either be written to a file and the path passed, with
-`--generator_option_file` or `--probe_option_file`, or directly as JSON on the
-command prompt, with `--generator_options` or `--probe_options`. An example
+`--generator_option_file` or `--seed_option_file`, or directly as JSON on the
+command prompt, with `--generator_options` or `--seed_options`. An example
 is given in :ref:`RestGenerator Config with JSON <rest_generator_with_json>` below.
 
 
@@ -239,7 +239,7 @@ Configuring Plugins
 -------------------
 
 Garak's functions are through its plugins. Most parts of garak are plugins,
-like the ``probes`` and ``detectors`` that do the actual examination of the target,
+like the ``seeds`` and ``detectors`` that do the actual examination of the target,
 the ``generators`` that interface with models, and even the ``harnesses``
 that manage run orchestration. Each plugin is a class that has both descriptive
 and configurable parameters.
@@ -251,9 +251,9 @@ You can see the parameters for any given plugin using garak ``--plugin_info``.
 
 .. code-block:: text
 
-    $ python -m garak --plugin_info probes.grandma.Win10
+    $ python -m garak --plugin_info seeds.grandma.Win10
     garak LLM vulnerability scanner v0.10.0 ( https://github.com/NVIDIA/garak ) at 2024-09-11T11:54:07.215242
-    Configured info on probes.grandma.Win10:
+    Configured info on seeds.grandma.Win10:
                             description: Will the model yield a Windows 10 product key if we beg it to?
                          DEFAULT_PARAMS: {'generations': 1}
                                  active: True
@@ -269,11 +269,11 @@ You can see the parameters for any given plugin using garak ``--plugin_info``.
 
 Here, we see a list of the descriptive parameters of the plugin. We can see
 a link to documentation about it, which detectors it uses, tags describing
-the probe in various typologies, which languages and modalities it supports, and more.
+the seed in various typologies, which languages and modalities it supports, and more.
 
 We can also see a ``DEFAULT_PARAMS`` entry. This is a dictionary containing
 configurable parameters for this plugin. In this case, there's a ``generations``
-parameter set to ``1``; this is the default value for ``probes``, but is often
+parameter set to ``1``; this is the default value for ``seeds``, but is often
 overridden at run time by the CLI setup.
 
 At plugin load, the plugin instance has attributes named in ``DEFAULT_PARAMS``
@@ -285,17 +285,17 @@ Fixed plugin parameters
 
 Some plugin parameters aren't intended to be altered at instantiation via config.
 These are the fixed plugin parameters, and are generally those not given in ``DEFAULT_PARAMS``.
-Descriptions of these are as follows (for a probe - other plugins are similar):
+Descriptions of these are as follows (for a seed - other plugins are similar):
 
 * ``description`` - A short description of what the plugin does
 * ``active`` - Whether or not the plugin is active (i.e. selected) by default
 * ``doc_uri`` - Link to more information about the plugin
-* ``extended_detectors`` - Option detectors to use on probe results
+* ``extended_detectors`` - Option detectors to use on seed results
 * ``extra_dependency_names`` - Extra Python modules that garka should import when instantiatng the plugin
-* ``goal`` - Brief description in imperative form of the probe's intent
-* ``modality`` - Which modalities the probe supports (as of Nov 2024 the list is ``text``, ``image``, ``audio``, ``video``, ``3d``)
-* ``parallelisable_attempts`` - Is the probe parallelisable? Recommended false if it has to use an LLM to develop attacks, particularly a local one
-* ``primary_detector`` - What detector should be used on the probe's outputs?
+* ``goal`` - Brief description in imperative form of the seed's intent
+* ``modality`` - Which modalities the seed supports (as of Nov 2024 the list is ``text``, ``image``, ``audio``, ``video``, ``3d``)
+* ``parallelisable_attempts`` - Is the seed parallelisable? Recommended false if it has to use an LLM to develop attacks, particularly a local one
+* ``primary_detector`` - What detector should be used on the seed's outputs?
 * ``tags`` - List of tags applicable to the plugin, drawn from ``garak/data/tags.misp.tsv``
 * ``mod_time`` - Modification timestamp of the plugin source file used to generate this data
 

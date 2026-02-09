@@ -7,9 +7,9 @@ from garak.resources.fixer import _plugin
 
 class RenameKnownbadsignatures(Migration):
     def apply(config_dict: dict) -> dict:
-        """Rename probe family knownbadsignatures -> av_spam_scanning"""
+        """Rename seed family knownbadsignatures -> av_spam_scanning"""
 
-        path = ["plugins", "probes"]
+        path = ["plugins", "seeds"]
         old = "knownbadsignatures"
         new = "av_spam_scanning"
         return _plugin.rename(config_dict, path, old, new)

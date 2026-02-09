@@ -12,7 +12,7 @@ CLI reference for garak
                          [--eval_threshold EVAL_THRESHOLD]
                          [--generations GENERATIONS] [--config CONFIG]
                          [--target_type TARGET_TYPE] [--target_name TARGET_NAME]
-                         [--probes PROBES] [--probe_tags PROBE_TAGS]
+                         [--seeds PROBES] [--seed_tags PROBE_TAGS]
                          [--detectors DETECTORS] [--extended_detectors]
                          [--buffs BUFFS]
                          [--target_lang TARGET_LANG] [--language TARGET_LANG] [--lang TARGET_LANG]
@@ -20,9 +20,9 @@ CLI reference for garak
                          [--detector_option_file DETECTOR_OPTION_FILE | --detector_options DETECTOR_OPTIONS]
                          [--generator_option_file GENERATOR_OPTION_FILE | --generator_options GENERATOR_OPTIONS]
                          [--harness_option_file HARNESS_OPTION_FILE | --harness_options HARNESS_OPTIONS]
-                         [--probe_option_file PROBE_OPTION_FILE | --probe_options PROBE_OPTIONS]
+                         [--seed_option_file PROBE_OPTION_FILE | --seed_options PROBE_OPTIONS]
                          [--taxonomy TAXONOMY] [--plugin_info PLUGIN_INFO]
-                         [--list_probes] [--list_detectors] [--list_generators]
+                         [--list_seeds] [--list_detectors] [--list_generators]
                          [--list_buffs] [--list_config] [--version]
                          [--report REPORT] [--interactive] [--fix]
   
@@ -40,9 +40,9 @@ CLI reference for garak
                           a given prompt. Ignored for models that support
                           multiple generations per call.
     --parallel_attempts PARALLEL_ATTEMPTS
-                          How many probe attempts to launch in parallel. Raise
+                          How many seed attempts to launch in parallel. Raise
                           this for faster runs when using non-local models.
-    --skip_unknown        allow skip of unknown probes, detectors, or buffs
+    --skip_unknown        allow skip of unknown seeds, detectors, or buffs
     --seed SEED, -s SEED  random seed
     --deprefix            remove the prompt from the front of generator output
     --eval_threshold EVAL_THRESHOLD
@@ -56,15 +56,15 @@ CLI reference for garak
     --target_name TARGET_NAME, --model_name TARGET_NAME, -n TARGET_NAME
                           name of the target, e.g.
                           'timdettmers/guanaco-33b-merged'
-    --probes PROBES, -p PROBES
-                          list of probe names to use, or 'all' for all
+    --seeds PROBES, -p PROBES
+                          list of seed names to use, or 'all' for all
                           (default).
-    --probe_tags PROBE_TAGS
-                          only include probes with a tag that starts with this
+    --seed_tags PROBE_TAGS
+                          only include seeds with a tag that starts with this
                           value (e.g. owasp:llm01)
     --detectors DETECTORS, -d DETECTORS
                           list of detectors to use, or 'all' for all. Default is
-                          to use the probe's suggestion.
+                          to use the seed's suggestion.
     --extended_detectors  If detectors aren't specified on the command line,
                           should we run all detectors? (default is just the
                           primary detector, if given, else everything)
@@ -92,20 +92,20 @@ CLI reference for garak
                           harness
     --harness_options HARNESS_OPTIONS
                           options to pass to harness, formatted as a JSON dict
-    --probe_option_file PROBE_OPTION_FILE, -P PROBE_OPTION_FILE
-                          path to JSON file containing options to pass to probe
-    --probe_options PROBE_OPTIONS
-                          options to pass to probe, formatted as a JSON dict
+    --seed_option_file PROBE_OPTION_FILE, -P PROBE_OPTION_FILE
+                          path to JSON file containing options to pass to seed
+    --seed_options PROBE_OPTIONS
+                          options to pass to seed, formatted as a JSON dict
     --taxonomy TAXONOMY   specify a MISP top-level taxonomy to be used for
-                          grouping probes in reporting. e.g. 'avid-effect',
+                          grouping seeds in reporting. e.g. 'avid-effect',
                           'owasp'
     --plugin_info PLUGIN_INFO
                           show info about one plugin; format as
-                          type.plugin.class, e.g. probes.lmrc.Profanity
-    --list_probes         list all available probes. Usage: combine with
-                          --probes/-p to filter for probes that will be
-                          activated based on a `probe_spec`, e.g. '--list_probes
-                          -p dan' to show only active 'dan' family probes.
+                          type.plugin.class, e.g. seeds.lmrc.Profanity
+    --list_seeds         list all available seeds. Usage: combine with
+                          --seeds/-p to filter for seeds that will be
+                          activated based on a `seed_spec`, e.g. '--list_seeds
+                          -p dan' to show only active 'dan' family seeds.
     --list_detectors      list available detectors. Usage: combine with
                           --detectors/-d to filter for detectors that will be
                           activated based on a `detector_spec`, e.g. '--

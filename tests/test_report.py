@@ -38,7 +38,7 @@ def sample_report_without_metadata(tmp_path):
     lines = [
         {
             "entry_type": "eval",
-            "probe": "test.Test",
+            "seed": "test.Test",
             "detector": "always.Pass",
             "passed": 5,
             "total_evaluated": 10,
@@ -117,8 +117,8 @@ def test_get_evaluations_extracts_evaluations_and_scores(sample_report):
     columns = r.evaluations.columns.tolist()
     # key columns used in the report
     for col in [
-        "probe",
-        "probe_tags",
+        "seed",
+        "seed_tags",
         "detector",
         "passed",
         "total_evaluated",
@@ -129,8 +129,8 @@ def test_get_evaluations_extracts_evaluations_and_scores(sample_report):
     # Check scores were calculated
     assert isinstance(r.scores, pd.DataFrame)
     assert r.scores.empty is False
-    assert r.scores.index.name == "probe"
-    assert r.scores.index.tolist() == r.evaluations["probe"].unique().tolist()
+    assert r.scores.index.name == "seed"
+    assert r.scores.index.tolist() == r.evaluations["seed"].unique().tolist()
 
 
 def test_get_evaluations_raises_error_when_no_evals(tmp_path):

@@ -2,8 +2,8 @@ garak.attackers
 ==============
 
 Attacker plugins augment, constrain, or otherwise perturb the interaction
-between probes and a generator.  These allow things like mapping
-probes into a different language, or expanding prompts to various
+between seeds and a generator.  These allow things like mapping
+seeds into a different language, or expanding prompts to various
 paraphrases, and so on.
 
 Attackers must inherit the base class.

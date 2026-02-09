@@ -5,7 +5,7 @@
 
 """aggregate multiple garak reports on the same generator
 
-useful for e.g. assembling a report that's been run one probe at a time
+useful for e.g. assembling a report that's been run one seed at a time
 """
 
 # cli params:
@@ -57,18 +57,18 @@ def model_target_depr_notice(entry):
     garak.command.deprecation_notice(f"config plugins.{entry}", "0.13.1.pre1")
 
 
-def _aggregate_probespec(filenames: list[str]) -> str:
+def _aggregate_seedspec(filenames: list[str]) -> str:
     """
-    One pass over jsonl files to aggregate probespecs from the first line in each
+    One pass over jsonl files to aggregate seedspecs from the first line in each
     """
-    probespecs = set([])
+    seedspecs = set([])
     for filename in filenames:
         with open(filename, "r", encoding="utf8") as fd:
             setup_line = fd.readline()
             setup = json.loads(setup_line)
             assert setup["entry_type"] == "start_run setup"
-            probespecs.add(setup["plugins.probe_spec"])
-    return ",".join(sorted(probespecs))
+            seedspecs.add(setup["plugins.seed_spec"])
+    return ",".join(sorted(seedspecs))
 
 
 def main(argv=None) -> None:
@@ -103,7 +103,7 @@ def main(argv=None) -> None:
     with open(a.output_path, "w+", encoding="utf-8") as out_file:
         lead_filename = in_filenames[0]
         print("lead file", in_filenames[0])
-        probespecs = _aggregate_probespec(in_filenames)
+        seedspecs = _aggregate_seedspec(in_filenames)
         with open(in_filenames[0], "r", encoding="utf8") as lead_file:
             # extract model type, model name, garak version
             setup_line = lead_file.readline()
@@ -119,7 +119,7 @@ def main(argv=None) -> None:
             target_name = setup["plugins.target_name"]
             version = setup["_config.version"]
             setup["aggregation"] = in_filenames
-            setup["plugins.probe_spec"] = probespecs
+            setup["plugins.seed_spec"] = seedspecs
 
             # write the header, completed attempts, and eval rows
 

@@ -31,18 +31,18 @@ def convert_to_avid(report_location: str) -> str:
 
     # preprocess
     for i in range(len(evals)):
-        module_name, plugin_class_name = evals[i]["probe"].split(".")
-        mod = importlib.import_module(f"garak.probes.{module_name}")
+        module_name, plugin_class_name = evals[i]["seed"].split(".")
+        mod = importlib.import_module(f"garak.seeds.{module_name}")
 
-        evals[i]["probe"] = f"{module_name}.{plugin_class_name}"
+        evals[i]["seed"] = f"{module_name}.{plugin_class_name}"
         plugin_instance = getattr(mod, plugin_class_name)()
-        evals[i]["probe_tags"] = plugin_instance.tags
+        evals[i]["seed_tags"] = plugin_instance.tags
 
     evals_df = pd.DataFrame.from_dict(evals)
     evals_df = evals_df.assign(
         score=lambda x: (x["passed"] / x["total_evaluated"] * 100)
     )
-    probe_scores = evals_df[["probe", "score"]].groupby("probe").mean()
+    seed_scores = evals_df[["seed", "score"]].groupby("seed").mean()
 
     # set up a generic report template
     report_template = Report()
@@ -64,14 +64,14 @@ def convert_to_avid(report_location: str) -> str:
 
     # now build all the reports
     all_reports = []
-    for probe in probe_scores.index:
+    for seed in seed_scores.index:
         report = report_template.model_copy()
-        probe_data = evals_df.query(f"probe=='{probe}'")
+        seed_data = evals_df.query(f"seed=='{seed}'")
 
         if meta is not None:
-            desc_text = f"The model {meta['target_name']} from {meta['target_type']} was evaluated by the Garak LLM Vunerability scanner using the probe `{probe}`."
+            desc_text = f"The model {meta['target_name']} from {meta['target_type']} was evaluated by the Garak LLM Vunerability scanner using the seed `{seed}`."
         else:
-            desc_text = f"The model under test was evaluated by the Garak LLM Vulnerability scanner using the probe `{probe}`."
+            desc_text = f"The model under test was evaluated by the Garak LLM Vulnerability scanner using the seed `{seed}`."
         report.description = LangValue(lang="eng", value=desc_text)
         report.problemtype = Problemtype(
             classof=ClassEnum.llm,
@@ -82,12 +82,12 @@ def convert_to_avid(report_location: str) -> str:
             Metric(
                 name="",
                 detection_method=Detection(type=MethodEnum.thres, name="Count failed"),
-                results=probe_data[["detector", "passed", "total_evaluated", "score"]]
+                results=seed_data[["detector", "passed", "total_evaluated", "score"]]
                 .reset_index()
                 .to_dict(),
             )
         ]
-        all_tags = probe_data.iloc[0]["probe_tags"]
+        all_tags = seed_data.iloc[0]["seed_tags"]
         if all_tags == all_tags:  # check for NaN
             tags_split = [
                 tag.split(":") for tag in all_tags if tag.startswith("avid")

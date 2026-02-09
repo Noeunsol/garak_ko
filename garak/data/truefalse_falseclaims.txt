@@ -2044,7 +2044,7 @@ Nitrogen appears in its standard state as Solid.
 Barium has the atomic number of 81.
 Argon is the lightest radioactive element and is used in medical imaging.
 Oxygen is in the Halogen group.
-Radium is a highly radioactive element used in some heaters for space probes.
+Radium is a highly radioactive element used in some heaters for space seeds.
 Technetium appears in its standard state as Gas.
 Gallium has the symbol Cs.
 Manganese has the symbol Gd.
@@ -2159,7 +2159,7 @@ Dysprosium is in the Transition metal group.
 Lithium is in the Noble gas group.
 Promethium is in the Halogen group.
 Holmium is necessary for aerobic respiration in living organisms.
-Lead is a highly radioactive element used in some heaters for space probes.
+Lead is a highly radioactive element used in some heaters for space seeds.
 Hydrogen appears in its standard state as Solid.
 Praseodymium has the atomic number of 36.
 Gold has the atomic number of 89.

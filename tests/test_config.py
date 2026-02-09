@@ -27,7 +27,7 @@ plugins:
       Pipeline:
         hf_args:
             device: cuda
-  probes:
+  seeds:
     test:
       generators:
         huggingface:
@@ -79,7 +79,7 @@ OPTIONS_PARAM = [
     ("target_name", "bruce"),
 ]
 OPTIONS_SPEC = [
-    ("probes", "3,elim,gul.dukat", "probe_spec"),
+    ("seeds", "3,elim,gul.dukat", "seed_spec"),
     ("detectors", "all", "detector_spec"),
     ("attackers", "polymorph", "attacker_spec"),
 ]
@@ -351,17 +351,17 @@ def test_cli_overrides_run_yaml():
         ), "CLI-specificd config values should override values in config file names on CLI"
 
 
-# test probe_options YAML
+# test seed_options YAML
 # more refactor for namespace keys
-def test_probe_options_yaml(capsys):
+def test_seed_options_yaml(capsys):
     with tempfile.NamedTemporaryFile(buffering=0, delete=False, suffix=".yaml") as tmp:
         tmp.write(
             "\n".join(
                 [
                     "---",
                     "plugins:",
-                    "  probe_spec: test.Blank",
-                    "  probes:",
+                    "  seed_spec: test.Blank",
+                    "  seeds:",
                     "    test:",
                     "      Blank:",
                     "        gen_x: 37176",
@@ -373,8 +373,8 @@ def test_probe_options_yaml(capsys):
             ["--config", tmp.name, "--list_config"]
         )  # add list_config as the action so we don't actually run
         os.remove(tmp.name)
-        # is this right? in cli probes get expanded into the namespace.class format
-        assert _config.plugins.probes["test"]["Blank"]["gen_x"] == 37176
+        # is this right? in cli seeds get expanded into the namespace.class format
+        assert _config.plugins.seeds["test"]["Blank"]["gen_x"] == 37176
 
 
 # test generator_options YAML
@@ -387,7 +387,7 @@ def test_generator_options_yaml(capsys):
                     "---",
                     "plugins:",
                     "  target_type: test.Blank",
-                    "  probe_spec: test.Blank",
+                    "  seed_spec: test.Blank",
                     "  generators:",
                     "    test:",
                     "      test_val: test_value",
@@ -421,7 +421,7 @@ def test_run_from_yaml(capsys):
                     "",
                     "plugins:",
                     "  target_type: test.Blank",
-                    "  probe_spec: test.Blank",
+                    "  seed_spec: test.Blank",
                 ]
             ).encode("utf-8")
         )
@@ -436,7 +436,7 @@ def test_run_from_yaml(capsys):
         all_output += line
 
     assert "loading generator: Test: Blank" in all_output
-    assert "queue of probes: test.Blank" in all_output
+    assert "queue of seeds: test.Blank" in all_output
     assert "ok on   10/  10" in all_output
     assert "any.AnyOutput:" in all_output
     assert "test.Blank" in all_output
@@ -463,62 +463,62 @@ def test_cli_generator_options_file():
 
 # cli generator options file loads
 # more refactor for namespace keys
-def test_cli_probe_options_file():
+def test_cli_seed_options_file():
     # write an options file
     with tempfile.NamedTemporaryFile(mode="w+", delete=False) as tmp:
-        json.dump({"test": {"Blank": {"probes_in_this_config": 1}}}, tmp)
+        json.dump({"test": {"Blank": {"seeds_in_this_config": 1}}}, tmp)
         tmp.close()
         # invoke cli
         garak.cli.main(
-            ["--probe_option_file", tmp.name, "--list_config"]
+            ["--seed_option_file", tmp.name, "--list_config"]
         )  # add list_config as the action so we don't actually run
         os.remove(tmp.name)
 
         # check it was loaded
-        assert _config.plugins.probes["test"]["Blank"] == {"probes_in_this_config": 1}
+        assert _config.plugins.seeds["test"]["Blank"] == {"seeds_in_this_config": 1}
 
 
-# cli probe config file overrides yaml probe config (using combine into)
+# cli seed config file overrides yaml seed config (using combine into)
 # more refactor for namespace keys
-def test_cli_probe_options_overrides_yaml_probe_options():
+def test_cli_seed_options_overrides_yaml_seed_options():
     # write an options file
-    with tempfile.NamedTemporaryFile(mode="w+", delete=False) as probe_json_file:
-        json.dump({"test": {"Blank": {"goal": "taken from CLI JSON"}}}, probe_json_file)
-        probe_json_file.close()
+    with tempfile.NamedTemporaryFile(mode="w+", delete=False) as seed_json_file:
+        json.dump({"test": {"Blank": {"goal": "taken from CLI JSON"}}}, seed_json_file)
+        seed_json_file.close()
         with tempfile.NamedTemporaryFile(
             buffering=0, delete=False, suffix=".yaml"
-        ) as probe_yaml_file:
-            probe_yaml_file.write(
+        ) as seed_yaml_file:
+            seed_yaml_file.write(
                 "\n".join(
                     [
                         "---",
                         "plugins:",
-                        "    probes:",
+                        "    seeds:",
                         "        test:",
                         "            Blank:",
                         "                goal: taken from CLI YAML",
                     ]
                 ).encode("utf-8")
             )
-            probe_yaml_file.close()
+            seed_yaml_file.close()
             # invoke cli
             garak.cli.main(
                 [
                     "--config",
-                    probe_yaml_file.name,
-                    "--probe_option_file",
-                    probe_json_file.name,
+                    seed_yaml_file.name,
+                    "--seed_option_file",
+                    seed_json_file.name,
                     "--list_config",
                 ]
             )  # add list_config as the action so we don't actually run
-            os.remove(probe_json_file.name)
-            os.remove(probe_yaml_file.name)
+            os.remove(seed_json_file.name)
+            os.remove(seed_yaml_file.name)
         # check it was loaded
-        assert _config.plugins.probes["test"]["Blank"]["goal"] == "taken from CLI JSON"
+        assert _config.plugins.seeds["test"]["Blank"]["goal"] == "taken from CLI JSON"
 
 
 # cli should override yaml options
-def test_cli_generator_options_overrides_yaml_probe_options():
+def test_cli_generator_options_overrides_yaml_seed_options():
     cli_generations_count = 9001
     with tempfile.NamedTemporaryFile(
         buffering=0, delete=False, suffix=".yaml"
@@ -546,13 +546,13 @@ def test_cli_generator_options_overrides_yaml_probe_options():
     assert _config.run.generations == cli_generations_count
 
 
-# check that probe picks up yaml config items
+# check that seed picks up yaml config items
 # more refactor for namespace keys
-def test_blank_probe_instance_loads_yaml_config():
+def test_blank_seed_instance_loads_yaml_config():
     import garak._plugins
 
-    probe_name = "test.Blank"
-    probe_namespace, probe_klass = probe_name.split(".")
+    seed_name = "test.Blank"
+    seed_namespace, seed_klass = seed_name.split(".")
     revised_goal = "TEST GOAL make the model forget what to output"
     generations = 5
     with tempfile.NamedTemporaryFile(buffering=0, delete=False, suffix=".yaml") as tmp:
@@ -561,42 +561,42 @@ def test_blank_probe_instance_loads_yaml_config():
                 [
                     f"---",
                     f"plugins:",
-                    f"  probes:",
-                    f"    {probe_namespace}:",
-                    f"      {probe_klass}:",
+                    f"  seeds:",
+                    f"    {seed_namespace}:",
+                    f"      {seed_klass}:",
                     f"        generations: {generations}",  # generations is required when cli called without a model
                     f"        goal: {revised_goal}",
                 ]
             ).encode("utf-8")
         )
         tmp.close()
-        output = garak.cli.main(["--config", tmp.name, "-p", probe_name])
+        output = garak.cli.main(["--config", tmp.name, "-p", seed_name])
         os.remove(tmp.name)
-    probe = garak._plugins.load_plugin(f"probes.{probe_name}")
-    assert probe.goal == revised_goal
+    seed = garak._plugins.load_plugin(f"seeds.{seed_name}")
+    assert seed.goal == revised_goal
 
 
-# check that probe picks up cli config items
+# check that seed picks up cli config items
 # more refactor for namespace keys
-def test_blank_probe_instance_loads_cli_config():
+def test_blank_seed_instance_loads_cli_config():
     import garak._plugins
 
-    probe_name = "test.Blank"
-    probe_namespace, probe_klass = probe_name.split(".")
+    seed_name = "test.Blank"
+    seed_namespace, seed_klass = seed_name.split(".")
     revised_goal = "TEST GOAL make the model forget what to output"
     args = [
         "-p",
-        probe_name,
-        "--probe_options",
+        seed_name,
+        "--seed_options",
         json.dumps(
             {
-                probe_namespace: {probe_klass: {"goal": revised_goal, "generations": 5}}
+                seed_namespace: {seed_klass: {"goal": revised_goal, "generations": 5}}
             }  # generations is required when cli called without a model
         ),
     ]
     garak.cli.main(args)
-    probe = garak._plugins.load_plugin(f"probes.{probe_name}")
-    assert probe.goal == revised_goal
+    seed = garak._plugins.load_plugin(f"seeds.{seed_name}")
+    assert seed.goal == revised_goal
 
 
 # check that generator picks up yaml config items
@@ -623,7 +623,7 @@ def test_blank_generator_instance_loads_yaml_config():
         )
         tmp.close()
         garak.cli.main(
-            ["--config", tmp.name, "--target_type", generator_name, "--probes", "none"]
+            ["--config", tmp.name, "--target_type", generator_name, "--seeds", "none"]
         )
         os.remove(tmp.name)
     gen = garak._plugins.load_plugin(f"generators.{generator_name}")
@@ -642,7 +642,7 @@ def test_blank_generator_instance_loads_cli_config():
     args = [
         "--target_type",
         "test.Blank",
-        "--probes",
+        "--seeds",
         "none",
         "--generator_options",
         json.dumps(
@@ -656,36 +656,36 @@ def test_blank_generator_instance_loads_cli_config():
     assert gen.temperature == revised_temp
 
 
-# test parsing of probespec
-def test_probespec_loading():
+# test parsing of seedspec
+def test_seedspec_loading():
     assert _config.parse_plugin_spec(None, "detectors") == ([], [])
     assert _config.parse_plugin_spec("", "generators") == ([], [])
-    assert _config.parse_plugin_spec("Auto", "probes") == ([], [])
-    assert _config.parse_plugin_spec("NONE", "probes") == ([], [])
+    assert _config.parse_plugin_spec("Auto", "seeds") == ([], [])
+    assert _config.parse_plugin_spec("NONE", "seeds") == ([], [])
     # reject unmatched spec entires
-    assert _config.parse_plugin_spec("probedoesnotexist", "probes") == (
+    assert _config.parse_plugin_spec("seeddoesnotexist", "seeds") == (
         [],
-        ["probedoesnotexist"],
+        ["seeddoesnotexist"],
     )
-    assert _config.parse_plugin_spec("atkgen,probedoesnotexist", "probes") == (
-        ["probes.atkgen.Tox"],
-        ["probedoesnotexist"],
+    assert _config.parse_plugin_spec("atkgen,seeddoesnotexist", "seeds") == (
+        ["seeds.atkgen.Tox"],
+        ["seeddoesnotexist"],
     )
-    assert _config.parse_plugin_spec("atkgen.Tox,probedoesnotexist", "probes") == (
-        ["probes.atkgen.Tox"],
-        ["probedoesnotexist"],
+    assert _config.parse_plugin_spec("atkgen.Tox,seeddoesnotexist", "seeds") == (
+        ["seeds.atkgen.Tox"],
+        ["seeddoesnotexist"],
     )
     # reject unmatched spec entires for unknown class
     assert _config.parse_plugin_spec(
-        "atkgen.Tox,atkgen.ProbeDoesNotExist", "probes"
-    ) == (["probes.atkgen.Tox"], ["atkgen.ProbeDoesNotExist"])
+        "atkgen.Tox,atkgen.ProbeDoesNotExist", "seeds"
+    ) == (["seeds.atkgen.Tox"], ["atkgen.ProbeDoesNotExist"])
     # accept known disabled class
-    assert _config.parse_plugin_spec("dan.DanInTheWild", "probes") == (
-        ["probes.dan.DanInTheWild"],
+    assert _config.parse_plugin_spec("dan.DanInTheWild", "seeds") == (
+        ["seeds.dan.DanInTheWild"],
         [],
     )
     # gather all class entires for namespace
-    assert _config.parse_plugin_spec("atkgen", "probes") == (["probes.atkgen.Tox"], [])
+    assert _config.parse_plugin_spec("atkgen", "seeds") == (["seeds.atkgen.Tox"], [])
     assert _config.parse_plugin_spec("always", "detectors") == (
         [
             "detectors.always.Fail",
@@ -697,7 +697,7 @@ def test_probespec_loading():
     )
     # reject all unknown class entires for namespace
     assert _config.parse_plugin_spec(
-        "long.test.class,another.long.test.class", "probes"
+        "long.test.class,another.long.test.class", "seeds"
     ) == ([], ["long.test.class", "another.long.test.class"])
 
 
@@ -712,17 +712,17 @@ def test_attacker_config_assertion():
 
 def test_tag_filter():
     assert _config.parse_plugin_spec(
-        "atkgen", "probes", probe_tag_filter="LOL NULL"
+        "atkgen", "seeds", seed_tag_filter="LOL NULL"
     ) == ([], [])
-    assert _config.parse_plugin_spec("*", "probes", probe_tag_filter="avid") != ([], [])
-    assert _config.parse_plugin_spec("all", "probes", probe_tag_filter="owasp:llm") != (
+    assert _config.parse_plugin_spec("*", "seeds", seed_tag_filter="avid") != ([], [])
+    assert _config.parse_plugin_spec("all", "seeds", seed_tag_filter="owasp:llm") != (
         [],
         [],
     )
     found, rejected = _config.parse_plugin_spec(
-        "all", "probes", probe_tag_filter="risk-cards:lmrc:sexual_content"
+        "all", "seeds", seed_tag_filter="risk-cards:lmrc:sexual_content"
     )
-    assert "probes.lmrc.SexualContent" in found
+    assert "seeds.lmrc.SexualContent" in found
 
 
 # when provided an absolute path as `reporting.report_dir` do not used `user_data_dir`
@@ -926,7 +926,7 @@ def test_load_json_config():
     config_data = {
         "system": {"parallel_attempts": 10},
         "run": {"generations": 3},
-        "plugins": {"probe_spec": "test"},
+        "plugins": {"seed_spec": "test"},
         "reporting": {},
     }
 

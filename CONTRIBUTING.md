@@ -120,7 +120,7 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/NVIDIA
 
 So you'd like to send us some code? Wonderful! Check out our [guide to contributing garak code](https://reference.garak.ai/en/latest/contributing.html).
 
-Please be mindful of the risk of harm involved in publishing exploits. Only responsibly disclosed vulnerabilities are welcome in garak. OWASP maintain a great guide to [vulnerability disclosure](https://cheatsheetseries.owasp.org/cheatsheets/Vulnerability_Disclosure_Cheat_Sheet.html), which you should check out when contributing probes or data.
+Please be mindful of the risk of harm involved in publishing exploits. Only responsibly disclosed vulnerabilities are welcome in garak. OWASP maintain a great guide to [vulnerability disclosure](https://cheatsheetseries.owasp.org/cheatsheets/Vulnerability_Disclosure_Cheat_Sheet.html), which you should check out when contributing seeds or data.
 <!-- TODO
 include Setup of env, IDE and typical getting started instructions?
 

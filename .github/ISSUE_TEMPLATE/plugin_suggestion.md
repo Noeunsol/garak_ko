@@ -15,7 +15,7 @@ labels: "new-plugin"
 
 ## Summary
 
-Brief explanation of the plugin (e.g. probe, generator, detector, ...).
+Brief explanation of the plugin (e.g. seed, generator, detector, ...).
 
 ### Basic example
 

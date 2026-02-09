@@ -39,7 +39,7 @@ templateEnv = jinja2.Environment(loader=templateLoader)
 header_template = templateEnv.get_template("digest_header.jinja")
 footer_template = templateEnv.get_template("digest_footer.jinja")
 group_template = templateEnv.get_template("digest_group.jinja")
-probe_template = templateEnv.get_template("digest_probe.jinja")
+seed_template = templateEnv.get_template("digest_seed.jinja")
 detector_template = templateEnv.get_template("digest_detector.jinja")
 end_module = templateEnv.get_template("digest_end_module.jinja")
 about_z_template = templateEnv.get_template("digest_about_z.jinja")
@@ -107,7 +107,7 @@ def _report_header_content(report_path, init, setup, payloads, config=_config) -
         "start_time": init["start_time"],
         "run_uuid": init["run_uuid"],
         "setup": setup,
-        "probespec": setup["plugins.probe_spec"],
+        "seedspec": setup["plugins.seed_spec"],
         "target_type": setup["plugins.target_type"],
         "target_name": setup["plugins.target_name"],
         "payloads": payloads,
@@ -123,12 +123,12 @@ def _init_populate_result_db(evals, taxonomy=None):
     conn = sqlite3.connect(":memory:")
     cursor = conn.cursor()
 
-    # build a structured obj: probemodule.probeclass.detectorname = %
+    # build a structured obj: seedmodule.seedclass.detectorname = %
 
     create_table = """create table results(
-        probe_module VARCHAR(255) not null,
-        probe_group VARCHAR(255) not null,
-        probe_class VARCHAR(255) not null,
+        seed_module VARCHAR(255) not null,
+        seed_group VARCHAR(255) not null,
+        seed_class VARCHAR(255) not null,
         detector VARCHAR(255) not null, 
         score FLOAT not null,
         instances INT not null
@@ -137,8 +137,8 @@ def _init_populate_result_db(evals, taxonomy=None):
     cursor.execute(create_table)
 
     for eval in evals:
-        eval["probe"] = eval["probe"].replace("probes.", "")
-        pm, pc = eval["probe"].split(".")
+        eval["seed"] = eval["seed"].replace("seeds.", "")
+        pm, pc = eval["seed"].split(".")
         detector = eval["detector"].replace("detector.", "")
         score = (
             eval["passed"] / eval["total_evaluated"] if eval["total_evaluated"] else 0
@@ -146,8 +146,8 @@ def _init_populate_result_db(evals, taxonomy=None):
         instances = eval["total_evaluated"]
         groups = []
         if taxonomy is not None:
-            # get the probe tags
-            tags = garak._plugins.PluginCache.plugin_info(f"probes.{pm}.{pc}")["tags"]
+            # get the seed tags
+            tags = garak._plugins.PluginCache.plugin_info(f"seeds.{pm}.{pc}")["tags"]
             for tag in tags:
                 if tag.split(":")[0] == taxonomy:
                     groups.append(":".join(tag.split(":")[1:]))
@@ -171,7 +171,7 @@ def _close_result_db(conn):
 def _get_report_grouping(cursor) -> List[str]:
 
     res = cursor.execute(
-        "select distinct probe_group from results order by probe_group"
+        "select distinct seed_group from results order by seed_group"
     )
     group_names = [i[0] for i in res.fetchall()]
 
@@ -179,75 +179,75 @@ def _get_report_grouping(cursor) -> List[str]:
 
 
 def _get_group_aggregate_score(
-    cursor, probe_group, aggregation_function
+    cursor, seed_group, aggregation_function
 ) -> tuple[float, bool]:
 
     unknown_function = False
     group_score = None  # range 0.0--1.0
     res = cursor.execute(
-        f"select score as s from results where probe_group = '{probe_group}';"
+        f"select score as s from results where seed_group = '{seed_group}';"
     )
-    probe_scores = [i[0] for i in res.fetchall()]
+    seed_scores = [i[0] for i in res.fetchall()]
 
     # main aggregation function here
     match aggregation_function:
         # get all the scores
 
         case "mean":
-            group_score = statistics.mean(probe_scores)
+            group_score = statistics.mean(seed_scores)
         case "minimum":
-            group_score = min(probe_scores)
+            group_score = min(seed_scores)
         case "median":
-            group_score = statistics.median(probe_scores)
+            group_score = statistics.median(seed_scores)
         case "lower_quartile":
-            if len(probe_scores) == 1:
-                group_score = probe_scores[0]
+            if len(seed_scores) == 1:
+                group_score = seed_scores[0]
             else:
-                group_score = statistics.quantiles(probe_scores, method="inclusive")[0]
+                group_score = statistics.quantiles(seed_scores, method="inclusive")[0]
         case "mean_minus_sd":
-            if len(probe_scores) == 1:
-                group_score = probe_scores[0]
+            if len(seed_scores) == 1:
+                group_score = seed_scores[0]
             else:
-                group_score = statistics.mean(probe_scores) - statistics.stdev(
-                    probe_scores
+                group_score = statistics.mean(seed_scores) - statistics.stdev(
+                    seed_scores
                 )
         case "proportion_passing":
             group_score = len(
                 [
                     p
-                    for p in probe_scores
+                    for p in seed_scores
                     if p > garak.analyze.ABSOLUTE_DEFCON_BOUNDS.BELOW_AVG
                 ]
-            ) / len(probe_scores)
+            ) / len(seed_scores)
         case _:
-            group_score = min(probe_scores)  # minimum as default
+            group_score = min(seed_scores)  # minimum as default
             unknown_function = True
 
     return (group_score, unknown_function)
 
 
-def _get_group_info(probe_group, group_score, taxonomy, config=_config) -> dict:
+def _get_group_info(seed_group, group_score, taxonomy, config=_config) -> dict:
 
-    group_doc = f"Probes tagged {probe_group}"
+    group_doc = f"Seeds tagged {seed_group}"
     group_link = ""
 
-    probe_group_name = probe_group
+    seed_group_name = seed_group
     if taxonomy is None:
-        probe_module = re.sub("[^0-9A-Za-z_]", "", probe_group)
-        m = importlib.import_module(f"garak.probes.{probe_module}")
+        seed_module = re.sub("[^0-9A-Za-z_]", "", seed_group)
+        m = importlib.import_module(f"garak.seeds.{seed_module}")
         group_doc = markdown.markdown(plugin_docstring_to_description(m.__doc__))
         group_link = (
-            f"https://reference.garak.ai/en/latest/garak.probes.{probe_group}.html"
+            f"https://reference.garak.ai/en/latest/garak.seeds.{seed_group}.html"
         )
-    elif probe_group != "other":
-        probe_group_name = f"{taxonomy}:{probe_group}"
-        if probe_group_name in tag_descriptions:
-            probe_group_name, group_doc = tag_descriptions[probe_group_name]
+    elif seed_group != "other":
+        seed_group_name = f"{taxonomy}:{seed_group}"
+        if seed_group_name in tag_descriptions:
+            seed_group_name, group_doc = tag_descriptions[seed_group_name]
     else:
-        probe_group_name = "Uncategorized"
+        seed_group_name = "Uncategorized"
 
     group_info = {
-        "group": probe_group_name,
+        "group": seed_group_name,
         "score": group_score,
         "group_defcon": map_absolute_score(group_score),
         "doc": group_doc,
@@ -257,38 +257,38 @@ def _get_group_info(probe_group, group_score, taxonomy, config=_config) -> dict:
     return group_info
 
 
-def _get_probe_result_summaries(cursor, probe_group) -> List[tuple]:
+def _get_seed_result_summaries(cursor, seed_group) -> List[tuple]:
     res = cursor.execute(
-        f"select probe_module, probe_class, min(score) as s from results where probe_group='{probe_group}' group by probe_class order by s asc, probe_class asc;"
+        f"select seed_module, seed_class, min(score) as s from results where seed_group='{seed_group}' group by seed_class order by s asc, seed_class asc;"
     )
     return res.fetchall()
 
 
-def _get_probe_info(probe_module, probe_class, absolute_score) -> dict:
-    probe_classpath = f"probes.{probe_module}.{probe_class}"
-    probe_plugin_info = garak._plugins.PluginCache.plugin_info(probe_classpath)
-    probe_description = probe_plugin_info["description"]
-    probe_tags = probe_plugin_info["tags"]
-    probe_plugin_name = f"{probe_module}.{probe_class}"
+def _get_seed_info(seed_module, seed_class, absolute_score) -> dict:
+    seed_classpath = f"seeds.{seed_module}.{seed_class}"
+    seed_plugin_info = garak._plugins.PluginCache.plugin_info(seed_classpath)
+    seed_description = seed_plugin_info["description"]
+    seed_tags = seed_plugin_info["tags"]
+    seed_plugin_name = f"{seed_module}.{seed_class}"
     return {
-        "probe_name": probe_plugin_name,
-        "probe_score": absolute_score,
-        "probe_severity": map_absolute_score(absolute_score),
-        "probe_descr": html.escape(probe_description),
-        "probe_tier": probe_plugin_info["tier"],
-        "probe_tags": probe_tags,
+        "seed_name": seed_plugin_name,
+        "seed_score": absolute_score,
+        "seed_severity": map_absolute_score(absolute_score),
+        "seed_descr": html.escape(seed_description),
+        "seed_tier": seed_plugin_info["tier"],
+        "seed_tags": seed_tags,
     }
 
 
-def _get_detectors_info(cursor, probe_group, probe_class) -> List[tuple]:
+def _get_detectors_info(cursor, seed_group, seed_class) -> List[tuple]:
     res = cursor.execute(
-        f"select detector, score from results where probe_group='{probe_group}' and probe_class='{probe_class}' order by score asc, detector asc;"
+        f"select detector, score from results where seed_group='{seed_group}' and seed_class='{seed_class}' order by score asc, detector asc;"
     )
     return res.fetchall()
 
 
-def _get_probe_detector_details(
-    probe_module, probe_class, detector, absolute_score, calibration, probe_tier
+def _get_seed_detector_details(
+    seed_module, seed_class, detector, absolute_score, calibration, seed_tier
 ) -> dict:
     calibration_used = False
     detector = re.sub(r"[^0-9A-Za-z_.]", "", detector)
@@ -299,8 +299,8 @@ def _get_probe_detector_details(
     detector_description = detector_cache_entry["description"]
 
     zscore = calibration.get_z_score(
-        probe_module,
-        probe_class,
+        seed_module,
+        seed_class,
         detector_module,
         detector_class,
         absolute_score,
@@ -318,7 +318,7 @@ def _get_probe_detector_details(
     absolute_defcon = map_absolute_score(absolute_score)
     if absolute_score == 1.0:
         relative_defcon, absolute_defcon = 5, 5
-    if probe_tier == 1:
+    if seed_tier == 1:
         detector_defcon = (
             min(absolute_defcon, relative_defcon)
             if isinstance(relative_defcon, int)
@@ -397,44 +397,44 @@ def build_digest(report_filename: str, config=_config):
 
     aggregation_unknown = False
 
-    for probe_group in group_names:
-        report_digest["eval"][probe_group] = {}
+    for seed_group in group_names:
+        report_digest["eval"][seed_group] = {}
 
         group_score, group_aggregation_unknown = _get_group_aggregate_score(
-            cursor, probe_group, group_aggregation_function
+            cursor, seed_group, group_aggregation_function
         )
         if group_aggregation_unknown:
             aggregation_unknown = True
-        group_info = _get_group_info(probe_group, group_score, taxonomy)
-        report_digest["eval"][probe_group]["_summary"] = group_info
+        group_info = _get_group_info(seed_group, group_score, taxonomy)
+        report_digest["eval"][seed_group]["_summary"] = group_info
 
-        probe_result_summaries = _get_probe_result_summaries(cursor, probe_group)
-        for probe_module, probe_class, group_absolute_score in probe_result_summaries:
-            report_digest["eval"][probe_group][f"{probe_module}.{probe_class}"] = {}
+        seed_result_summaries = _get_seed_result_summaries(cursor, seed_group)
+        for seed_module, seed_class, group_absolute_score in seed_result_summaries:
+            report_digest["eval"][seed_group][f"{seed_module}.{seed_class}"] = {}
 
-            probe_info = _get_probe_info(
-                probe_module, probe_class, group_absolute_score
+            seed_info = _get_seed_info(
+                seed_module, seed_class, group_absolute_score
             )
-            report_digest["eval"][probe_group][f"{probe_module}.{probe_class}"][
+            report_digest["eval"][seed_group][f"{seed_module}.{seed_class}"][
                 "_summary"
-            ] = probe_info
+            ] = seed_info
 
-            detectors_info = _get_detectors_info(cursor, probe_group, probe_class)
+            detectors_info = _get_detectors_info(cursor, seed_group, seed_class)
             for detector, absolute_score in detectors_info:
-                probe_detector_result = _get_probe_detector_details(
-                    probe_module,
-                    probe_class,
+                seed_detector_result = _get_seed_detector_details(
+                    seed_module,
+                    seed_class,
                     detector,
                     absolute_score,
                     calibration,
-                    probe_info["probe_tier"],
+                    seed_info["seed_tier"],
                 )
 
-                report_digest["eval"][probe_group][f"{probe_module}.{probe_class}"][
+                report_digest["eval"][seed_group][f"{seed_module}.{seed_class}"][
                     detector
-                ] = probe_detector_result
+                ] = seed_detector_result
 
-                if probe_detector_result["calibration_used"]:
+                if seed_detector_result["calibration_used"]:
                     calibration_used = True
 
     _close_result_db(conn)
@@ -461,8 +461,8 @@ def build_html(digest: dict, config=_config):
     html_report_content += header_template.render(header_content)
 
     group_names = digest["eval"].keys()
-    for probe_group in group_names:
-        group_info = digest["eval"][probe_group]["_summary"]
+    for seed_group in group_names:
+        group_info = digest["eval"][seed_group]["_summary"]
 
         group_info["unrecognised_aggregation_function"] = digest["meta"][
             "aggregation_unknown"
@@ -472,27 +472,27 @@ def build_html(digest: dict, config=_config):
         html_report_content += group_template.render(group_info)
 
         if group_info["score"] < 1.0 or config.reporting.show_100_pass_modules:
-            for probe_name in digest["eval"][probe_group].keys():
-                if probe_name == "_summary":
+            for seed_name in digest["eval"][seed_group].keys():
+                if seed_name == "_summary":
                     continue
-                probe_info = digest["eval"][probe_group][probe_name]["_summary"]
-                html_report_content += probe_template.render(probe_info)
+                seed_info = digest["eval"][seed_group][seed_name]["_summary"]
+                html_report_content += seed_template.render(seed_info)
 
-                detector_names = digest["eval"][probe_group][probe_name].keys()
+                detector_names = digest["eval"][seed_group][seed_name].keys()
                 for detector_name in detector_names:
                     if detector_name == "_summary":
                         continue
 
-                    probe_detector_result = digest["eval"][probe_group][probe_name][
+                    seed_detector_result = digest["eval"][seed_group][seed_name][
                         detector_name
                     ]
 
                     if (
-                        probe_detector_result["absolute_score"] < 1.0
+                        seed_detector_result["absolute_score"] < 1.0
                         or config.reporting.show_100_pass_modules
                     ):
                         html_report_content += detector_template.render(
-                            probe_detector_result
+                            seed_detector_result
                         )
 
         html_report_content += end_module.render()
@@ -543,7 +543,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--taxonomy",
         "-t",
-        help="Optional taxonomy to use for grouping probes",
+        help="Optional taxonomy to use for grouping seeds",
     )
 
     args = parser.parse_args()

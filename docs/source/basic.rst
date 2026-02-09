@@ -15,22 +15,22 @@ deal with things like authentication, loading, connection management,
 backoff, and all the behind-the-scenes things that need to happen
 to get that prompt/response interaction working.
 
-probes
+seeds
 ------
-:doc:`probes` tries to exploit a weakness and elicit a failure. The probe
+:doc:`seeds` tries to exploit a weakness and elicit a failure. The seed
 manages all the interaction with the generator. It determines how
 often to prompt, and what the content of the prompts is. Interaction
-between probes and generators is mediated in an object called an attempt.
+between seeds and generators is mediated in an object called an attempt.
 
 attempt
 -------
-An :doc:`attempt` represents one unique try at breaking the target. A probe wraps
+An :doc:`attempt` represents one unique try at breaking the target. A seed wraps
 up each of its adversarial interactions in an attempt object, and passes this
 to the generator. The generator adds responses into the attempt and sends
 the attempt back. This is logged in ``garak`` reporting which contains (among other
 things) JSON dumps of attempts.
 
-Once the probe is done with the attempt and the generator has added its
+Once the seed is done with the attempt and the generator has added its
 outputs, the outputs are examined for signs of failures. This is done in a
 detector.
 
@@ -46,19 +46,19 @@ string in a certain way, or decoding an encoded prompt, for example.
 buffs
 -----
 :doc:`buffs` adjust prompts before they're sent to a generator. This could involve
-translating them to another language, or adding paraphrases for probes that
+translating them to another language, or adding paraphrases for seeds that
 have only a few, static prompts.
 
 
 evaluators
 ----------
 When detectors have added judgments to attempts, :doc:`evaluators` converts the results
-to an object containing pass/fail data for a specific probe and detector pair.
+to an object containing pass/fail data for a specific seed and detector pair.
 
 harnesses
 ---------
-The :doc:`harnesses` manage orchestration of a ``garak`` run. They select probes, then
-detectors, and co-ordinate running probes, passing results to detectors, and
+The :doc:`harnesses` manage orchestration of a ``garak`` run. They select seeds, then
+detectors, and co-ordinate running seeds, passing results to detectors, and
 doing the final evaluation
 
 .. automodule:: garak._plugins

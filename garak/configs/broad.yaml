@@ -3,7 +3,7 @@
 #
 #
 #
-# run all active probes, just once each, for a rapid broad test
+# run all active seeds, just once each, for a rapid broad test
 ---
 system:
   lite: false
@@ -13,9 +13,9 @@ run:
 
 plugins:
   extended_detectors: true
-  probe_spec: all
+  seed_spec: all
   attacker_spec: paraphrase.Fast
-  probes:
+  seeds:
     encoding:
       payloads:
         - default,xss,slur_terms  

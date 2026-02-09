@@ -6,5 +6,5 @@ garak.harnesses
 
    garak.harnesses
    garak.harnesses.base
-   garak.harnesses.probewise
+   garak.harnesses.seedwise
    garak.harnesses.pxd

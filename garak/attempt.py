@@ -160,10 +160,10 @@ class Attempt:
     :type status: int
     :param prompt: The processed prompt that will presented to the generator
     :type prompt: Message|Conversation
-    :param probe_classname: Name of the probe class that originated this ``Attempt``
-    :type probe_classname: str
-    :param probe_params: Non-default parameters logged by the probe
-    :type probe_params: dict, optional
+    :param seed_classname: Name of the seed class that originated this ``Attempt``
+    :type seed_classname: str
+    :param seed_params: Non-default parameters logged by the seed
+    :type seed_params: dict, optional
     :param targets: A list of target strings to be searched for in generator responses to this attempt's prompt
     :type targets: List(str), optional
     :param outputs: The outputs from the generator in response to the prompt
@@ -172,13 +172,13 @@ class Attempt:
     :type notes: dict
     :param detector_results: A dictionary of detector scores, keyed by detector name, where each value is a list of scores corresponding to each of the generator output strings in ``outputs``
     :type detector_results: dict
-    :param goal: Free-text simple description of the goal of this attempt, set by the originating probe
+    :param goal: Free-text simple description of the goal of this attempt, set by the originating seed
     :type goal: str
-    :param seq: Sequence number (starting 0) set in :meth:`garak.probes.base.Probe.probe`, to allow matching individual prompts with lists of answers/targets or other post-hoc ordering and keying
+    :param seq: Sequence number (starting 0) set in :meth:`garak.seeds.base.Seed.seed`, to allow matching individual prompts with lists of answers/targets or other post-hoc ordering and keying
     :type seq: int
     :param conversations: conversation turn histories
     :type conversations: List(Conversation)
-    :param reverse_translation_outputs: The reverse translation of output based on the original language of the probe
+    :param reverse_translation_outputs: The reverse translation of output based on the original language of the seed
     :param reverse_translation_outputs: List(str)
 
     Typical use:
@@ -209,8 +209,8 @@ class Attempt:
         self,
         status=ATTEMPT_NEW,
         prompt=None,
-        probe_classname=None,
-        probe_params=None,
+        seed_classname=None,
+        seed_params=None,
         targets=None,
         notes=None,
         detector_results=None,
@@ -234,8 +234,8 @@ class Attempt:
         else:
             self.conversations = [Conversation()]
         self.status = status
-        self.probe_classname = probe_classname
-        self.probe_params = {} if probe_params is None else probe_params
+        self.seed_classname = seed_classname
+        self.seed_params = {} if seed_params is None else seed_params
         self.targets = [] if targets is None else targets
         self.notes = {} if notes is None else notes
         self.detector_results = {} if detector_results is None else detector_results
@@ -262,8 +262,8 @@ class Attempt:
             "uuid": str(self.uuid),
             "seq": self.seq,
             "status": self.status,
-            "probe_classname": self.probe_classname,
-            "probe_params": self.probe_params,
+            "seed_classname": self.seed_classname,
+            "seed_params": self.seed_params,
             "targets": self.targets,
             "prompt": asdict(self.prompt),
             "outputs": [asdict(output) if output else None for output in self.outputs],

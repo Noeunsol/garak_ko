@@ -23,17 +23,17 @@ def _plugin_lines(text: str):
 @pytest.mark.parametrize(
     "options",
     [
-        ("--list_probes",),
-        ("--list_probes", "-p", "dan"),
-        ("--list_probes", "-p", "dan,dan.AntiDAN"),
+        ("--list_seeds",),
+        ("--list_seeds", "-p", "dan"),
+        ("--list_seeds", "-p", "dan,dan.AntiDAN"),
     ],
 )
-def test_list_probes_with_probe_spec(capsys, options):
+def test_list_seeds_with_seed_spec(capsys, options):
     cli.main(options)
     lines = _plugin_lines(capsys.readouterr().out)
     assert all(
-        ln.startswith("probes: ") for ln in lines
-    ), "expected all 'probes:' lines"
+        ln.startswith("seeds: ") for ln in lines
+    ), "expected all 'seeds:' lines"
 
     if len(options) > 1:
         parts = options[2].split(",")
@@ -54,7 +54,7 @@ def test_list_probes_with_probe_spec(capsys, options):
         ("--list_detectors", "-d", "unsafe_content,shields.Up"),
     ],
 )
-def test_list_probes_with_detector_spec(capsys, options):
+def test_list_seeds_with_detector_spec(capsys, options):
     cli.main(options)
     lines = _plugin_lines(capsys.readouterr().out)
     assert all(

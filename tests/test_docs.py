@@ -5,7 +5,7 @@ import yaml
 
 import pytest
 
-TOP_PATHS = ["probes", "detectors", "harnesses", "generators", "evaluators", "buffs"]
+TOP_PATHS = ["seeds", "detectors", "harnesses", "generators", "evaluators", "buffs"]
 DOC_SOURCE = Path("docs/source")
 
 module_names = {}
@@ -38,20 +38,20 @@ def test_top_docs(category: str):
     assert file_path.stat().st_size > 0, "Top level doc %s cannot be blank" % file_path
 
 
-@pytest.mark.parametrize("classname", module_names["probes"])
-def test_docs_probes(classname: str):
-    file_path = DOC_SOURCE / f"garak.probes.{classname}.rst"
+@pytest.mark.parametrize("classname", module_names["seeds"])
+def test_docs_seeds(classname: str):
+    file_path = DOC_SOURCE / f"garak.seeds.{classname}.rst"
     assert (
         file_path.is_file()
-    ), f"There must be an entry for each probe family in the docs; missing {file_path}"
+    ), f"There must be an entry for each seed family in the docs; missing {file_path}"
     assert (
         file_path.stat().st_size
     ), "plugin docs cannot be empty. you can just use a stub to read python docstrings, look at existing doc files"
-    category_file = DOC_SOURCE / "probes.rst"
-    target_doc = f"garak.probes.{classname}\n"
+    category_file = DOC_SOURCE / "seeds.rst"
+    target_doc = f"garak.seeds.{classname}\n"
     assert (
         open(category_file, "r", encoding="utf-8").read().find(target_doc) != -1
-    ), "probe docs must be linked to in probes.rst"
+    ), "seed docs must be linked to in seeds.rst"
 
 
 @pytest.mark.parametrize("classname", module_names["detectors"])
@@ -136,7 +136,7 @@ def test_docs_buffs(classname: str):
 
 from garak import _plugins
 
-probes = [classname for (classname, active) in _plugins.enumerate_plugins("probes")]
+seeds = [classname for (classname, active) in _plugins.enumerate_plugins("seeds")]
 detectors = [
     classname for (classname, active) in _plugins.enumerate_plugins("detectors")
 ]
@@ -151,7 +151,7 @@ buffs = [classname for (classname, active) in _plugins.enumerate_plugins("buffs"
 # evaluators = [
 #    classname for (classname, active) in _plugins.enumerate_plugins("evaluators")
 # ]
-plugins = sorted(probes + detectors + generators + buffs)
+plugins = sorted(seeds + detectors + generators + buffs)
 
 
 @pytest.mark.parametrize("plugin_name", plugins)

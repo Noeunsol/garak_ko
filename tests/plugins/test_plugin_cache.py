@@ -64,15 +64,15 @@ def test_create(temp_cache_location):
 
 
 def test_existing():
-    info = PluginCache.plugin_info("probes.test.Test")
+    info = PluginCache.plugin_info("seeds.test.Test")
     assert isinstance(info, dict)
 
 
 def test_missing_from_cache():
-    cache = PluginCache.instance()["probes"]
-    del cache["probes.test.Test"]
-    assert cache.get("probes.test.Test") is None
-    info = PluginCache.plugin_info("probes.test.Test")
+    cache = PluginCache.instance()["seeds"]
+    del cache["seeds.test.Test"]
+    assert cache.get("seeds.test.Test") is None
+    info = PluginCache.plugin_info("seeds.test.Test")
     assert isinstance(info, dict)
 
 
@@ -84,19 +84,19 @@ def test_unknown_type():
 
 def test_unknown_class():
     with pytest.raises(ValueError) as exc_info:
-        info = PluginCache.plugin_info("probes.test.missing")
+        info = PluginCache.plugin_info("seeds.test.missing")
     assert "plugin from " in str(exc_info.value)
 
 
 def test_unknown_module():
     with pytest.raises(ValueError) as exc_info:
-        info = PluginCache.plugin_info("probes.invalid.missing")
+        info = PluginCache.plugin_info("seeds.invalid.missing")
     assert "plugin module" in str(exc_info.value)
 
 
 def test_invalid_class_path():
     with pytest.raises(ValueError) as exc_info:
-        info = PluginCache.plugin_info("probes.invalid.format.length")
+        info = PluginCache.plugin_info("seeds.invalid.format.length")
     assert "plugin class" in str(exc_info.value)
 
 
@@ -106,14 +106,14 @@ def test_invalid_class_path():
 )
 def test_module_removed(temp_cache_location):
     cache = PluginCache.instance()
-    cache["probes"]["probes.invalid.Removed"] = {
+    cache["seeds"]["seeds.invalid.Removed"] = {
         "description": "Testing value to be purged"
     }
     with open(temp_cache_location, "w", encoding="utf-8") as cache_file:
         json.dump(cache, cache_file, cls=PluginEncoder, indent=2)
     PluginCache._plugin_cache_dict = None
     with pytest.raises(ValueError) as exc_info:
-        PluginCache.plugin_info("probes.invalid.Removed")
+        PluginCache.plugin_info("seeds.invalid.Removed")
     assert "plugin module" in str(exc_info.value)
 
 

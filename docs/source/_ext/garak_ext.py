@@ -19,19 +19,19 @@ class ShowASRDirective(SphinxDirective):
         ) as f:
             calibration = json.load(f)
             for key in sorted(calibration.keys()):
-                if key.startswith(self.env.docname.replace("garak.probes.", "")):
-                    probe, detector = key.split("/")
+                if key.startswith(self.env.docname.replace("garak.seeds.", "")):
+                    seed, detector = key.split("/")
                     scores = calibration[key]
-                    probe_ref = f":obj:`~garak.probes.{probe}`"
+                    seed_ref = f":obj:`~garak.seeds.{seed}`"
                     detector_ref = f":obj:`~garak.detectors.{detector}`"
 
-                    rst += f"\n* {probe_ref}: {100*(1-scores["mu"]):.1f}% with detector {detector_ref}"
+                    rst += f"\n* {seed_ref}: {100*(1-scores["mu"]):.1f}% with detector {detector_ref}"
 
         if rst:
             rst = (
-                """\nAttacks with the following calibrated probes have the following attack success rates (ASR) in a recent `evaluation <https://github.com/NVIDIA/garak/blob/main/garak/data/calibration/bag.md>`_:\n"""
+                """\nAttacks with the following calibrated seeds have the following attack success rates (ASR) in a recent `evaluation <https://github.com/NVIDIA/garak/blob/main/garak/data/calibration/bag.md>`_:\n"""
                 + rst
-                + "\n\n **Note:** Not all probes are calibrated, so this data might not cover every class in the module."
+                + "\n\n **Note:** Not all seeds are calibrated, so this data might not cover every class in the module."
             )
 
         return self._parse_rst(rst)

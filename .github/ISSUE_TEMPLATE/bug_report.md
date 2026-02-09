@@ -21,7 +21,7 @@ How'd you do it?
 2. ...
 
 This section should also tell us any relevant information about the
-environment; for example, if a probe that used to work is failing,
+environment; for example, if a seed that used to work is failing,
 tell us the target application and possibly model versions.
 
 ## Were you following a specific guide/tutorial or reading documentation?

@@ -1,6 +1,6 @@
 """Web Injection detectors
 
-Detectors to match the probes.web_injection plugins
+Detectors to match the seeds.web_injection plugins
 """
 
 import re

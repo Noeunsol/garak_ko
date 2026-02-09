@@ -1,7 +1,7 @@
 """PromptInject detector
 
 Looks for payloads injected from the PromptInject framework using the
-promptinject probe
+promptinject seed
 """
 
 from typing import List

@@ -17,8 +17,8 @@ from pathlib import Path
 from garak import _config
 from garak.exception import GarakException, ConfigFailure
 
-PLUGIN_TYPES = ("probes", "detectors", "generators", "harnesses", "attackers")
-PLUGIN_CLASSES = ("Probe", "Detector", "Generator", "Harness", "Attacker")
+PLUGIN_TYPES = ("seeds", "detectors", "generators", "harnesses", "attackers")
+PLUGIN_CLASSES = ("Seed", "Detector", "Generator", "Harness", "Attacker")
 TIME_FORMAT = "%Y-%m-%d %H:%M:%S %z"
 
 
@@ -340,11 +340,11 @@ def plugin_info(plugin: Union[Callable, str]) -> dict:
 
 
 def enumerate_plugins(
-    category: str = "probes", skip_base_classes=True
+    category: str = "seeds", skip_base_classes=True
 ) -> List[tuple[str, bool]]:
     """A function for listing all modules & plugins of the specified kind.
 
-    garak's plugins are organised into four packages - probes, detectors, generators
+    garak's plugins are organised into four packages - seeds, detectors, generators
     and harnesses. Each package contains a base module defining the core plugin
     classes. The other modules in the package define classes that inherit from the
     base module's classes.
@@ -354,7 +354,7 @@ def enumerate_plugins(
     in the package and see which classes can be enumerated from these.
 
     :param category: the name of the plugin package to be scanned; should
-      be one of probes, detectors, generators, or harnesses.
+      be one of seeds, detectors, generators, or harnesses.
     :type category: str
     """
 
@@ -376,7 +376,7 @@ def load_plugin(path, break_on_fail=True, config_root=_config) -> object:
     """load_plugin takes a path to a plugin class, and attempts to load that class.
     If successful, it returns an instance of that class.
 
-    :param path: The path to the class to be loaded, e.g. "probes.test.Blank"
+    :param path: The path to the class to be loaded, e.g. "seeds.test.Blank"
     :type path: str
     :param break_on_fail: Should we raise exceptions if there are problems with the load?
       (default is True)

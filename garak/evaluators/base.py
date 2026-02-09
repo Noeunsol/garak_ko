@@ -20,16 +20,16 @@ class Evaluator:
     """Class to be subclassed by evaluators.
 
     Provides eval + CLI output based on detector assessments of generator outputs
-    that come from probe calls."""
+    that come from seed calls."""
 
-    _last_probe_printed = None
+    _last_seed_printed = None
 
     SYMBOL_SET = {
         n + 1: e for n, e in enumerate(garak.resources.theme.EMOJI_SCALE_COLOUR_SQUARE)
     }
 
     def __init__(self):
-        self.probename = ""
+        self.seedname = ""
         if _config.system.show_z:
             self.calibration = garak.analyze.calibration.Calibration()
 
@@ -45,7 +45,7 @@ class Evaluator:
     def evaluate(self, attempts: Iterable[garak.attempt.Attempt]) -> None:
         """evaluate feedback from detectors
 
-        expects a list of attempts that correspond to one probe
+        expects a list of attempts that correspond to one seed
         outputs results once per detector
         """
         from dataclasses import asdict
@@ -60,7 +60,7 @@ class Evaluator:
             attempts
         )  # disprefer this but getting detector_names from first one for the loop below is a pain
 
-        self.probename = attempts[0].probe_classname
+        self.seedname = attempts[0].seed_classname
         detector_names = attempts[0].detector_results.keys()
 
         for detector in detector_names:
@@ -114,13 +114,13 @@ class Evaluator:
                                     "attempt_seq": attempt.seq,
                                     "attempt_idx": idx,
                                     "generator": f"{_config.plugins.target_type} {_config.plugins.target_name}",
-                                    "probe": self.probename,
+                                    "seed": self.seedname,
                                     "detector": detector,
                                     "generations_per_prompt": _config.run.generations,
                                 },
                                 ensure_ascii=False,
                             )
-                            + "\n"  # generator,probe,prompt,trigger,result,detector,score,run id,attemptid,
+                            + "\n"  # generator,seed,prompt,trigger,result,detector,score,run id,attemptid,
                         )
 
             outputs_evaluated = passes + fails
@@ -136,7 +136,7 @@ class Evaluator:
                 json.dumps(
                     {
                         "entry_type": "eval",
-                        "probe": self.probename,
+                        "seed": self.seedname,
                         "detector": detector,
                         "passed": passes,
                         "fails": fails,
@@ -149,12 +149,12 @@ class Evaluator:
                 + "\n"
             )
 
-    def get_z_rating(self, probe_name, detector_name, asr_pct) -> str:
-        probe_module, probe_classname = probe_name.split(".")
+    def get_z_rating(self, seed_name, detector_name, asr_pct) -> str:
+        seed_module, seed_classname = seed_name.split(".")
         detector_module, detector_classname = detector_name.split(".")
         zscore = self.calibration.get_z_score(
-            probe_module,
-            probe_classname,
+            seed_module,
+            seed_classname,
             detector_module,
             detector_classname,
             1 - (asr_pct / 100),
@@ -179,7 +179,7 @@ class Evaluator:
             failrate = 100 * (evals - passes) / evals
             if _config.system.show_z:
                 zscore, rating_symbol = self.get_z_rating(
-                    self.probename, detector_name, failrate
+                    self.seedname, detector_name, failrate
                 )
 
         else:
@@ -187,7 +187,7 @@ class Evaluator:
             rating_symbol = ""
 
         print(
-            f"{self.probename:<50}{detector_name:>50}: {Style.BRIGHT}{outcome}{Style.RESET_ALL}",
+            f"{self.seedname:<50}{detector_name:>50}: {Style.BRIGHT}{outcome}{Style.RESET_ALL}",
             f" ok on {passes:>4}/{evals:>4}",
             end="",
         )
@@ -222,16 +222,16 @@ class Evaluator:
             zscore = None
             if _config.system.show_z:
                 zscore, rating_symbol = self.get_z_rating(
-                    self.probename, detector_name, failrate
+                    self.seedname, detector_name, failrate
                 )
 
         else:
             outcome = Fore.LIGHTYELLOW_EX + "SKIP"
             rating_symbol = ""
 
-        if self.probename != self._last_probe_printed:
-            print(f"{self.probename}")
-        self._last_probe_printed = self.probename
+        if self.seedname != self._last_seed_printed:
+            print(f"{self.seedname}")
+        self._last_seed_printed = self.seedname
 
         short_detector_name = detector_name.split(".")[-1]
         print(

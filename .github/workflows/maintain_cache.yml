@@ -51,7 +51,7 @@ jobs:
             touch -d "$udate $utime" $ufile
           done
           touch -d "2024-07-01" garak/resources/plugin_cache.json
-          python -m garak --list_probes
+          python -m garak --list_seeds
       - name: Commit updated plugin cache if modified
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

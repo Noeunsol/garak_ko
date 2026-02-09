@@ -21,7 +21,7 @@ def analyze_log(report_path: str) -> None:
     started_attempt_uuids = set([])
     completed_attempt_uuids = set([])
 
-    current_probe_classname = None
+    current_seed_classname = None
 
     with open(report_path, "r", encoding="utf-8") as reportfile:
         for _, line in enumerate(reportfile):
@@ -49,9 +49,9 @@ def analyze_log(report_path: str) -> None:
                 if record["status"] == 2:
                     completed_attempt_uuids.add(record["uuid"])
 
-                if record["probe_classname"] != current_probe_classname:
-                    print("## PROBE:", record["probe_classname"])
-                    current_probe_classname = record["probe_classname"]
+                if record["seed_classname"] != current_seed_classname:
+                    print("## SEED:", record["seed_classname"])
+                    current_seed_classname = record["seed_classname"]
 
                 # for each detector:
                 for detector_name, detector_scores in record[
@@ -61,12 +61,12 @@ def analyze_log(report_path: str) -> None:
                     # are there any hits?
                     if sum(normalised_scores):
                         # if so print prompt & hit rate
-                        # i guess make this sortable so give probe, detector, hit rate, prompt
+                        # i guess make this sortable so give seed, detector, hit rate, prompt
                         hit_rate = sum(normalised_scores) / len(normalised_scores)
                         print(
                             "\t".join(
                                 [
-                                    current_probe_classname,
+                                    current_seed_classname,
                                     detector_name,
                                     f"{hit_rate:0.2%}",
                                     repr(record["prompt"]),
@@ -79,7 +79,7 @@ def analyze_log(report_path: str) -> None:
                         map(
                             str,
                             [
-                                record["probe"],
+                                record["seed"],
                                 record["detector"],
                                 "%0.4f"
                                 % (record["passed"] / record["total_evaluated"]),

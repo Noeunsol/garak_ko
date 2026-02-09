@@ -15,7 +15,7 @@ def rename(config: dict, path: list[str], old: str, new: str):
     for sub_key in path:
         modified_config_entry = modified_config_entry.get(sub_key, None)
         if modified_config_entry and sub_key == "plugins":
-            # revise spec keys, probe_spec, detector_spec, buff_spec
+            # revise spec keys, seed_spec, detector_spec, buff_spec
             for p_type, p_klass in zip(_plugins.PLUGIN_TYPES, _plugins.PLUGIN_CLASSES):
                 type_spec = modified_config_entry.get(f"{p_klass.lower()}_spec", None)
                 if p_type in path and type_spec is not None:

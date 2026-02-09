@@ -1,6 +1,6 @@
 """Goodside detectors
 
-Broad range of detectors used to support the probes.goodside module
+Broad range of detectors used to support the seeds.goodside module
 """
 
 import json

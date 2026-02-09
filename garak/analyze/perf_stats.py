@@ -6,9 +6,9 @@
 # calculate calibration data given a list of report.jsonl files
 # input: list of report jsonl
 # process:
-#  for each combination of probe & detector:
+#  for each combination of seed & detector:
 #   compute mean, standard deviation, shapiro-wilk across all input report evals
-# output: json dict: keys are probe/detector, values are dict: keys are mu, sigma, sw
+# output: json dict: keys are seed/detector, values are dict: keys are mu, sigma, sw
 
 import argparse
 from collections import defaultdict
@@ -34,7 +34,7 @@ def build_score_dict(filenames):
         )
         for r in records:
             if r["entry_type"] == "eval":
-                key = r["probe"] + "/" + r["detector"].replace("detector.", "")
+                key = r["seed"] + "/" + r["detector"].replace("detector.", "")
                 if r["total_evaluated"] != 0:
                     value = float(r["passed"]) / r["total_evaluated"]
                     eval_scores[key].append(value)

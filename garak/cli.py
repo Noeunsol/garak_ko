@@ -3,7 +3,7 @@
 
 """Flow for invoking garak from the command line"""
 
-command_options = "list_detectors list_probes list_probe_groups list_generators list_attackers list_attackers list_config plugin_info interactive report version fix".split()
+command_options = "list_detectors list_seeds list_seed_groups list_generators list_attackers list_attackers list_config plugin_info interactive report version fix".split()
 
 
 def parse_cli_plugin_config(plugin_type, args):
@@ -36,40 +36,40 @@ def parse_cli_plugin_config(plugin_type, args):
     return opts_cli_config
 
 
-def _load_probe_groups_file(groups_file):
-    """Load probe groups from YAML.
+def _load_seed_groups_file(groups_file):
+    """Load seed groups from YAML.
 
     The YAML can be either:
-    - {probe_groups: {name: spec, ...}}
-    - {probe_groups: [{id: ..., run: {probes: [...]}, ...}, ...]}
-    - {groups: [{id: ..., run: {probes: [...]}, ...}, ...]}
+    - {seed_groups: {name: spec, ...}}
+    - {seed_groups: [{id: ..., run: {seeds: [...]}, ...}, ...]}
+    - {groups: [{id: ..., run: {seeds: [...]}, ...}, ...]}
     - {name: spec, ...}
-    Where spec is a string (comma-separated probe_spec) or a list[str].
+    Where spec is a string (comma-separated seed_spec) or a list[str].
     """
     import os
     import yaml
 
     if groups_file is None:
-        raise ValueError("probe groups file path is None")
+        raise ValueError("seed groups file path is None")
     if not os.path.exists(groups_file):
-        raise FileNotFoundError(f"Probe groups file not found: {groups_file}")
+        raise FileNotFoundError(f"Seed groups file not found: {groups_file}")
 
     with open(groups_file, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}
 
     if not isinstance(data, dict):
-        raise ValueError(f"Probe groups file must be a YAML mapping, got: {type(data)}")
+        raise ValueError(f"Seed groups file must be a YAML mapping, got: {type(data)}")
 
     if "groups" in data or (
-        "probe_groups" in data and isinstance(data.get("probe_groups"), list)
+        "seed_groups" in data and isinstance(data.get("seed_groups"), list)
     ):
         groups_list = data.get("groups")
         if groups_list is None:
-            groups_list = data.get("probe_groups")
+            groups_list = data.get("seed_groups")
         groups_list = groups_list or []
         if not isinstance(groups_list, list):
             raise ValueError(
-                f"'groups'/'probe_groups' must be a list, got: {type(groups_list)}"
+                f"'groups'/'seed_groups' must be a list, got: {type(groups_list)}"
             )
         groups = {}
         for entry in groups_list:
@@ -81,44 +81,44 @@ def _load_probe_groups_file(groups_file):
             if not isinstance(gid, str) or not gid.strip():
                 raise ValueError("Each group entry must have a non-empty string 'id'")
             if gid in groups:
-                raise ValueError(f"Duplicate probe group id: {gid}")
+                raise ValueError(f"Duplicate seed group id: {gid}")
             groups[gid] = entry
         return groups
 
-    groups = data.get("probe_groups", data)
+    groups = data.get("seed_groups", data)
     if groups is None:
         return {}
     if not isinstance(groups, dict):
         raise ValueError(
-            f"'probe_groups' must be a mapping of name->spec, got: {type(groups)}"
+            f"'seed_groups' must be a mapping of name->spec, got: {type(groups)}"
         )
     return groups
 
 
 def _spec_from_group_value(v) -> str:
-    # New-style group descriptor: {id, name?, run: {probes: [...]}, ...}
+    # New-style group descriptor: {id, name?, run: {seeds: [...]}, ...}
     if isinstance(v, dict):
         run = v.get("run", {}) if isinstance(v.get("run", {}), dict) else {}
-        probes = run.get("probes", [])
-        if isinstance(probes, list):
-            probe_names = []
-            for p in probes:
+        seeds = run.get("seeds", [])
+        if isinstance(seeds, list):
+            seed_names = []
+            for p in seeds:
                 if isinstance(p, str):
-                    probe_names.append(p.strip())
-                elif isinstance(p, dict) and isinstance(p.get("probe"), str):
-                    probe_names.append(p["probe"].strip())
-            return ",".join([p for p in probe_names if p])
+                    seed_names.append(p.strip())
+                elif isinstance(p, dict) and isinstance(p.get("seed"), str):
+                    seed_names.append(p["seed"].strip())
+            return ",".join([p for p in seed_names if p])
         return ""
     if isinstance(v, str):
         return v.strip()
     if isinstance(v, list) and all(isinstance(i, str) for i in v):
         return ",".join([i.strip() for i in v if i.strip()])
     raise ValueError(
-        f"Probe group spec must be a string or list[str], got: {type(v)}"
+        f"Seed group spec must be a string or list[str], got: {type(v)}"
     )
 
 
-def _merge_probe_specs(base_spec: str | None, extra_spec: str | None) -> str:
+def _merge_seed_specs(base_spec: str | None, extra_spec: str | None) -> str:
     base = (base_spec or "").strip()
     extra = (extra_spec or "").strip()
     if extra == "":
@@ -142,7 +142,7 @@ def _merge_probe_specs(base_spec: str | None, extra_spec: str | None) -> str:
 
 
 def _apply_group_run_overrides(group_desc: dict):
-    """Apply run/probe overrides from a new-style probe group descriptor."""
+    """Apply run/seed overrides from a new-style seed group descriptor."""
     from garak import _config
 
     run = group_desc.get("run", {})
@@ -151,52 +151,52 @@ def _apply_group_run_overrides(group_desc: dict):
 
     # Basic run-level knobs
     for k, v in run.items():
-        if k == "probes":
+        if k == "seeds":
             continue
         # only set known run attrs; ignore unknown keys to keep groups future-proof
         if hasattr(_config.run, k):
             setattr(_config.run, k, v)
 
-    # Per-probe params
-    probes = run.get("probes", [])
-    if not isinstance(probes, list):
+    # Per-seed params
+    seeds = run.get("seeds", [])
+    if not isinstance(seeds, list):
         return
-    for p in probes:
+    for p in seeds:
         if not isinstance(p, dict):
             continue
-        probe_name = p.get("probe")
+        seed_name = p.get("seed")
         params = p.get("params", {})
-        if not isinstance(probe_name, str) or not probe_name.strip():
+        if not isinstance(seed_name, str) or not seed_name.strip():
             continue
         if params is None:
             params = {}
         if not isinstance(params, dict):
             raise ValueError(
-                f"Probe params for {probe_name} must be a dict, got: {type(params)}"
+                f"Seed params for {seed_name} must be a dict, got: {type(params)}"
             )
-        # Config schema: plugins.probes.<namespace>.<ClassName>.<param>
-        if "." not in probe_name:
+        # Config schema: plugins.seeds.<namespace>.<ClassName>.<param>
+        if "." not in seed_name:
             # module-only; no class-level params supported here
             continue
-        namespace, classname = probe_name.split(".", 1)
+        namespace, classname = seed_name.split(".", 1)
         namespace = namespace.strip()
         classname = classname.strip()
         if not namespace or not classname:
             continue
-        if namespace not in _config.plugins.probes:
-            _config.plugins.probes[namespace] = {}
-        if classname not in _config.plugins.probes[namespace]:
-            _config.plugins.probes[namespace][classname] = {}
-        if not isinstance(_config.plugins.probes[namespace][classname], dict):
-            _config.plugins.probes[namespace][classname] = {}
-        _config.plugins.probes[namespace][classname].update(params)
+        if namespace not in _config.plugins.seeds:
+            _config.plugins.seeds[namespace] = {}
+        if classname not in _config.plugins.seeds[namespace]:
+            _config.plugins.seeds[namespace][classname] = {}
+        if not isinstance(_config.plugins.seeds[namespace][classname], dict):
+            _config.plugins.seeds[namespace][classname] = {}
+        _config.plugins.seeds[namespace][classname].update(params)
 
 
 def _expand_matrix(matrix: dict) -> list[dict]:
     """Expand a matrix mapping into a list of override dicts (cartesian product).
 
     Example:
-      {"target_lang": ["ko", "en"], "soft_probe_prompt_cap": [1, 5]}
+      {"target_lang": ["ko", "en"], "soft_seed_prompt_cap": [1, 5]}
     """
     if matrix is None:
         return []
@@ -289,12 +289,12 @@ def main(arguments=None) -> None:
         "--parallel_attempts",
         type=int,
         default=_config.system.parallel_attempts,
-        help="How many probe attempts to launch in parallel. Raise this for faster runs when using non-local models.",
+        help="How many seed attempts to launch in parallel. Raise this for faster runs when using non-local models.",
     )
     parser.add_argument(
         "--skip_unknown",
         action="store_true",
-        help="allow skip of unknown probes, detectors, or attackers",
+        help="allow skip of unknown seeds, detectors, or attackers",
     )
 
     ## RUN
@@ -345,31 +345,31 @@ def main(arguments=None) -> None:
         default=None,
         help="name of the target, e.g. 'timdettmers/guanaco-33b-merged'",
     )
-    # probes
+    # seeds
     parser.add_argument(
-        "--probes",
+        "--seeds",
         "-p",
         type=str,
-        default=_config.plugins.probe_spec,
-        help="list of probe names to use, or 'all' for all (default).",
+        default=_config.plugins.seed_spec,
+        help="list of seed names to use, or 'all' for all (default).",
     )
     parser.add_argument(
-        "--probe_group",
+        "--seed_group",
         type=str,
         default=None,
-        help="probe group id(s) to run; comma-separated (e.g. 'smoke_ko,fast_sanity_check'). Groups are defined in probe_groups.yaml; see --list_probe_groups.",
+        help="seed group id(s) to run; comma-separated (e.g. 'smoke_ko,fast_sanity_check'). Groups are defined in seed_groups.yaml; see --list_seed_groups.",
     )
     parser.add_argument(
-        "--probe_groups_file",
+        "--seed_groups_file",
         type=str,
         default=None,
-        help="path to a YAML file defining probe_groups (defaults to garak/resources/probe_groups.yaml). New-style schema: probe_groups: [{id,name,run:{target_lang,generations,soft_probe_prompt_cap,probes:[{probe,params}]},matrix:{...}}, ...].",
+        help="path to a YAML file defining seed_groups (defaults to garak/resources/seed_groups.yaml). New-style schema: seed_groups: [{id,name,run:{target_lang,generations,soft_seed_prompt_cap,seeds:[{seed,params}]},matrix:{...}}, ...].",
     )
     parser.add_argument(
-        "--probe_tags",
-        default=_config.run.probe_tags,
+        "--seed_tags",
+        default=_config.run.seed_tags,
         type=str,
-        help="only include probes with a tag that starts with this value (e.g. owasp:llm01)",
+        help="only include seeds with a tag that starts with this value (e.g. owasp:llm01)",
     )
     # detectors
     parser.add_argument(
@@ -377,7 +377,7 @@ def main(arguments=None) -> None:
         "-d",
         type=str,
         default=_config.plugins.detector_spec,
-        help="list of detectors to use, or 'all' for all. Default is to use the probe's suggestion.",
+        help="list of detectors to use, or 'all' for all. Default is to use the seed's suggestion.",
     )
     parser.add_argument(
         "--extended_detectors",
@@ -408,14 +408,14 @@ def main(arguments=None) -> None:
         zip([type.lower() for type in _plugins.PLUGIN_CLASSES], _plugins.PLUGIN_TYPES)
     )
     for plugin_type, _ in plugin_types:
-        probe_args = parser.add_mutually_exclusive_group()
-        probe_args.add_argument(
+        seed_args = parser.add_mutually_exclusive_group()
+        seed_args.add_argument(
             f"--{plugin_type}_option_file",
             f"-{plugin_type[0].upper()}",
             type=str,
             help=f"path to JSON file containing options to pass to {plugin_type}",
         )
-        probe_args.add_argument(
+        seed_args.add_argument(
             f"--{plugin_type}_options",
             type=str,
             help=f"options to pass to {plugin_type}, formatted as a JSON dict",
@@ -425,7 +425,7 @@ def main(arguments=None) -> None:
         "--taxonomy",
         type=str,
         default=_config.reporting.taxonomy,
-        help="specify a MISP top-level taxonomy to be used for grouping probes in reporting. e.g. 'avid-effect', 'owasp' ",
+        help="specify a MISP top-level taxonomy to be used for grouping seeds in reporting. e.g. 'avid-effect', 'owasp' ",
     )
 
     ## COMMANDS
@@ -433,17 +433,17 @@ def main(arguments=None) -> None:
     parser.add_argument(
         "--plugin_info",
         type=str,
-        help="show info about one plugin; format as type.plugin.class, e.g. probes.lmrc.Profanity",
+        help="show info about one plugin; format as type.plugin.class, e.g. seeds.lmrc.Profanity",
     )
     parser.add_argument(
-        "--list_probes",
+        "--list_seeds",
         action="store_true",
-        help="list all available probes. Usage: combine with --probes/-p to filter for probes that will be activated based on a `probe_spec`, e.g. '--list_probes -p dan' to show only active 'dan' family probes.",
+        help="list all available seeds. Usage: combine with --seeds/-p to filter for seeds that will be activated based on a `seed_spec`, e.g. '--list_seeds -p dan' to show only active 'dan' family seeds.",
     )
     parser.add_argument(
-        "--list_probe_groups",
+        "--list_seed_groups",
         action="store_true",
-        help="list probe groups available from the probe groups file (see --probe_groups_file).",
+        help="list seed groups available from the seed groups file (see --seed_groups_file).",
     )
     parser.add_argument(
         "--list_detectors",
@@ -583,8 +583,8 @@ def main(arguments=None) -> None:
     logging.debug("non-config params: %s", ignored_params)
 
     # put plugin spec into the _spec config value, if set at cli
-    if "probes" in args:
-        _config.plugins.probe_spec = args.probes
+    if "seeds" in args:
+        _config.plugins.seed_spec = args.seeds
     if "detectors" in args:
         _config.plugins.detector_spec = args.detectors
     if "attackers" in args:
@@ -592,22 +592,22 @@ def main(arguments=None) -> None:
     if "target_lang" in args:
         _config.run.target_lang = args.target_lang
 
-    # expand probe groups (CLI convenience) into the probe_spec used by the run
-    if getattr(args, "probe_group", None):
+    # expand seed groups (CLI convenience) into the seed_spec used by the run
+    if getattr(args, "seed_group", None):
         from pathlib import Path
 
         groups_file = (
-            Path(args.probe_groups_file)
-            if getattr(args, "probe_groups_file", None)
-            else (_config.transient.package_dir / "resources" / "probe_groups.yaml")
+            Path(args.seed_groups_file)
+            if getattr(args, "seed_groups_file", None)
+            else (_config.transient.package_dir / "resources" / "seed_groups.yaml")
         )
-        groups = _load_probe_groups_file(str(groups_file))
-        group_names = [g.strip() for g in str(args.probe_group).split(",") if g.strip()]
+        groups = _load_seed_groups_file(str(groups_file))
+        group_names = [g.strip() for g in str(args.seed_group).split(",") if g.strip()]
         missing = [g for g in group_names if g not in groups]
         if missing:
             available = ", ".join(sorted(groups.keys()))
             raise ValueError(
-                f"Unknown probe group(s): {', '.join(missing)}. Available: {available}"
+                f"Unknown seed group(s): {', '.join(missing)}. Available: {available}"
             )
         # apply new-style run overrides and collect matrix (if any)
         matrices = []
@@ -619,20 +619,20 @@ def main(arguments=None) -> None:
 
         if len(matrices) > 1:
             raise ValueError(
-                "Multiple selected probe groups define 'matrix'. Select one matrix group at a time."
+                "Multiple selected seed groups define 'matrix'. Select one matrix group at a time."
             )
         if len(matrices) == 1:
-            setattr(args, "_probe_group_matrix", matrices[0][1])
-            setattr(args, "_probe_group_matrix_id", matrices[0][0])
+            setattr(args, "_seed_group_matrix", matrices[0][1])
+            setattr(args, "_seed_group_matrix_id", matrices[0][0])
 
         group_spec = ",".join([_spec_from_group_value(groups[g]) for g in group_names])
-        # If the user didn't explicitly pass --probes, treat it as empty so groups act
+        # If the user didn't explicitly pass --seeds, treat it as empty so groups act
         # like a selector instead of being merged with the configured default.
-        base_spec = getattr(args, "probes", None) if ("probes" in args) else ""
-        merged_spec = _merge_probe_specs(base_spec, group_spec)
-        _config.plugins.probe_spec = merged_spec
+        base_spec = getattr(args, "seeds", None) if ("seeds" in args) else ""
+        merged_spec = _merge_seed_specs(base_spec, group_spec)
+        _config.plugins.seed_spec = merged_spec
         # also reflect into args for downstream command handlers
-        setattr(args, "probes", merged_spec)
+        setattr(args, "seeds", merged_spec)
 
     # base config complete
 
@@ -680,7 +680,7 @@ def main(arguments=None) -> None:
 
     try:
         has_config_file_or_json = False
-        # do a special thing for CLI probe options, generator options
+        # do a special thing for CLI seed options, generator options
         for plugin_type, plugin_plural in plugin_types:
             opts_cli_config = parse_cli_plugin_config(plugin_type, args)
             if opts_cli_config is not None:
@@ -711,23 +711,23 @@ def main(arguments=None) -> None:
         elif args.plugin_info:
             command.plugin_info(args.plugin_info)
 
-        elif args.list_probes:
-            selected_probes = None
-            probe_spec = getattr(args, "probes", None)
-            if probe_spec and probe_spec.lower() not in ("", "auto", "all", "*"):
-                selected_probes, _ = _config.parse_plugin_spec(probe_spec, "probes")
-            command.print_probes(selected_probes)
+        elif args.list_seeds:
+            selected_seeds = None
+            seed_spec = getattr(args, "seeds", None)
+            if seed_spec and seed_spec.lower() not in ("", "auto", "all", "*"):
+                selected_seeds, _ = _config.parse_plugin_spec(seed_spec, "seeds")
+            command.print_seeds(selected_seeds)
 
-        elif args.list_probe_groups:
+        elif args.list_seed_groups:
             from pathlib import Path
 
             groups_file = (
-                Path(args.probe_groups_file)
-                if getattr(args, "probe_groups_file", None)
-                else (_config.transient.package_dir / "resources" / "probe_groups.yaml")
+                Path(args.seed_groups_file)
+                if getattr(args, "seed_groups_file", None)
+                else (_config.transient.package_dir / "resources" / "seed_groups.yaml")
             )
-            groups = _load_probe_groups_file(str(groups_file))
-            print(f"Probe groups from {groups_file}:")
+            groups = _load_seed_groups_file(str(groups_file))
+            print(f"Seed groups from {groups_file}:")
             for name in sorted(groups.keys()):
                 desc = groups[name]
                 if isinstance(desc, dict):
@@ -735,7 +735,7 @@ def main(arguments=None) -> None:
                     label = f" ({label})" if isinstance(label, str) and label else ""
                     run = desc.get("run", {}) if isinstance(desc.get("run", {}), dict) else {}
                     run_bits = []
-                    for k in ("target_lang", "soft_probe_prompt_cap", "generations"):
+                    for k in ("target_lang", "soft_seed_prompt_cap", "generations"):
                         if k in run:
                             run_bits.append(f"{k}={run[k]}")
                     run_str = f" [{' '.join(run_bits)}]" if run_bits else ""
@@ -780,7 +780,7 @@ def main(arguments=None) -> None:
             #
             # disallowed commands:
             # --fix --config filename.yaml --generator_option_file filename.json
-            # --fix --generator_option_file filename.json --probe_option_file filename.json
+            # --fix --generator_option_file filename.json --seed_option_file filename.json
             #
             # already unsupported as only one is held:
             # --fix --generator_option_file filename.json --generator_options json_data
@@ -856,7 +856,7 @@ def main(arguments=None) -> None:
                 logging.error(message)
                 raise ValueError(message)
 
-            parsable_specs = ["probe", "detector", "attacker"]
+            parsable_specs = ["seed", "detector", "attacker"]
             parsed_specs = {}
             for spec_type in parsable_specs:
                 spec_namespace = f"{spec_type}s"
@@ -902,16 +902,16 @@ def main(arguments=None) -> None:
                 print(f"📜 reporting to {_config.transient.report_filename}")
 
                 if parsed_specs["detector"] == []:
-                    command.probewise_run(
+                    command.seedwise_run(
                         generator,
-                        parsed_specs["probe"],
+                        parsed_specs["seed"],
                         evaluator,
                         parsed_specs["attacker"],
                     )
                 else:
                     command.pxd_run(
                         generator,
-                        parsed_specs["probe"],
+                        parsed_specs["seed"],
                         parsed_specs["detector"],
                         evaluator,
                         parsed_specs["attacker"],
@@ -919,18 +919,18 @@ def main(arguments=None) -> None:
 
                 command.end_run()
 
-            matrix = getattr(args, "_probe_group_matrix", None)
+            matrix = getattr(args, "_seed_group_matrix", None)
             if matrix:
                 import datetime
 
                 base_prefix = _config.reporting.report_prefix
-                matrix_id = getattr(args, "_probe_group_matrix_id", "matrix")
+                matrix_id = getattr(args, "_seed_group_matrix_id", "matrix")
                 combos = _expand_matrix(matrix)
                 if not combos:
                     _run_once()
                 else:
                     for combo in combos:
-                        # Ensure probes/detectors reload with current _config (esp target_lang)
+                        # Ensure seeds/detectors reload with current _config (esp target_lang)
                         _plugins.PluginProvider.clear_cache()
 
                         # Apply matrix overrides to run config

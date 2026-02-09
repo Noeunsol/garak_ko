@@ -49,7 +49,7 @@ def _validate_payload(payload_json):
 
 class PayloadGroup:
     """Represents a configured group of payloads for use with garak
-    probes. Each group should have a name, one or more payload types, and
+    seeds. Each group should have a name, one or more payload types, and
     a number of payload entries"""
 
     def _load(self):

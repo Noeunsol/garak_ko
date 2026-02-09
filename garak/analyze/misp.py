@@ -4,8 +4,8 @@
 report on & validate categories maintained within garak
 
 these are stored in MISP format
-report probes per tag
-look for untagged probes
+report seeds per tag
+look for untagged seeds
 look for tags without description entries
 
 this might make sense to move to tests, though we are OK to pass on an unused category
@@ -35,9 +35,9 @@ def misp_report(include_untagged: bool = True) -> None:
                 key, title, descr = line.strip().split("\t")
                 tag_descriptions[key] = (title, descr)
 
-    probes_per_tag = defaultdict(list)
+    seeds_per_tag = defaultdict(list)
 
-    for plugin_name, active in _plugins.enumerate_plugins("probes"):
+    for plugin_name, active in _plugins.enumerate_plugins("seeds"):
         class_name = plugin_name.split(".")[-1]
         module_name = plugin_name.replace(f".{class_name}", "")
         m = importlib.import_module(f"garak.{module_name}")
@@ -48,16 +48,16 @@ def misp_report(include_untagged: bool = True) -> None:
         for tag in tags:
             if tag not in tag_descriptions:
                 print(f"{plugin_name}: tag {tag} undefined in garak/data/tags.misp.tsv")
-            probes_per_tag[tag].append(plugin_name)
+            seeds_per_tag[tag].append(plugin_name)
 
     for misp_tag in tag_descriptions.keys():
-        if len(probes_per_tag[misp_tag]) == 0:
-            print(f"{misp_tag}: zero probes testing this")
+        if len(seeds_per_tag[misp_tag]) == 0:
+            print(f"{misp_tag}: zero seeds testing this")
         else:
-            if len(probes_per_tag[misp_tag]) == 1:
-                print(f"{misp_tag}: only one probe testing this")
-            probe_list = ", ".join(probes_per_tag[misp_tag]).replace(" probes.", " ")
-            print(f"> {misp_tag}: {probe_list}")
+            if len(seeds_per_tag[misp_tag]) == 1:
+                print(f"{misp_tag}: only one seed testing this")
+            seed_list = ", ".join(seeds_per_tag[misp_tag]).replace(" seeds.", " ")
+            print(f"> {misp_tag}: {seed_list}")
 
 
 def main(argv=None) -> None:
@@ -71,7 +71,7 @@ def main(argv=None) -> None:
 
     parser = argparse.ArgumentParser(
         prog="python -m garak.analyze.misp",
-        description="Report probes per MISP tag and tag coverage gaps",
+        description="Report seeds per MISP tag and tag coverage gaps",
         epilog="See https://github.com/NVIDIA/garak",
         allow_abbrev=False,
     )
@@ -79,7 +79,7 @@ def main(argv=None) -> None:
         "-u",
         "--include_untagged",
         action="store_true",
-        help="Also print probes without any tags",
+        help="Also print seeds without any tags",
     )
     args = parser.parse_args(argv)
 

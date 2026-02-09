@@ -3,7 +3,7 @@ import pytest
 from garak.resources import fixer
 
 EMPTY_CONFIG = {"system": {"lite": False}}
-BASE_TEST_CONFIG = {"plugins": {"probe_spec": "test.Test"}}
+BASE_TEST_CONFIG = {"plugins": {"seed_spec": "test.Test"}}
 
 
 def test_fixer_empty(mocker):
@@ -25,33 +25,33 @@ def test_fixer_empty(mocker):
         (
             None,
             {},
-            {"probe_spec": "test.Test"},
+            {"seed_spec": "test.Test"},
         ),
         (
             "RenameGCG",
             {
-                "probe_spec": "lmrc,gcg,tap",
+                "seed_spec": "lmrc,gcg,tap",
             },
             {
-                "probe_spec": "lmrc,suffix,tap",
-            },
-        ),
-        (
-            "RenameGCG",
-            {
-                "probe_spec": "lmrc,gcg,tap",
-                "probes": {"gcg": {"GOAL": "fake the goal"}},
-            },
-            {
-                "probe_spec": "lmrc,suffix,tap",
-                "probes": {"suffix": {"GOAL": "fake the goal"}},
+                "seed_spec": "lmrc,suffix,tap",
             },
         ),
         (
             "RenameGCG",
             {
-                "probe_spec": "lmrc,gcg.GCGCached,tap",
-                "probes": {
+                "seed_spec": "lmrc,gcg,tap",
+                "seeds": {"gcg": {"GOAL": "fake the goal"}},
+            },
+            {
+                "seed_spec": "lmrc,suffix,tap",
+                "seeds": {"suffix": {"GOAL": "fake the goal"}},
+            },
+        ),
+        (
+            "RenameGCG",
+            {
+                "seed_spec": "lmrc,gcg.GCGCached,tap",
+                "seeds": {
                     "gcg": {
                         "GCGCached": {},
                         "GOAL": "fake the goal",
@@ -59,8 +59,8 @@ def test_fixer_empty(mocker):
                 },
             },
             {
-                "probe_spec": "lmrc,suffix.GCGCached,tap",
-                "probes": {
+                "seed_spec": "lmrc,suffix.GCGCached,tap",
+                "seeds": {
                     "suffix": {
                         "GCGCached": {},
                         "GOAL": "fake the goal",
@@ -71,17 +71,17 @@ def test_fixer_empty(mocker):
         (
             "RenameContinuation",
             {
-                "probe_spec": "lmrc,continuation.ContinueSlursReclaimedSlurs80,tap",
+                "seed_spec": "lmrc,continuation.ContinueSlursReclaimedSlurs80,tap",
             },
             {
-                "probe_spec": "lmrc,continuation.ContinueSlursReclaimedSlurs,tap",
+                "seed_spec": "lmrc,continuation.ContinueSlursReclaimedSlurs,tap",
             },
         ),
         (
             "RenameContinuation",
             {
-                "probe_spec": "lmrc,continuation,tap",
-                "probes": {
+                "seed_spec": "lmrc,continuation,tap",
+                "seeds": {
                     "continuation": {
                         "ContinueSlursReclaimedSlurs80": {
                             "source_resource_filename": "fake_data_file.json"
@@ -90,8 +90,8 @@ def test_fixer_empty(mocker):
                 },
             },
             {
-                "probe_spec": "lmrc,continuation,tap",
-                "probes": {
+                "seed_spec": "lmrc,continuation,tap",
+                "seeds": {
                     "continuation": {
                         "ContinueSlursReclaimedSlurs": {
                             "source_resource_filename": "fake_data_file.json"
@@ -103,65 +103,65 @@ def test_fixer_empty(mocker):
         (
             "RenameKnownbadsignatures",
             {
-                "probe_spec": "knownbadsignatures.EICAR,lmrc,tap",
+                "seed_spec": "knownbadsignatures.EICAR,lmrc,tap",
             },
             {
-                "probe_spec": "av_spam_scanning.EICAR,lmrc,tap",
+                "seed_spec": "av_spam_scanning.EICAR,lmrc,tap",
             },
         ),
         (
             "RenameKnownbadsignatures",
             {
-                "probe_spec": "knownbadsignatures,lmrc,tap",
+                "seed_spec": "knownbadsignatures,lmrc,tap",
             },
             {
-                "probe_spec": "av_spam_scanning,lmrc,tap",
-            },
-        ),
-        (
-            "RenameReplay",
-            {
-                "probe_spec": "lmrc,tap,replay",
-            },
-            {
-                "probe_spec": "lmrc,tap,divergence",
+                "seed_spec": "av_spam_scanning,lmrc,tap",
             },
         ),
         (
             "RenameReplay",
             {
-                "probe_spec": "lmrc,tap,replay.Repeat",
+                "seed_spec": "lmrc,tap,replay",
             },
             {
-                "probe_spec": "lmrc,tap,divergence.Repeat",
+                "seed_spec": "lmrc,tap,divergence",
+            },
+        ),
+        (
+            "RenameReplay",
+            {
+                "seed_spec": "lmrc,tap,replay.Repeat",
+            },
+            {
+                "seed_spec": "lmrc,tap,divergence.Repeat",
             },
         ),
         (
             "RenameDanInTheWild",
             {
-                "probe_spec": "dan.DanInTheWildMini,dan.DanInTheWild",
+                "seed_spec": "dan.DanInTheWildMini,dan.DanInTheWild",
             },
             {
-                "probe_spec": "dan.DanInTheWild,dan.DanInTheWildFull",
-            },
-        ),
-        (
-            "RenameXSS",
-            {
-                "probe_spec": "lmrc,xss.MdExfil20230929",
-            },
-            {
-                "probe_spec": "lmrc,web_injection.PlaygroundMarkdownExfil",
+                "seed_spec": "dan.DanInTheWild,dan.DanInTheWildFull",
             },
         ),
         (
             "RenameXSS",
             {
-                "probe_spec": "test.Test",
+                "seed_spec": "lmrc,xss.MdExfil20230929",
+            },
+            {
+                "seed_spec": "lmrc,web_injection.PlaygroundMarkdownExfil",
+            },
+        ),
+        (
+            "RenameXSS",
+            {
+                "seed_spec": "test.Test",
                 "detector_spec": "xss.MarkdownExfil20230929",
             },
             {
-                "probe_spec": "test.Test",
+                "seed_spec": "test.Test",
                 "detector_spec": "web_injection.PlaygroundMarkdownExfil",
             },
         ),

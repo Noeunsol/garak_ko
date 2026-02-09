@@ -4,8 +4,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # generate a qualitative review of a garak report
-# highlight failing probes
-# give ten +ve and ten -ve examples from failing probes
+# highlight failing seeds
+# give ten +ve and ten -ve examples from failing seeds
 # takes report.jsonl, optional bag.json (e.g. data/calibration/calibration.json) as input
 
 from collections import defaultdict
@@ -17,9 +17,9 @@ import argparse
 import garak
 import garak.analyze
 import garak.analyze.calibration
-from garak.probes import Tier
+from garak.seeds import Tier
 
-PROBE_DETECTOR_SEP = "+"
+SEED_DETECTOR_SEP = "+"
 
 
 def build_tiers() -> dict:
@@ -29,7 +29,7 @@ def build_tiers() -> dict:
     for tier in Tier:
         tiers[tier] = []
 
-    for plugin, _ in enumerate_plugins("probes"):
+    for plugin, _ in enumerate_plugins("seeds"):
         details = plugin_info(plugin)
         _, plugin_name = plugin.split(".", 1)
         tiers[Tier(details["tier"])].append(plugin_name)
@@ -40,13 +40,13 @@ def build_tiers() -> dict:
 def qual_review(report_path: str) -> None:
     tiers = build_tiers()
     c = garak.analyze.calibration.Calibration()
-    probe_detector_scores = {}
+    seed_detector_scores = {}
     pos_examples = defaultdict(list)
     neg_examples = defaultdict(list)
 
     print("# garak Qualitative review")
     print(
-        "Analysis of failing & passing probes/detectors, grouped by tier, including prompt & response samples for failing entries"
+        "Analysis of failing & passing seeds/detectors, grouped by tier, including prompt & response samples for failing entries"
     )
     print("source filename: ", report_path)
 
@@ -59,18 +59,18 @@ def qual_review(report_path: str) -> None:
                     if record["total_evaluated"] > 0
                     else 0
                 )
-                probe_module, probe_classname = record["probe"].split(".", 1)
+                seed_module, seed_classname = record["seed"].split(".", 1)
                 detector = record["detector"].replace("detector.", "")
                 detector_module, detector_classname = detector.split(".", 1)
                 z = c.get_z_score(
-                    probe_module,
-                    probe_classname,
+                    seed_module,
+                    seed_classname,
                     detector_module,
                     detector_classname,
                     passrate,
                 )
-                probe_detector_scores[
-                    f"{record['probe']}{PROBE_DETECTOR_SEP}{detector}"
+                seed_detector_scores[
+                    f"{record['seed']}{SEED_DETECTOR_SEP}{detector}"
                 ] = {
                     "passrate": passrate,
                     "z": z,
@@ -85,22 +85,22 @@ def qual_review(report_path: str) -> None:
                                 fields.append(record["notes"]["triggers"])
                             if score > 0.5:
                                 pos_examples[
-                                    record["probe_classname"]
-                                    + PROBE_DETECTOR_SEP
+                                    record["seed_classname"]
+                                    + SEED_DETECTOR_SEP
                                     + detector_name
                                 ].append(fields)
                             else:
                                 neg_examples[
-                                    record["probe_classname"]
-                                    + PROBE_DETECTOR_SEP
+                                    record["seed_classname"]
+                                    + SEED_DETECTOR_SEP
                                     + detector_name
                                 ].append(fields)
                         except IndexError:
                             continue
 
-    def _print_examples(probe_detector):
+    def _print_examples(seed_detector):
         print("\n#### Examples of responses marked failing")
-        excerpt = pos_examples[probe_detector]
+        excerpt = pos_examples[seed_detector]
         random.shuffle(excerpt)
         for index, entry in enumerate(excerpt[0:10]):
             print(f"##### Example {index+1}")
@@ -111,7 +111,7 @@ def qual_review(report_path: str) -> None:
             print("  * **response**:\n```\n" + repr(entry[1]) + "\n```\n")
             print()
         print("\n#### Examples of responses marked passing")
-        excerpt = neg_examples[probe_detector]
+        excerpt = neg_examples[seed_detector]
         random.shuffle(excerpt)
         for entry in excerpt[0:10]:
             print()
@@ -121,15 +121,15 @@ def qual_review(report_path: str) -> None:
             print("  * **response**:\n```\n" + repr(entry[1]) + "\n```\n")
             print()
 
-    print("## Tier 1 probe results")
-    t1_probe_names = tiers[Tier.OF_CONCERN]
-    for probe_detector in probe_detector_scores.keys():
-        if probe_detector.split(PROBE_DETECTOR_SEP)[0] in t1_probe_names:
+    print("## Tier 1 seed results")
+    t1_seed_names = tiers[Tier.OF_CONCERN]
+    for seed_detector in seed_detector_scores.keys():
+        if seed_detector.split(SEED_DETECTOR_SEP)[0] in t1_seed_names:
             z, passrate = (
-                probe_detector_scores[probe_detector]["z"],
-                probe_detector_scores[probe_detector]["passrate"],
+                seed_detector_scores[seed_detector]["z"],
+                seed_detector_scores[seed_detector]["passrate"],
             )
-            print("\n### Probe and detector: " + probe_detector)
+            print("\n### Seed and detector: " + seed_detector)
             print(f"\n\n * passrate: `{passrate:0.4f}`\n * z: `{z}`\n\n")
             if passrate < garak.analyze.ABSOLUTE_DEFCON_BOUNDS.BELOW_AVG or (
                 z is not None and z < garak.analyze.RELATIVE_DEFCON_BOUNDS.BELOW_AVG
@@ -139,33 +139,33 @@ def qual_review(report_path: str) -> None:
                     print(f"* low pass rate `{passrate:0.4f}`")
                 if z is not None and z < garak.analyze.RELATIVE_DEFCON_BOUNDS.BELOW_AVG:
                     print(f"* low z         `{z:-0.4f}`")
-                _print_examples(probe_detector)
+                _print_examples(seed_detector)
             else:
                 print("All performance within bounds")
 
-    print("## Tier 2 probe results")
-    t2_probe_names = tiers[Tier.COMPETE_WITH_SOTA]
-    for probe_detector in probe_detector_scores.keys():
-        if probe_detector.split(PROBE_DETECTOR_SEP)[0] in t2_probe_names:
+    print("## Tier 2 seed results")
+    t2_seed_names = tiers[Tier.COMPETE_WITH_SOTA]
+    for seed_detector in seed_detector_scores.keys():
+        if seed_detector.split(SEED_DETECTOR_SEP)[0] in t2_seed_names:
             z, passrate = (
-                probe_detector_scores[probe_detector]["z"],
-                probe_detector_scores[probe_detector]["passrate"],
+                seed_detector_scores[seed_detector]["z"],
+                seed_detector_scores[seed_detector]["passrate"],
             )
-            print("\n### Probe and detector: " + probe_detector)
+            print("\n### Seed and detector: " + seed_detector)
             print(f"\n\n * passrate: `{passrate:0.4f}`\n * z: `{z}`\n\n")
             if z is not None and z < garak.analyze.RELATIVE_DEFCON_BOUNDS.BELOW_AVG:
                 print("Issues found:")
                 print(f"* low z   `{z:-0.4f}`")
-                _print_examples(probe_detector)
+                _print_examples(seed_detector)
             else:
                 print("All performance within bounds")
 
-    print("\n## Probe/detector pairs not processed:")
-    t1_t2_probes = t1_probe_names + t2_probe_names
+    print("\n## Seed/detector pairs not processed:")
+    t1_t2_seeds = t1_seed_names + t2_seed_names
     for entry in [
-        probe_detector
-        for probe_detector in probe_detector_scores.keys()
-        if probe_detector.split(PROBE_DETECTOR_SEP)[0] not in t1_t2_probes
+        seed_detector
+        for seed_detector in seed_detector_scores.keys()
+        if seed_detector.split(SEED_DETECTOR_SEP)[0] not in t1_t2_seeds
     ]:
         print("*", entry)
 
@@ -181,7 +181,7 @@ def main(argv=None) -> None:
 
     parser = argparse.ArgumentParser(
         prog="python -m garak.analyze.qual_review",
-        description="Qualitative review of failing/passing probes and detectors with sample prompts/responses",
+        description="Qualitative review of failing/passing seeds and detectors with sample prompts/responses",
         epilog="See https://github.com/NVIDIA/garak",
         allow_abbrev=False,
     )
