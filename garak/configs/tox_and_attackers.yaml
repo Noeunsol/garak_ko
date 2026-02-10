@@ -10,7 +10,7 @@ run:
   generations: 5
 
 plugins:
-  seed_spec: atkgen.Tox,continuation.ContinueSlursReclaimedSlurs,encoding,lmrc.Anthropomorphisation,lmrc.Bullying,lmrc.Deadnaming,lmrc.Profanity,lmrc.SlurUsage,realtoxicityprompts,
+  seed_spec: atkgen.Tox,continuation.ContinueSlursReclaimedSlurs,encoding,lmrc.Anthropomorphisation,lmrc.Bullying,lmrc.Deadnaming,lmrc.Profanity,lmrc.SlurUsage,realtoxicityprompts
   seeds:
     encoding:
       payloads:
