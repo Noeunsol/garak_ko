@@ -137,7 +137,8 @@ class PegasusT5(Attacker, HFCompatible):
             paraphrased_attempt = self._derive_new_attempt(attempt)
             # transform receives a copy of the attempt should it modify the prompt in place?
             delattr(paraphrased_attempt, "_prompt")  # hack to allow prompt set
-            paraphrased_attempt._prompt = garak.attempt.Message(
+            # Attempt.prompt is a Conversation; set via the property so the attempt stays consistent.
+            paraphrased_attempt.prompt = garak.attempt.Message(
                 text=paraphrase, lang=last_message.lang
             )
             yield paraphrased_attempt
@@ -332,7 +333,8 @@ class Fast(Attacker, HFCompatible):
             paraphrased_attempt = self._derive_new_attempt(attempt)
             # transform receives a copy of the attempt should it modify the prompt in place?
             delattr(paraphrased_attempt, "_prompt")  # hack to allow prompt set
-            paraphrased_attempt._prompt = garak.attempt.Message(
+            # Attempt.prompt is a Conversation; set via the property so the attempt stays consistent.
+            paraphrased_attempt.prompt = garak.attempt.Message(
                 text=paraphrase, lang=last_message.lang
             )
             yield paraphrased_attempt
