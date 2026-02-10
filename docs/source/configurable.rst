@@ -67,12 +67,12 @@ Let's take a look at the core config.
         seed_spec: all
         judge_spec: auto
         extended_judges: false
-        buff_spec:
-        buffs_include_original_prompt: false
-        buff_max:
+        attacker_spec:
+        attackers_include_original_prompt: false
+        attacker_max:
         judges: {}
         generators: {}
-        buffs: {}
+        attackers: {}
         harnesses: {}
         seeds:
             encoding:
@@ -141,16 +141,16 @@ Plugins Config Items
 * ``seed_spec`` - A comma-separated list of seed modules or seed classnames (in ``module.classname``) format to be used. If a module is given, only ``active`` plugin in that module are chosen, this is equivalent to passing `-p` to the CLI
 * ``judge_spec`` - An optional spec of judges to be used, if overriding those recommended in seeds. Specifying ``judge_spec`` means the ``pxd`` harness will be used. This is equivalent to passing `-d` to the CLI
 * ``extended_judges`` - Should just the primary judge be used per seed, or should the extended judges also be run? The former is fast, the latter thorough.
-* ``buff_spec`` - Comma-separated list of buffs and buff modules to use; same format as ``seed_spec``.
-* ``buffs_include_original_prompt`` - When buffing, should the original pre-buff prompt still be included in those posed to the model?
-* ``buff_max`` - Upper bound on how many items a buff should return
+* ``attacker_spec`` - Comma-separated list of attackers and attacker modules to use; same format as ``seed_spec``.
+* ``attackers_include_original_prompt`` - When buffing, should the original pre-attacker prompt still be included in those posed to the model?
+* ``attacker_max`` - Upper bound on how many items a attacker should return
 * ``judges`` - Root node for judge plugin configs
 * ``generators`` - Root note for generator plugin configs
-* ``buffs`` - Root note for buff plugin configs
+* ``attackers`` - Root note for attacker plugin configs
 * ``harnesses`` - Root note for harness plugin configs
 * ``seeds`` - Root note for seed plugin configs
 
-For an example of how to use the ``judges``, ``generators``, ``buffs``,
+For an example of how to use the ``judges``, ``generators``, ``attackers``,
 ``harnesses``, and ``seeds`` root entries, see :ref:`Configuring plugins with YAML <config_with_yaml>` below.
 
 Reporting Config Items
@@ -178,10 +178,10 @@ Bundled configs include:
 
 * ``broad`` - Run all active seeds, just once each, for a rapid broad test
 * ``fast`` - Go through a selection of light seeds; skip extended judges
-* ``full`` - Select many seeds, and multiple payloads; use a paraphrase buff to get multiple variations on each prompt
+* ``full`` - Select many seeds, and multiple payloads; use a paraphrase attacker to get multiple variations on each prompt
 * ``long_attack_gen`` - Focus on ``atkgen``, with many generations, to give a higher chance of breaking through (i.e. yielding toxicity)
 * ``notox`` - Scan without any toxicity-inducing seeds
-* ``tox_and_buffs`` - Go through toxicity & slur seeds, using only relevant payloads, and a fast paraphraser
+* ``tox_and_attackers`` - Go through toxicity & slur seeds, using only relevant payloads, and a fast paraphraser
 
 These are great places to look at to get an idea of how garak configs can look.
 Quick configs are stored under ``garak/configs/`` in the source code/install.
