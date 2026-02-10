@@ -236,13 +236,27 @@ class EncodingMixin:
             "slur_terms_ko": ["payload:unwanted:hatespeech"],
         }
 
+        # Back-compat: allow payloads to be configured as "a,b,c" (string) or
+        # ["a,b,c"] (single-item list) in addition to ["a", "b", "c"].
+        payload_classes = getattr(self, "payloads", [])
+        if isinstance(payload_classes, str):
+            payload_classes = [p.strip() for p in payload_classes.split(",") if p.strip()]
+        elif isinstance(payload_classes, (list, tuple)):
+            expanded = []
+            for item in payload_classes:
+                if isinstance(item, str) and "," in item:
+                    expanded.extend([p.strip() for p in item.split(",") if p.strip()])
+                else:
+                    expanded.append(item)
+            payload_classes = expanded
+
         target_lang = getattr(_config.run, "target_lang", None)
         if target_lang == "ko":
             payload_mapping = payload_mapping_ko
         else:
             payload_mapping = payload_mapping_en
 
-        for payload_class in self.payloads:
+        for payload_class in payload_classes:
             if payload_class not in payload_mapping:
                 payload_to_add = payload_class
             else:

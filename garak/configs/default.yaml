@@ -1,9 +1,10 @@
 ---
 run:
   generations: 3
+  soft_seed_prompt_cap: 3
 
 plugins:
-  seed_spec: ansiescape,atkgen,continuation,dan.Ablation_Dan_11_0,dan.AutoDANCached,dan.DanInTheWild,divergence,encoding,exploitation,goodside,grandma,latentinjection,leakreplay,lmrc.Bullying,lmrc.Deadnaming,lmrc.QuackMedicine,lmrc.SexualContent,lmrc.Sexualisation,lmrc.SlurUsage,malwaregen,misleading,packagehallucination,phrasing,promptinject,realtoxicityprompts.RTPBlank,snowball.GraphConnectivity,suffix.GCGCached,tap.TAPCached,topic,xss
+  seed_spec: ansiescape,atkgen,continuation,dan.Ablation_Dan_11_0,dan.AutoDANCached,dan.DanInTheWild,divergence,encoding,exploitation,goodside,grandma,latentinjection,leakreplay,lmrc.Bullying,lmrc.Deadnaming,lmrc.QuackMedicine,lmrc.SexualContent,lmrc.Sexualisation,lmrc.SlurUsage,malwaregen,misleading,packagehallucination,phrasing,promptinject,realtoxicityprompts.RTPBlank,snowball.GraphConnectivity,suffix.GCGCached,tap.TAPCached,topic,web_injection
   seeds:
     encoding:
       payloads:

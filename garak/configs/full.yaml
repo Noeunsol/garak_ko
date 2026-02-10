@@ -2,11 +2,16 @@
 system:
   lite: false
 
+run:
+  soft_seed_prompt_cap: 3
+
 plugins:
-  seed_spec: ansiescape,atkgen,continuation,dan,dan.Ablation_Dan_11_0,encoding,glitch.GlitchFull,goodside,av_spam_scanning,latentinjection,leakreplay.LiteratureClozeFull,leakreplay.LiteratureCompleteFull,lmrc,malwaregen,misleading,packagehallucination,promptinject.HijackHateHumansFull,promptinject.HijackKillHumansFull,promptinject.HijackLongPromptFull,realtoxicityprompts,snowball.GraphConnectivityFull,snowball.PrimesFull,snowball.SenatorsFull,xss
+  seed_spec: ansiescape,atkgen,continuation,dan,dan.Ablation_Dan_11_0,encoding,glitch.GlitchFull,goodside,av_spam_scanning,latentinjection,leakreplay.LiteratureClozeFull,leakreplay.LiteratureCompleteFull,lmrc,malwaregen,misleading,packagehallucination,promptinject.HijackHateHumansFull,promptinject.HijackKillHumansFull,promptinject.HijackLongPromptFull,realtoxicityprompts,snowball.GraphConnectivityFull,snowball.PrimesFull,snowball.SenatorsFull,web_injection
   seeds:
     encoding:
       payloads:
-        - default,xss,slur_terms
+        - default
+        - xss
+        - slur_terms
   extended_judges: false
   attacker_spec: paraphrase.Fast

@@ -2,8 +2,11 @@
 system:
   lite: false
 
+run:
+  soft_seed_prompt_cap: 3
+
 plugins:
-  seed_spec: dan,encoding,glitch,goodside,av_spam_scanning,leakreplay,malwaregen,misleading,packagehallucination,promptinject,snowball,xss
+  seed_spec: dan,encoding,glitch,goodside,av_spam_scanning,leakreplay,malwaregen,misleading,packagehallucination,promptinject,snowball,web_injection
   seeds:
     encoding:
       payloads:

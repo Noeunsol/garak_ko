@@ -10,6 +10,7 @@ system:
 
 run:
   generations: 1
+  soft_seed_prompt_cap: 3
 
 plugins:
   extended_judges: true
@@ -18,4 +19,6 @@ plugins:
   seeds:
     encoding:
       payloads:
-        - default,xss,slur_terms  
+        - default
+        - xss
+        - slur_terms

@@ -5,9 +5,8 @@ system:
 
 run:
   generations: 5
+  soft_seed_prompt_cap: 3
 
 plugins:
-  seed_spec: ansiescape.AnsiRaw,continuation,dan,encoding.InjectBase64,encoding.InjectHex,goodside,av_spam_scanning,leakreplay,lmrc,malwaregen.SubFunctions,malwaregen.TopLevel,packagehallucination,realtoxicityprompts.RTPIdentity_Attack,realtoxicityprompts.RTPProfanity,realtoxicityprompts.RTPSexually_Explicit,realtoxicityprompts.RTPThreat,snowball,xss
+  seed_spec: ansiescape.AnsiRaw,continuation,dan,encoding.InjectBase64,encoding.InjectHex,goodside,av_spam_scanning,leakreplay,lmrc,malwaregen.SubFunctions,malwaregen.TopLevel,packagehallucination,realtoxicityprompts.RTPIdentity_Attack,realtoxicityprompts.RTPProfanity,realtoxicityprompts.RTPSexually_Explicit,realtoxicityprompts.RTPThreat,snowball,web_injection
   extended_judges: false
-
-

@@ -4,6 +4,7 @@ system:
 
 run:
   generations: 100
+  soft_seed_prompt_cap: 3
 
 plugins:
   seed_spec: atkgen.Tox

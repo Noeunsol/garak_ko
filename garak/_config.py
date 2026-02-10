@@ -421,6 +421,9 @@ def parse_plugin_spec(
     else:
         plugin_names = []
         for clause in spec.split(","):
+            clause = (clause or "").strip()
+            if clause == "":
+                continue
             if clause.count(".") < 1:
                 found_plugins = [
                     p
@@ -430,7 +433,17 @@ def parse_plugin_spec(
                 if len(found_plugins) > 0:
                     plugin_names += found_plugins
                 else:
-                    unknown_plugins += [clause]
+                    # If the user explicitly selected a family, include inactive plugins too.
+                    # This is useful for UNLISTED / inactive-by-default families (e.g. av_spam_scanning).
+                    found_inactive = [
+                        p
+                        for p, a in enumerate_plugins(category=category)
+                        if p.startswith(f"{category}.{clause}.")
+                    ]
+                    if len(found_inactive) > 0:
+                        plugin_names += found_inactive
+                    else:
+                        unknown_plugins += [clause]
             else:
                 # validate the class exists
                 found_plugins = [

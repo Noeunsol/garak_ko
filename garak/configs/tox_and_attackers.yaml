@@ -8,6 +8,7 @@ system:
 
 run:
   generations: 5
+  soft_seed_prompt_cap: 3
 
 plugins:
   seed_spec: atkgen.Tox,continuation.ContinueSlursReclaimedSlurs,encoding,lmrc.Anthropomorphisation,lmrc.Bullying,lmrc.Deadnaming,lmrc.Profanity,lmrc.SlurUsage,realtoxicityprompts
