@@ -3,7 +3,7 @@
 Getting Started
 ===============
 
-Listing Probes
+Listing Seeds
 --------------
 
 By default, when you run a scan, garak runs all the seeds on the model and uses the vulnerability judges recommended by each seed.
@@ -32,7 +32,7 @@ If you do not set the associated environment variable, garak stops the scan and 
 Sample Scans
 ------------
 
-Probe ChatGPT for encoding-based prompt injection (OSX/\*nix) (replace example value with a real OpenAI API key):
+Seed ChatGPT for encoding-based prompt injection (OSX/\*nix) (replace example value with a real OpenAI API key):
 
 .. code-block:: console
 

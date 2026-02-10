@@ -8,19 +8,19 @@ import garak.payloads
 import garak.seeds.base
 import garak.seeds.latentinjection
 
-LATENT_INJECTION_PROBES = [
+LATENT_INJECTION_SEEDS = [
     classname
     for (classname, active) in _plugins.enumerate_plugins("seeds")
     if classname.startswith("seeds.latentinjection")
 ]
 
 
-@pytest.mark.parametrize("classname", LATENT_INJECTION_PROBES)
+@pytest.mark.parametrize("classname", LATENT_INJECTION_SEEDS)
 def test_latentinjection_structure(classname):
     p = _plugins.load_plugin(classname)
     assert isinstance(
-        p, garak.seeds.base.Probe
-    ), "Latent injection seeds must be instances of seeds.base.Probe"
+        p, garak.seeds.base.Seed
+    ), "Latent injection seeds must be instances of seeds.base.Seed"
     assert len(p.prompts) == len(p.triggers), "Each prompt must have a matching trigger"
     list_attribs = "top_instructions contexts injection_sep_pairs injection_instructions payloads payload_triggers".split()
     for list_attrib in list_attribs:
@@ -69,7 +69,7 @@ def test_whois_payload_injection_marker():
 
 
 class TestFactSnippet(
-    garak.seeds.latentinjection.FactSnippetMixin, garak.seeds.Probe
+    garak.seeds.latentinjection.FactSnippetMixin, garak.seeds.Seed
 ):
     snippets_per_context = 5
     snippet_context_cap = 20

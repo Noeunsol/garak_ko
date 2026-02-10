@@ -1,12 +1,12 @@
 garak.seeds.base
 =================
 
-This class defines the basic structure of garak's seeds. All seeds inherit from ``garak.seeds.base.Probe``.
+This class defines the basic structure of garak's seeds. All seeds inherit from ``garak.seeds.base.Seed``.
 
 Attributes:
 
 1. **doc_uri**   URI for documentation of the seed (perhaps a paper)
-1. **lang**    Language this is for, in BCP47 format; ``*`` for all langs. Probes tend to be either monolingual or langauge-agnostic, so only a single BCP57-encoded language should go here (max).
+1. **lang**    Language this is for, in BCP47 format; ``*`` for all langs. Seeds tend to be either monolingual or langauge-agnostic, so only a single BCP57-encoded language should go here (max).
 1. **active**    Should this seed be run by default?
 1. **tags** MISP-format taxonomy categories
 1. **goal** What the seed is trying to do, phrased as an imperative

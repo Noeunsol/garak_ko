@@ -677,8 +677,8 @@ def test_seedspec_loading():
     )
     # reject unmatched spec entires for unknown class
     assert _config.parse_plugin_spec(
-        "atkgen.Tox,atkgen.ProbeDoesNotExist", "seeds"
-    ) == (["seeds.atkgen.Tox"], ["atkgen.ProbeDoesNotExist"])
+        "atkgen.Tox,atkgen.SeedDoesNotExist", "seeds"
+    ) == (["seeds.atkgen.Tox"], ["atkgen.SeedDoesNotExist"])
     # accept known disabled class
     assert _config.parse_plugin_spec("dan.DanInTheWild", "seeds") == (
         ["seeds.dan.DanInTheWild"],

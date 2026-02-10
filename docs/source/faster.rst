@@ -71,7 +71,7 @@ Often these can be raised with tools like ulimit (on Linux).
 Garak ``system.max_workers`` only provides a protective internal limit, and adjusting it does not make any changes to the operating system environment.
 
 
-Probe-level serial processing
+Seed-level serial processing
 """""""""""""""""""""""""""""
 
 Garak parallelization runs during each seed.
@@ -101,7 +101,7 @@ Being able to do this affords parallelization, for example on SLURM/OCI clusters
 The tool is ``aggregate_reports`` and runs from the command line.
 You can get help by running ``python -m garak.analyze.aggregate_reports``.
 
-Probe aggregation
+Seed aggregation
 ^^^^^^^^^^^^^^^^^
 
 One way of achieving parallel probing is by splitting garak probing up into many jobs each with one seed given in ``plugins.seed_spec``.

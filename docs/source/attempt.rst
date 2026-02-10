@@ -2,7 +2,7 @@ garak.attempt
 =============
 
 In garak, ``Attempt`` objects track a single prompt and the results of running it on through the generator.
-Probes work by creating a set of garak.attempt.Attempt objects and setting their class properties.
+Seeds work by creating a set of garak.attempt.Attempt objects and setting their class properties.
 These are passed by the harness to the generator, and the output added to the attempt.
 Then, a judge assesses the outputs from that attempt and the judge's scores are saved in the attempt.
 Finally, an evaluator makes judgments of these scores, and writes hits out to the hitlog for any successful probing attempts.

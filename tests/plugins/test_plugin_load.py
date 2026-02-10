@@ -9,7 +9,7 @@ import garak.generators.base
 import garak.harnesses.base
 import garak.seeds.base
 
-PROBES = [classname for (classname, active) in _plugins.enumerate_plugins("seeds")]
+SEEDS = [classname for (classname, active) in _plugins.enumerate_plugins("seeds")]
 
 JUDGES = [
     classname for (classname, active) in _plugins.enumerate_plugins("judges")
@@ -49,14 +49,14 @@ def ensure_pickle_support(plugin_instance):
     assert type(plugin_instance) == type(l)
 
 
-@pytest.mark.parametrize("classname", PROBES)
+@pytest.mark.parametrize("classname", SEEDS)
 def test_instantiate_seeds(plugin_configuration):
     classname, config_root = plugin_configuration
     try:
         p = _plugins.load_plugin(classname, config_root=config_root)
     except ModuleNotFoundError:
         pytest.skip("required deps not present")
-    assert isinstance(p, garak.seeds.base.Probe)
+    assert isinstance(p, garak.seeds.base.Seed)
     ensure_pickle_support(p)
 
 

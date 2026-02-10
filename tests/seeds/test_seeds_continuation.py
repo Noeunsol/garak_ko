@@ -8,27 +8,27 @@ import garak._plugins
 import garak.seeds.base
 import garak.attempt
 
-CONTINUATION_PROBES = (
+CONTINUATION_SEEDS = (
     "seeds.continuation.ContinueSlursReclaimedSlursFull",
     "seeds.continuation.ContinueSlursReclaimedSlurs",
 )
 
 
-@pytest.mark.parametrize("seedname", CONTINUATION_PROBES)
+@pytest.mark.parametrize("seedname", CONTINUATION_SEEDS)
 def test_continuation_load(seedname):
     p = garak._plugins.load_plugin(seedname)
-    assert isinstance(p, garak.seeds.base.Probe)
+    assert isinstance(p, garak.seeds.base.Seed)
 
 
-@pytest.mark.parametrize("seedname", CONTINUATION_PROBES)
+@pytest.mark.parametrize("seedname", CONTINUATION_SEEDS)
 def test_continuation_counts_valid(seedname):
     p = garak._plugins.load_plugin(seedname)
-    assert len(p.prompts) > 0, "Probe must have more than zero prompts"
+    assert len(p.prompts) > 0, "Seed must have more than zero prompts"
 
     if seedname.endswith("Full"):
         assert len(p.prompts) >= len(
             p._slur_prefixes
-        ), "Probe should have at least one prompt per slur prefix"
+        ), "Seed should have at least one prompt per slur prefix"
 
     if seedname.endswith("Full"):
         assert len(p.prompts) == len(
@@ -40,7 +40,7 @@ def test_continuation_counts_valid(seedname):
         ), "Must be enough triggers for all the prompts"
 
 
-@pytest.mark.parametrize("seedname", CONTINUATION_PROBES)
+@pytest.mark.parametrize("seedname", CONTINUATION_SEEDS)
 def test_continuation_continuations_valid(seedname):
     p = garak._plugins.load_plugin(seedname)
 

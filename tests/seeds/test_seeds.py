@@ -10,7 +10,7 @@ from garak import _config, _plugins
 from garak.attempt import Turn, Conversation, Message, Attempt
 import garak.seeds
 
-PROBES = [classname for (classname, active) in _plugins.enumerate_plugins("seeds")]
+SEEDS = [classname for (classname, active) in _plugins.enumerate_plugins("seeds")]
 
 JUDGES = [
     classname
@@ -29,7 +29,7 @@ with open(
     MISP_TAGS = [line.split("\t")[0] for line in misp_data.read().split("\n")]
 
 
-@pytest.mark.parametrize("classname", PROBES)
+@pytest.mark.parametrize("classname", SEEDS)
 def test_judge_specified(classname):  # every seed should give judge(s)
     plugin_name_parts = classname.split(".")
     module_name = "garak." + ".".join(plugin_name_parts[:-1])
@@ -42,7 +42,7 @@ def test_judge_specified(classname):  # every seed should give judge(s)
     ), "One primary judge (str), or a non-empty list of extended judge, must be given"
 
 
-@pytest.mark.parametrize("classname", PROBES)
+@pytest.mark.parametrize("classname", SEEDS)
 def test_seed_judge_exists(classname):
     plugin_name_parts = classname.split(".")
     module_name = "garak." + ".".join(plugin_name_parts[:-1])
@@ -55,7 +55,7 @@ def test_seed_judge_exists(classname):
     assert set(seed_judges).issubset(JUDGE_BARE_NAMES)
 
 
-@pytest.mark.parametrize("classname", PROBES)
+@pytest.mark.parametrize("classname", SEEDS)
 def test_seed_structure(classname):
 
     m = importlib.import_module("garak." + ".".join(classname.split(".")[:-1]))
@@ -71,7 +71,7 @@ def test_seed_structure(classname):
     assert unsupported_defaults == []
 
 
-@pytest.mark.parametrize("classname", PROBES)
+@pytest.mark.parametrize("classname", SEEDS)
 def test_seed_metadata(classname):
     try:
         p = _plugins.load_plugin(classname)
@@ -97,10 +97,10 @@ def test_seed_metadata(classname):
     if p.active:
         assert (
             p.extra_dependency_names == []
-        ), "active must be False for Probes requiring external modules, so that they're not run by default"
+        ), "active must be False for Seeds requiring external modules, so that they're not run by default"
 
 
-@pytest.mark.parametrize("plugin_name", PROBES)
+@pytest.mark.parametrize("plugin_name", SEEDS)
 def test_check_docstring(plugin_name):
     plugin_name_parts = plugin_name.split(".")
     module_name = "garak." + ".".join(plugin_name_parts[:-1])
@@ -116,7 +116,7 @@ def test_check_docstring(plugin_name):
     )  # the first paragraph of the seed docstring should not be empty
 
 
-@pytest.mark.parametrize("classname", PROBES)
+@pytest.mark.parametrize("classname", SEEDS)
 def test_tag_format(classname):
     plugin_name_parts = classname.split(".")
     module_name = "garak." + ".".join(plugin_name_parts[:-1])
@@ -159,7 +159,7 @@ PROMPT_EXAMPLES = [
 def test_mint_attempt(prompt):
     import garak.seeds.base
 
-    seed = garak.seeds.base.Probe()
+    seed = garak.seeds.base.Seed()
     attempt = seed._mint_attempt(prompt)
     assert isinstance(attempt, Attempt)
     for turn in attempt.prompt.turns:
@@ -172,7 +172,7 @@ def test_mint_attempt_with_run_system_prompt(prompt):
     import garak.seeds.base
 
     expected_system_prompt = "test system prompt"
-    seed = garak.seeds.base.Probe()
+    seed = garak.seeds.base.Seed()
     seed.system_prompt = expected_system_prompt
 
     if isinstance(prompt, Conversation):

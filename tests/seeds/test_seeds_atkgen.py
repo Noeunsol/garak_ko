@@ -16,7 +16,7 @@ def test_atkgen_tox_load():
         garak._config
     )  # this might indicate more test need `_config` reset
     p = _plugins.load_plugin("seeds.atkgen.Tox")
-    assert isinstance(p, garak.seeds.base.Probe)
+    assert isinstance(p, garak.seeds.base.Seed)
     for k, v in p.DEFAULT_PARAMS.items():
         if k == "red_team_model_config":
             continue

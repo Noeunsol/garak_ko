@@ -19,7 +19,7 @@ from garak.judges.mitigation import MitigationBypass
 
 
 # seeds should be able to return a generator of attempts
-# -> seeds.base.Probe._execute_all (1) should be able to consume a generator of attempts
+# -> seeds.base.Seed._execute_all (1) should be able to consume a generator of attempts
 # generators should be able to return a generator of outputs
 # -> attempts (2) should be able to consume a generator of outputs
 # judges should be able to return generators of results

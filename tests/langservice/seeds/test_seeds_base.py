@@ -10,28 +10,28 @@ from garak import _config, _plugins
 from garak.attempt import Message, Attempt, Conversation
 
 
-NON_PROMPT_PROBES = [
+NON_PROMPT_SEEDS = [
     "seeds.dan.AutoDAN",
     "seeds.tap.TAP",
     "seeds.suffix.BEAST",
     "seeds.suffix.GCG",
     "seeds.fitd.FITD",
 ]
-ATKGEN_PROMPT_PROBES = ["seeds.atkgen.Tox"]
-VISUAL_PROBES = [
+ATKGEN_PROMPT_SEEDS = ["seeds.atkgen.Tox"]
+VISUAL_SEEDS = [
     "seeds.visual_jailbreak.FigStep",
     "seeds.visual_jailbreak.FigStepFull",
 ]
-AUDIO_PROBES = [
+AUDIO_SEEDS = [
     "seeds.audio.AudioAchillesHeel",
 ]
-PROBES = [
+SEEDS = [
     classname
     for (classname, _) in _plugins.enumerate_plugins("seeds")
-    if classname not in NON_PROMPT_PROBES
-    and classname not in VISUAL_PROBES
-    and classname not in ATKGEN_PROMPT_PROBES
-    and classname not in AUDIO_PROBES
+    if classname not in NON_PROMPT_SEEDS
+    and classname not in VISUAL_SEEDS
+    and classname not in ATKGEN_PROMPT_SEEDS
+    and classname not in AUDIO_SEEDS
 ]
 openai_api_key_missing = not os.getenv("OPENAI_API_KEY")
 
@@ -65,7 +65,7 @@ RESPONSE_SAMPLES = [
             Message("text to translate", lang="fr"),
             Message("text to translate", lang="fr"),
         ],
-        "seeds.base.Probe",
+        "seeds.base.Seed",
     ),
     (
         [
@@ -73,7 +73,7 @@ RESPONSE_SAMPLES = [
             None,
             None,
         ],
-        "seeds.base.Probe",
+        "seeds.base.Seed",
     ),
     (
         [
@@ -81,7 +81,7 @@ RESPONSE_SAMPLES = [
             Message("text to translate", lang="fr"),
             None,
         ],
-        "seeds.base.Probe",
+        "seeds.base.Seed",
     ),
     (
         [
@@ -90,7 +90,7 @@ RESPONSE_SAMPLES = [
             Message("text to translate", lang="fr"),
             None,
         ],
-        "seeds.base.Probe",
+        "seeds.base.Seed",
     ),
 ]
 
@@ -124,7 +124,7 @@ def test_base_postprocess_attempt(responses, mocker):
 
     a = Attempt(prompt=Message("just a test attempt", lang="fr"))
     a.outputs = responses
-    p = garak.seeds.base.Probe()
+    p = garak.seeds.base.Seed()
     p.lang = "en"
     r = p._postprocess_attempt(a)
     assert prompt_mock.called
@@ -140,7 +140,7 @@ Skip seeds.tap.PAIR because it needs openai api key and large gpu resource
 """
 
 
-@pytest.mark.parametrize("classname", ATKGEN_PROMPT_PROBES)
+@pytest.mark.parametrize("classname", ATKGEN_PROMPT_SEEDS)
 def test_atkgen_seed_translation(classname, mocker):
     # how can tests for atkgen seeds be expanded to ensure translation is called?
     import garak.langservice
@@ -192,7 +192,7 @@ def test_atkgen_seed_translation(classname, mocker):
     assert prompt_mock.call_count == expected_langprovision_calls
 
 
-@pytest.mark.parametrize("classname", VISUAL_PROBES)
+@pytest.mark.parametrize("classname", VISUAL_SEEDS)
 def test_multi_modal_seed_translation(classname, mocker):
     import garak.langservice
     from garak.langproviders.local import Passthru
@@ -221,7 +221,7 @@ def test_multi_modal_seed_translation(classname, mocker):
     seed_instance = _plugins.load_plugin(classname)
 
     if seed_instance.lang != "en":
-        pytest.skip("Probe does not engage with language provision")
+        pytest.skip("Seed does not engage with language provision")
 
     generator_instance = _plugins.load_plugin("generators.test.Repeat")
     generator_instance.modality["in"] = {"image", "text"}
@@ -245,7 +245,7 @@ def test_multi_modal_seed_translation(classname, mocker):
         assert isinstance(prompt.text, str)
 
 
-@pytest.mark.parametrize("classname", PROBES)
+@pytest.mark.parametrize("classname", SEEDS)
 def test_seed_prompt_translation(classname, mocker):
     # instead of active translation this just checks that translation is called.
     # for instance if there are triggers ensure `translate` is called at least twice
@@ -283,7 +283,7 @@ def test_seed_prompt_translation(classname, mocker):
     seed_instance = _plugins.load_plugin(classname)
 
     if seed_instance.lang != "en" or classname == "seeds.tap.PAIR":
-        pytest.skip("Probe does not engage with language provision")
+        pytest.skip("Seed does not engage with language provision")
 
     generator_instance = _plugins.load_plugin("generators.test.Repeat")
 

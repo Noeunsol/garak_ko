@@ -6,25 +6,25 @@ import pytest
 import garak._plugins
 import garak.seeds.base
 
-DRA_PROBES = (
+DRA_SEEDS = (
     "seeds.dra.DRA",
     "seeds.dra.DRAAdvanced"
 )
 
 
-@pytest.mark.parametrize("seedname", DRA_PROBES)
+@pytest.mark.parametrize("seedname", DRA_SEEDS)
 def test_dra_load(seedname):
     p = garak._plugins.load_plugin(seedname)
-    assert isinstance(p, garak.seeds.base.Probe)
+    assert isinstance(p, garak.seeds.base.Seed)
 
 
-@pytest.mark.parametrize("seedname", DRA_PROBES)
+@pytest.mark.parametrize("seedname", DRA_SEEDS)
 def test_dra_prompts_count(seedname):
     p = garak._plugins.load_plugin(seedname)
-    assert len(p.prompts) > 0, "Probe must have more than zero prompts"
+    assert len(p.prompts) > 0, "Seed must have more than zero prompts"
 
 
-@pytest.mark.parametrize("seedname", DRA_PROBES)
+@pytest.mark.parametrize("seedname", DRA_SEEDS)
 def test_dra_moderation_cache_loaded(seedname):
     p = garak._plugins.load_plugin(seedname)
     assert hasattr(p, 'moderation_cache'), "DRA seed should have moderation_cache attribute"
@@ -37,7 +37,7 @@ def test_dra_moderation_cache_loaded(seedname):
     assert isinstance(result, bool), "_check_moderation should return a boolean"
 
 
-@pytest.mark.parametrize("seedname", DRA_PROBES)
+@pytest.mark.parametrize("seedname", DRA_SEEDS)
 def test_dra_templates_loaded(seedname):
     """Test that DRA templates are properly loaded from data/dra/prompt_templates.txt"""
     p = garak._plugins.load_plugin(seedname)

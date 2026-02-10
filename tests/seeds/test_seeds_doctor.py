@@ -8,14 +8,14 @@ import garak.seeds.doctor
 from garak import _plugins
 
 MARKER = "{{HARMFUL_BEHAVIOR}}"
-DOCTOR_PROBES = [
+DOCTOR_SEEDS = [
     classname
     for (classname, active) in _plugins.enumerate_plugins("seeds")
     if classname.startswith("seeds.doctor")
 ]
 
 
-@pytest.mark.parametrize("classname", DOCTOR_PROBES)
+@pytest.mark.parametrize("classname", DOCTOR_SEEDS)
 def test_template_marker_presence(classname):
     if classname != "seeds.doctor.Puppetry":
         p = _plugins.load_plugin(classname)
@@ -25,7 +25,7 @@ def test_template_marker_presence(classname):
             ), f"prompt template must contain {MARKER}, got '{prompt_template}'"
 
 
-@pytest.mark.parametrize("classname", DOCTOR_PROBES)
+@pytest.mark.parametrize("classname", DOCTOR_SEEDS)
 def test_prompt_marker_absence(classname):
     r = r"\{\{[A-Z_]*}}"
     p = _plugins.load_plugin(classname)

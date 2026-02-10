@@ -119,7 +119,7 @@ class Harness(Configurable):
         :param model: an instantiated generator providing an interface to the model to be examined
         :type model: garak.generators.Generator
         :param seeds: a list of seed instances to be run
-        :type seeds: List[garak.seeds.base.Probe]
+        :type seeds: List[garak.seeds.base.Seed]
         :param judges: a list of judges to use on the results of the seeds
         :type judges: List[garak.judges.base.Judge]
         :param evaluator: an instantiated evaluator for judging judge results

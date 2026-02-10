@@ -23,10 +23,10 @@ The recipe for writing a new plugin or plugin class isn't outlandish:
 * Only start a new module if none of the current modules could fit
 * Take a look at how other plugins do it
    * For an example Generator, check out :class:`garak.generators.replicate`
-   * For an example Probe, check out :class:`garak.seeds.malwaregen`
+   * For an example Seed, check out :class:`garak.seeds.malwaregen`
    * For an example Judge, check out :class:`garak.judges.toxicity` or :class:`garak.judges.specialwords`
    * For an example Attacker, check out :class:`garak.attackers.lowercase`
-* Start a new module inheriting from one of the base classes, e.g. :class:`garak.seeds.base.Probe`
+* Start a new module inheriting from one of the base classes, e.g. :class:`garak.seeds.base.Seed`
 * Override as little as possible.
 
 If you use custom modules not included in garak's default list, include these in the plugin's top-level ``extra_dependency_names`` parameter.
@@ -47,7 +47,7 @@ Testing during development
 You can test your code in a few ways:
 
 * Start an interactive Python session
-   * Instantiate the plugin, e.g. ``import garak._plugins`` then ``seed = garak._plugins.load_plugin("garak.seeds.mymodule.MyProbe")``
+   * Instantiate the plugin, e.g. ``import garak._plugins`` then ``seed = garak._plugins.load_plugin("garak.seeds.mymodule.MySeed")``
    * Check out that the values and methods work as you'd expect
 * Get ``garak`` to list all the plugins of the type you're writing, with ``--list_seeds``, ``--list_judges``, or ``--list_generators``: ``python3 -m garak --list_seeds``
 * Run a scan with test plugins

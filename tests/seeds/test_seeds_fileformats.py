@@ -13,7 +13,7 @@ import garak.attempt
 
 def test_hf_files_load():
     p = garak.seeds.fileformats.HF_Files()
-    assert isinstance(p, garak.seeds.base.Probe)
+    assert isinstance(p, garak.seeds.base.Seed)
 
 
 # files could be their own thing if Turns start taking named/typed entries

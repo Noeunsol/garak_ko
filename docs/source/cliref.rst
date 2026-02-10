@@ -12,7 +12,7 @@ CLI reference for garak
                          [--eval_threshold EVAL_THRESHOLD]
                          [--generations GENERATIONS] [--config CONFIG]
                          [--target_type TARGET_TYPE] [--target_name TARGET_NAME]
-                         [--seeds PROBES] [--seed_tags PROBE_TAGS]
+                         [--seeds SEEDS] [--seed_tags SEED_TAGS]
                          [--judges JUDGES] [--extended_judges]
                          [--attackers ATTACKERS]
                          [--target_lang TARGET_LANG] [--language TARGET_LANG] [--lang TARGET_LANG]
@@ -20,7 +20,7 @@ CLI reference for garak
                          [--judge_option_file JUDGE_OPTION_FILE | --judge_options JUDGE_OPTIONS]
                          [--generator_option_file GENERATOR_OPTION_FILE | --generator_options GENERATOR_OPTIONS]
                          [--harness_option_file HARNESS_OPTION_FILE | --harness_options HARNESS_OPTIONS]
-                         [--seed_option_file PROBE_OPTION_FILE | --seed_options PROBE_OPTIONS]
+                         [--seed_option_file SEED_OPTION_FILE | --seed_options SEED_OPTIONS]
                          [--taxonomy TAXONOMY] [--plugin_info PLUGIN_INFO]
                          [--list_seeds] [--list_judges] [--list_generators]
                          [--list_attackers] [--list_config] [--version]
@@ -56,10 +56,10 @@ CLI reference for garak
     --target_name TARGET_NAME, --model_name TARGET_NAME, -n TARGET_NAME
                           name of the target, e.g.
                           'timdettmers/guanaco-33b-merged'
-    --seeds PROBES, -p PROBES
+    --seeds SEEDS, -p SEEDS
                           list of seed names to use, or 'all' for all
                           (default).
-    --seed_tags PROBE_TAGS
+    --seed_tags SEED_TAGS
                           only include seeds with a tag that starts with this
                           value (e.g. owasp:llm01)
     --judges JUDGES, -d JUDGES
@@ -92,9 +92,9 @@ CLI reference for garak
                           harness
     --harness_options HARNESS_OPTIONS
                           options to pass to harness, formatted as a JSON dict
-    --seed_option_file PROBE_OPTION_FILE, -P PROBE_OPTION_FILE
+    --seed_option_file SEED_OPTION_FILE, -P SEED_OPTION_FILE
                           path to JSON file containing options to pass to seed
-    --seed_options PROBE_OPTIONS
+    --seed_options SEED_OPTIONS
                           options to pass to seed, formatted as a JSON dict
     --taxonomy TAXONOMY   specify a MISP top-level taxonomy to be used for
                           grouping seeds in reporting. e.g. 'avid-effect',

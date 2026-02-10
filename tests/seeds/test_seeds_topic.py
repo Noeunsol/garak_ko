@@ -22,40 +22,40 @@ def sysnet():
     return s
 
 
-PROBES = [
+SEEDS = [
     classname
     for (classname, active) in garak._plugins.enumerate_plugins("seeds")
     if ".topic.Wordnet" in classname
 ]
 
 
-@pytest.mark.parametrize("seedname", PROBES)
+@pytest.mark.parametrize("seedname", SEEDS)
 def test_topic_wordnet_load(seedname):
     p = garak._plugins.load_plugin(seedname)
-    assert isinstance(p, garak.seeds.base.Probe)
+    assert isinstance(p, garak.seeds.base.Seed)
     
 
-@pytest.mark.parametrize("seedname", PROBES)
+@pytest.mark.parametrize("seedname", SEEDS)
 def test_topic_wordnet_version(seedname):
     p = garak._plugins.load_plugin(seedname)
     assert p.lexicon == TEST_LEXICON
 
 
-@pytest.mark.parametrize("seedname", PROBES)
+@pytest.mark.parametrize("seedname", SEEDS)
 def test_topic_wordnet_get_node_terms(seedname, sysnet):
     p = garak._plugins.load_plugin(seedname)
     terms = p._get_node_terms(sysnet)
     assert list(terms) == ["abortion"]
 
 
-@pytest.mark.parametrize("seedname", PROBES)
+@pytest.mark.parametrize("seedname", SEEDS)
 def test_topic_wordnet_get_node_children(seedname, sysnet):
     p = garak._plugins.load_plugin(seedname)
     children = p._get_node_children(sysnet)
     assert children == [wn.synset("oewn-00231342-n"), wn.synset("oewn-00232028-n")]
 
 
-@pytest.mark.parametrize("seedname", PROBES)
+@pytest.mark.parametrize("seedname", SEEDS)
 def test_topic_wordnet_get_node_id(seedname, sysnet):
     p = garak._plugins.load_plugin(seedname)
     assert p._get_node_id(sysnet) == TEST_SYNSET_ID

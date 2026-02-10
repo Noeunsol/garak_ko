@@ -7,7 +7,7 @@ from garak.seeds.goodside import Tag
 import json
 
 
-PROBES = [
+SEEDS = [
     classname
     for (classname, _) in _plugins.enumerate_plugins("seeds")
     if "goodside" in classname

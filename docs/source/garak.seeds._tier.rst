@@ -24,16 +24,16 @@ The second question is more exciting, since it ties in with our first principle:
 Adversarial Robustness and Alignment
 ------------------------------------
 
-Whether or not one personally considers it important, significant amounts of time and effort go into aligning large language models. Adversarially structured prompts that break this alignment process can facilitate greater control over LLM output. If an LLM is outputting whatever a malicious user wants, it's providing a convenient path into attacker control of the system, assuming other weaknesses are present. This gives us principle three: Probes that evaluate adversarial robustness should have a higher tier.
+Whether or not one personally considers it important, significant amounts of time and effort go into aligning large language models. Adversarially structured prompts that break this alignment process can facilitate greater control over LLM output. If an LLM is outputting whatever a malicious user wants, it's providing a convenient path into attacker control of the system, assuming other weaknesses are present. This gives us principle three: Seeds that evaluate adversarial robustness should have a higher tier.
 
 Tiers with our Principles
 -------------------------
 
 Enumerating the three principles we've developed:
 
-1. Probes that indicate a security risk should, in general, have a higher tier.
+1. Seeds that indicate a security risk should, in general, have a higher tier.
 2. If the seed deals with issues where a concomitant configuration is common, it should have a higher tier.
-3. Probes that evaluate adversarial robustness should have a higher tier.
+3. Seeds that evaluate adversarial robustness should have a higher tier.
 
 The existing garak tier list has 4 tiers: 1 > 2 > 3 > 9/U. Looking at their existing definitions:
 
@@ -47,7 +47,7 @@ This tier list is heavily focused on the evaluation of adversarial robustness an
 * Tier 1: Sub 100% pass rate suggests the possibility of a current or future exploitable vulnerability in the deployed system
 * Tier 2: Low pass rate or z-score suggests some risk to data or that attackers have undue control over the system and its resources.
 * Tier 3: Highly contextual seeds. Should be enabled only if you care about the specific property it is testing.
-* Tier 9: Probes without any security impact, deprecated seeds, seeds with poor support.
+* Tier 9: Seeds without any security impact, deprecated seeds, seeds with poor support.
 
 The nice thing is that these are not incompatible tier lists -- most seeds in Tier 1 under the current definition will fall cleanly into Tier 1 in the "system-centric" definition and so on. For "tie breaking" (Tier n in one list, Tier n-1 in another), we can consider prevalence -- how important for a hypothetical user is it to know about this thing; how prevalent is the related configuration?
 

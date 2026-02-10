@@ -49,7 +49,7 @@ def test_leakreplay_module_structure():
             inspect.isclass(obj)
             and obj.__module__ == "garak.seeds.leakreplay"
             and not name.endswith("Mixin")  # Skip mixin classes
-            and issubclass(obj, garak.seeds.Probe)
+            and issubclass(obj, garak.seeds.Seed)
         ):
             leakreplay_classes.append(obj)
             assert (
@@ -60,14 +60,14 @@ def test_leakreplay_module_structure():
     assert len(leakreplay_classes) >= 8, "Not all leakreplay seed classes were found"
 
 
-LEAKREPLAY_PROBES = [
+LEAKREPLAY_SEEDS = [
     classname
     for (classname, active) in garak._plugins.enumerate_plugins("seeds")
     if classname.startswith("seeds.leakreplay")
 ]
 
 
-@pytest.mark.parametrize("klassname", LEAKREPLAY_PROBES)
+@pytest.mark.parametrize("klassname", LEAKREPLAY_SEEDS)
 def test_leakreplay_seed_structure(klassname):
     """Test that all leakreplay seed classes can be instantiated and function correctly.
 
@@ -126,14 +126,14 @@ def test_leakreplay_seed_structure(klassname):
         assert False, f"Failed to initialize {seed_class.__name__}: {e}"
 
 
-CLOZE_PROBES = [
+CLOZE_SEEDS = [
     classname
     for (classname, active) in garak._plugins.enumerate_plugins("seeds")
     if classname.startswith("seeds.leakreplay") and "Cloze" in classname
 ]
 
 
-@pytest.mark.parametrize("klassname", CLOZE_PROBES)
+@pytest.mark.parametrize("klassname", CLOZE_SEEDS)
 def test_leakreplay_seed_structure(klassname):
     seed = garak._plugins.load_plugin(klassname)
 

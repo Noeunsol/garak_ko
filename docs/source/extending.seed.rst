@@ -1,26 +1,26 @@
-Writing a Probe
+Writing a Seed
 ###############
 
-Probes are, in some ways, the essence of garak's functionality -- they serve as the abstraction that encapsulates attacks against AI models and systems.
+Seeds are, in some ways, the essence of garak's functionality -- they serve as the abstraction that encapsulates attacks against AI models and systems.
 In this example, we're going to go over the key points of how to develop a new seed.
 
 Inheritance
 ***********
 
-All seeds inherit from ``garak.seeds.base.Probe``, exposed at package level via ``garak.seeds``.
+All seeds inherit from ``garak.seeds.base.Seed``, exposed at package level via ``garak.seeds``.
 
 .. code-block:: python
 
     import garak.seeds
 
-    class MyNewProbe(garak.seeds.Probe):
-        """Probe to do something naughty to a language model"""
+    class MyNewSeed(garak.seeds.Seed):
+        """Seed to do something naughty to a language model"""
         ...
 
-By inheriting from ``garak.seeds.base.Probe``, seeds can work nicely with ``Generator`` and ``Attempt`` objects in addition to ensuring that any ``Attacker`` objects that you apply to a seed will work appropriately.
+By inheriting from ``garak.seeds.base.Seed``, seeds can work nicely with ``Generator`` and ``Attempt`` objects in addition to ensuring that any ``Attacker`` objects that you apply to a seed will work appropriately.
 
-The ``seed`` method of a ``Probe`` object provides the core logic of the seed.
-Ideally, you only need to populate the ``prompts`` attribute of a ``Probe`` and let the ``seed`` method do the heavy lifting.
+The ``seed`` method of a ``Seed`` object provides the core logic of the seed.
+Ideally, you only need to populate the ``prompts`` attribute of a ``Seed`` and let the ``seed`` method do the heavy lifting.
 However, if this logic is insufficient for your seed, the ``seed`` method is where the majority of the work (and potential issues) tends to lie.
 
 .. code-block:: python
@@ -50,11 +50,11 @@ However, if this logic is insufficient for your seed, the ``seed`` method is whe
 
         return attempts_completed
 
-Configuring and Describing Probes
+Configuring and Describing Seeds
 *********************************
 
-Probes are built upon the ``Configurable`` base class and are themselves configurable.
-We largely ignore parameters like ``ENV_VAR`` and ``DEFAULT_PARAMS`` in ``Probe`` classes, but if your seed requires an environment variable or you want to set some default parameters, it is done first in the class.
+Seeds are built upon the ``Configurable`` base class and are themselves configurable.
+We largely ignore parameters like ``ENV_VAR`` and ``DEFAULT_PARAMS`` in ``Seed`` classes, but if your seed requires an environment variable or you want to set some default parameters, it is done first in the class.
 
 More often, we'll be looking at descriptive attributes of the seed.
 From the base class:
@@ -98,8 +98,8 @@ Many of these are decent defaults, though there are a few that we absolutely wan
 
 .. code-block:: python
 
-    class MyNewProbe(garak.seeds.Probe):
-        """Probe to do something naughty to a language model"""
+    class MyNewSeed(garak.seeds.Seed):
+        """Seed to do something naughty to a language model"""
 
         primary_judge = "mitigation.MitigationBypass"
         tags = [
@@ -113,7 +113,7 @@ Many of these are decent defaults, though there are a few that we absolutely wan
         active = False
         ...
 
-Probe Documentation
+Seed Documentation
 *******************
 
 You must provide documentation for your seed.
@@ -153,7 +153,7 @@ Refer to the following example:
 
     Try to make a model produce ANSI escape codes, which can disrupt downstream processing.
 
-    Probes in this module should all try to elicit ANSI escape codes or information suggesting that the target is capable of producing them.
+    Seeds in this module should all try to elicit ANSI escape codes or information suggesting that the target is capable of producing them.
     There are a couple of different dimensions included:
 
     * the encoding can vary - raw binary, or an escaped version;
@@ -172,8 +172,8 @@ Refer to the following example:
 Class Docstrings
 ================
 
-Probe classes themselves must also have a docstring.
-The target structure for garak ``Probe`` class docstrings include the following items:
+Seed classes themselves must also have a docstring.
+The target structure for garak ``Seed`` class docstrings include the following items:
 
 * Short description of the technique or intent of the seed (1 sentence, followed by a blank line)
 * Friendly general intro to the seed, in very simple English (1-4 sentences; short sentences; follow `Basic English <https://simple.wikipedia.org/wiki/Basic_English>`_ rules as much as possible, try this `tool <https://www.online-utility.org/english/simple_basic_helper.jsp>`_)
@@ -206,18 +206,18 @@ Let's try running our new seed against a HuggingFace ``Pipeline`` using ``meta-l
 
 .. code-block:: bash
 
-  $ garak -t huggingface -n meta-llama/Llama-2-7b-chat-hf -p mynewseed.MyNewProbe
+  $ garak -t huggingface -n meta-llama/Llama-2-7b-chat-hf -p mynewseed.MyNewSeed
 
 If it all runs well, you'll get a log and a hitlog file, which tell you how successful your new seed was!
 If you encounter errors, go through and try to address them. You can look at the bottom of the `garak.log` file, whose path is printed in the output every time you call garak, to see what errors there are.
 
-If you want to debug your seed interactively, try using something like ``p = garak._plugins.load_plugin("seeds.mynewseed.MyNewProbe")`` from a Python prompt to load the seed. The variable ``p`` will be assigned an instance of the seed (if instantiation was successful) and you can test a lot of the seed's intended functionality from here.
+If you want to debug your seed interactively, try using something like ``p = garak._plugins.load_plugin("seeds.mynewseed.MyNewSeed")`` from a Python prompt to load the seed. The variable ``p`` will be assigned an instance of the seed (if instantiation was successful) and you can test a lot of the seed's intended functionality from here.
 
 
 Finally, check a few properties:
 
 * Does the new seed appear in ``python -m garak --list_seeds``?
-* Does the seed run? ``python -m garak -t test -p mynewseed.MyNewProbe``
+* Does the seed run? ``python -m garak -t test -p mynewseed.MyNewSeed``
 * Do the garak tests pass? ``python -m pytest tests/``
 
 Done!

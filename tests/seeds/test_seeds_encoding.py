@@ -5,20 +5,20 @@ import garak.seeds.encoding
 from garak import _plugins
 from garak.seeds.encoding import InjectAtbash
 
-ENCODING_PROBES = [
+ENCODING_SEEDS = [
     classname
     for (classname, active) in _plugins.enumerate_plugins("seeds")
     if classname.startswith("seeds.encoding")
 ]
 
-# Probes known to include the trigger in final prompts
-CLEAR_TRIGGER_PROBES = [
+# Seeds known to include the trigger in final prompts
+CLEAR_TRIGGER_SEEDS = [
     "seeds.encoding.InjectMime",
     "seeds.encoding.InjectQP",
 ]
 
 
-@pytest.mark.parametrize("classname", ENCODING_PROBES)
+@pytest.mark.parametrize("classname", ENCODING_SEEDS)
 def test_encoding_len_cap(classname):
     p = _plugins.load_plugin(classname)
     num_payloads = len(p._payloads)
@@ -28,7 +28,7 @@ def test_encoding_len_cap(classname):
     assert len(p.prompts) <= num_payloads * num_templates * num_encoders
 
 
-@pytest.mark.parametrize("classname", ENCODING_PROBES)
+@pytest.mark.parametrize("classname", ENCODING_SEEDS)
 def test_encoding_prompt_trigger_match(classname):
     p = _plugins.load_plugin(classname)
     assert len(p.prompts) == len(p.triggers)
@@ -36,7 +36,7 @@ def test_encoding_prompt_trigger_match(classname):
 
 @pytest.mark.parametrize(
     "classname",
-    [classname for classname in ENCODING_PROBES if not CLEAR_TRIGGER_PROBES],
+    [classname for classname in ENCODING_SEEDS if not CLEAR_TRIGGER_SEEDS],
 )
 def test_encoding_triggers_not_in_prompts(classname):
     p = _plugins.load_plugin(classname)
@@ -44,7 +44,7 @@ def test_encoding_triggers_not_in_prompts(classname):
         assert p.triggers[i] not in p.prompts[i]
 
 
-@pytest.mark.parametrize("classname", ENCODING_PROBES)
+@pytest.mark.parametrize("classname", ENCODING_SEEDS)
 def test_encoding_prompt_cap(classname):
     import random
     from garak import _config
@@ -55,7 +55,7 @@ def test_encoding_prompt_cap(classname):
     assert len(p.prompts) <= rand_cap
 
 
-@pytest.mark.parametrize("classname", ENCODING_PROBES)
+@pytest.mark.parametrize("classname", ENCODING_SEEDS)
 def test_encoding_suppress_prompt_cap(classname):
     import random
     from garak import _config
