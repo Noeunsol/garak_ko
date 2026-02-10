@@ -19,7 +19,7 @@ class Attacker(Configurable):
     """Base class for an attacker.
 
     An attacker should take as input a list of attempts, and return
-    a list of events. It should be able to return a generator.
+    a list of events. It should be able to return a target.
     It's worth storing the origin attempt ID in the notes attrib
     of derivative attempt objects.
     """

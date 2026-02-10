@@ -16,7 +16,7 @@ from garak.exception import APIKeyMissingError
 import garak.judges.base
 
 
-DEFAULT_GENERATOR_NAME = "garak test"
+DEFAULT_TARGET_NAME = "garak test"
 DEFAULT_PROMPT_TEXT = "especially the lies"
 
 
@@ -91,8 +91,10 @@ def test_judge_detect(classname):
     except APIKeyMissingError:
         pytest.skip(f"API key unavailable for {classname}")
 
+    from collections.abc import Iterator
+
     assert isinstance(
-        results, (list, types.GeneratorType)
+        results, (list, Iterator)
     ), "detect() should return an ordered iterable"
     for entry in results:
         # detect() should skip non-evaluated items from output. NB this breaks output:result alignment

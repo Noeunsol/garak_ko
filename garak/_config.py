@@ -89,7 +89,7 @@ reporting = GarakSubConfig()
 
 def _lock_config_as_dict():
     global plugins
-    for plugin_type in ("seeds", "generators", "attackers", "judges", "harnesses"):
+    for plugin_type in ("seeds", "targets", "attackers", "judges", "harnesses"):
         setattr(plugins, plugin_type, _crystallise(getattr(plugins, plugin_type)))
 
 
@@ -107,7 +107,7 @@ def _nested_dict():
 nested_dict = _nested_dict
 
 plugins.seeds = nested_dict()
-plugins.generators = nested_dict()
+plugins.targets = nested_dict()
 plugins.judges = nested_dict()
 plugins.attackers = nested_dict()
 plugins.harnesses = nested_dict()
@@ -124,7 +124,7 @@ run.target_lang = "en"
 run.langproviders = []
 
 # placeholder
-# generator, seed, judge, attacker = {}, {}, {}, {}
+# target, seed, judge, attacker = {}, {}, {}, {}
 
 
 def _key_exists(d: dict, key: str) -> bool:
@@ -296,7 +296,7 @@ def load_base_config() -> None:
 def load_config(
     site_config_filename="garak.site.yaml", run_config_filename=None
 ) -> None:
-    # would be good to bubble up things from run_config, e.g. generator, seed(s), judge(s)
+    # would be good to bubble up things from run_config, e.g. target, seed(s), judge(s)
     # and then not have cli be upset when these are not given as cli params
     global loaded
 

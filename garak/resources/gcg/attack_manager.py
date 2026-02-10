@@ -43,8 +43,8 @@ from transformers import (
 from logging import getLogger
 from tqdm import tqdm
 
-import garak.generators
-from garak.generators.huggingface import Model
+import garak.targets
+from garak.targets.huggingface import Model
 from garak.resources.common import load_advbench, REJECTION_STRINGS
 
 logger = getLogger(__name__)
@@ -1714,16 +1714,16 @@ class EvaluateAttack(object):
 
 
 class ModelWorker(object):
-    def __init__(self, generator, conv_template):
+    def __init__(self, target, conv_template):
         """Worker for running against models
 
         Args:
-            generator (garak.Generator): Generator to run against
+            target (garak.Target): Target to run against
             conv_template (fastchat.Conversation): Conversation template
         """
-        self.model = generator.model
+        self.model = target.model
         self.model.requires_grad_(False)  # Disable grads to reduce memory consumption
-        self.tokenizer = generator.tokenizer
+        self.tokenizer = target.tokenizer
         self.tokenizer.pad_token_id = (
             self.tokenizer.eos_token_id
         )  # Suppress warning for open-end generation.
@@ -1779,12 +1779,12 @@ class ModelWorker(object):
         return self
 
 
-def get_workers(generators: list, n_train_models=1, evaluate=False):
+def get_workers(targets: list, n_train_models=1, evaluate=False):
     """Get workers for GCG generation and testing
 
     Parameters
     ----------
-    generators : List generators to evaluate
+    targets : List targets to evaluate
     n_train_models : Number of models to use for training
     evaluate : Boolean -- is the worker being used for eval. Will prevent starting the workers.
 
@@ -1793,7 +1793,7 @@ def get_workers(generators: list, n_train_models=1, evaluate=False):
     tuple of train workers and test workers.
 
     """
-    conv_model_names = [get_conv_name(generator.name) for generator in generators]
+    conv_model_names = [get_conv_name(target.name) for target in targets]
     raw_conv_templates = [
         get_conversation_template(conv_model) for conv_model in conv_model_names
     ]
@@ -1807,9 +1807,9 @@ def get_workers(generators: list, n_train_models=1, evaluate=False):
         conv_templates.append(conv)
 
     workers = [
-        ModelWorker(generator, conv_template)
-        for generator, conv_template in zip(
-            [generator for generator in generators], conv_templates
+        ModelWorker(target, conv_template)
+        for target, conv_template in zip(
+            [target for target in targets], conv_templates
         )
     ]
     if not evaluate:

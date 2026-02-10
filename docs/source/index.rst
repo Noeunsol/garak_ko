@@ -56,7 +56,7 @@ Check out the :doc:`usage` section for further information, including :doc:`inst
    judges
    evaluators
    exception
-   generators
+   targets
    harnesses
    interactive
    langservice
@@ -73,6 +73,6 @@ Check out the :doc:`usage` section for further information, including :doc:`inst
    :hidden:
 
    extending
-   extending.generator
+   extending.target
    extending.seed
    contributing

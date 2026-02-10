@@ -100,15 +100,15 @@ class GCG(garak.seeds.Seed):
         self.run_gcg = run_gcg
         super().__init__(config_root=config_root)
 
-    def seed(self, generator) -> List[garak.attempt.Attempt]:
+    def seed(self, target) -> List[garak.attempt.Attempt]:
         try:
-            from garak.generators.huggingface import Model
+            from garak.targets.huggingface import Model
 
-            if not isinstance(generator, Model):
-                msg = f"Incompatible generator type received: {generator.__class__.__module__}.{generator.__class__.__name__} expected: {Model.__module__}.{Model.__name__}"
+            if not isinstance(target, Model):
+                msg = f"Incompatible target type received: {target.__class__.__module__}.{target.__class__.__name__} expected: {Model.__module__}.{Model.__name__}"
                 logging.error(msg)
                 return list()
-            gcg_output = self.run_gcg(target_generator=generator)
+            gcg_output = self.run_gcg(target_target=target)
         except Exception as e:
             logging.error(e)
             print(f"GCG generation encountered an error:\n{e}")
@@ -174,11 +174,11 @@ class BEAST(garak.seeds.Seed):
         self.run_beast = run_beast
         super().__init__(config_root=config_root)
 
-    def seed(self, generator) -> List[garak.attempt.Attempt]:
-        self.generator = generator
+    def seed(self, target) -> List[garak.attempt.Attempt]:
+        self.target = target
 
         try:
-            beast_output = self.run_beast(target_generator=self.generator)
+            beast_output = self.run_beast(target_target=self.target)
         except Exception as e:
             logging.error(e)
             print(f"BEAST generation encountered an error:\n{e}")
@@ -186,7 +186,7 @@ class BEAST(garak.seeds.Seed):
 
         if beast_output:
             self.prompts = [self.goal + val for val in beast_output]
-            return super().seed(generator)
+            return super().seed(target)
 
         else:
             logging.warning("BEAST failed to find a jailbreak!")

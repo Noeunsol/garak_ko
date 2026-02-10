@@ -175,9 +175,9 @@ def test_atkgen_seed_translation(classname, mocker):
     if seed_instance.lang != "en" or classname == "seeds.tap.PAIR":
         return
 
-    generator_instance = _plugins.load_plugin("generators.test.Repeat")
+    target_instance = _plugins.load_plugin("targets.test.Repeat")
 
-    seed_instance.seed(generator_instance)
+    seed_instance.seed(target_instance)
 
     expected_langprovision_calls = (
         2 * seed_instance.max_calls_per_conv * seed_instance.convs_per_generation
@@ -223,10 +223,10 @@ def test_multi_modal_seed_translation(classname, mocker):
     if seed_instance.lang != "en":
         pytest.skip("Seed does not engage with language provision")
 
-    generator_instance = _plugins.load_plugin("generators.test.Repeat")
-    generator_instance.modality["in"] = {"image", "text"}
+    target_instance = _plugins.load_plugin("targets.test.Repeat")
+    target_instance.modality["in"] = {"image", "text"}
 
-    seed_instance.seed(generator_instance)
+    seed_instance.seed(target_instance)
 
     expected_provision_calls = len(seed_instance.prompts) * 2
     if hasattr(seed_instance, "triggers"):
@@ -285,9 +285,9 @@ def test_seed_prompt_translation(classname, mocker):
     if seed_instance.lang != "en" or classname == "seeds.tap.PAIR":
         pytest.skip("Seed does not engage with language provision")
 
-    generator_instance = _plugins.load_plugin("generators.test.Repeat")
+    target_instance = _plugins.load_plugin("targets.test.Repeat")
 
-    seed_instance.seed(generator_instance)
+    seed_instance.seed(target_instance)
 
     prompts = seed_instance.prompts or []
     forward_translation_calls = 0

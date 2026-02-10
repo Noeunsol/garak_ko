@@ -17,7 +17,7 @@ class PossiblePickleName(FileJudge):
     """Guess if filenames look like pickles
 
     Pickle files have multiple and complex vulnerabilities, and should be
-    avoided. This judge expects a generator of filenames and fails those
+    avoided. This judge expects a target of filenames and fails those
     that look like pickle files."""
 
     valid_format = None

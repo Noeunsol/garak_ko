@@ -3,7 +3,7 @@
 
 """Flow for invoking garak from the command line"""
 
-command_options = "list_judges list_seeds list_seed_groups list_generators list_attackers list_attackers list_config plugin_info interactive report version fix".split()
+command_options = "list_judges list_seeds list_seed_groups list_targets list_attackers list_attackers list_config plugin_info interactive report version fix".split()
 
 
 def parse_cli_plugin_config(plugin_type, args):
@@ -283,7 +283,7 @@ def main(arguments=None) -> None:
         "--parallel_requests",
         type=int,
         default=_config.system.parallel_requests,
-        help="How many generator requests to launch in parallel for a given prompt. Ignored for models that support multiple generations per call.",
+        help="How many target requests to launch in parallel for a given prompt. Ignored for models that support multiple generations per call.",
     )
     parser.add_argument(
         "--parallel_attempts",
@@ -308,7 +308,7 @@ def main(arguments=None) -> None:
     parser.add_argument(
         "--deprefix",
         action="store_false",
-        help="remove the prompt from the front of generator output",
+        help="remove the prompt from the front of target output",
     )
     parser.add_argument(
         "--eval_threshold",
@@ -328,14 +328,14 @@ def main(arguments=None) -> None:
     )
 
     ## PLUGINS
-    # generators
+    # targets
     parser.add_argument(
         "--target_type",
         "-t",
         "--model_type",
         "-m",
         type=str,
-        help="module and optionally also class of the generator, e.g. 'huggingface', or 'openai'",
+        help="module and optionally also class of the target, e.g. 'huggingface', or 'openai'",
     )
     parser.add_argument(
         "--target_name",
@@ -451,7 +451,7 @@ def main(arguments=None) -> None:
         help="list available judges. Usage: combine with --judges/-d to filter for judges that will be activated based on a `judge_spec`, e.g. '--list_judges -d misleading.Invalid' to show only that judge.",
     )
     parser.add_argument(
-        "--list_generators",
+        "--list_targets",
         action="store_true",
         help="list available generation model interfaces",
     )
@@ -680,7 +680,7 @@ def main(arguments=None) -> None:
 
     try:
         has_config_file_or_json = False
-        # do a special thing for CLI seed options, generator options
+        # do a special thing for CLI seed options, target options
         for plugin_type, plugin_plural in plugin_types:
             opts_cli_config = parse_cli_plugin_config(plugin_type, args)
             if opts_cli_config is not None:
@@ -759,8 +759,8 @@ def main(arguments=None) -> None:
         elif getattr(args, "list_attackers", False) or getattr(args, "list_attackers", False):
             command.print_attackers()
 
-        elif args.list_generators:
-            command.print_generators()
+        elif args.list_targets:
+            command.print_targets()
 
         elif args.list_config:
             print("cli args:\n ", args)
@@ -775,15 +775,15 @@ def main(arguments=None) -> None:
             # should this restrict the config updates to a single fixable value?
             # for example allowed commands:
             # --fix --config filename.yaml
-            # --fix --generator_option_file filename.json
-            # --fix --generator_options json
+            # --fix --target_option_file filename.json
+            # --fix --target_options json
             #
             # disallowed commands:
-            # --fix --config filename.yaml --generator_option_file filename.json
-            # --fix --generator_option_file filename.json --seed_option_file filename.json
+            # --fix --config filename.yaml --target_option_file filename.json
+            # --fix --target_option_file filename.json --seed_option_file filename.json
             #
             # already unsupported as only one is held:
-            # --fix --generator_option_file filename.json --generator_options json_data
+            # --fix --target_option_file filename.json --target_options json_data
             #
             # How should this handle garak.site.yaml? Only if --fix was provided and no other options offered?
             # For now process all files registered a part of the config
@@ -836,17 +836,17 @@ def main(arguments=None) -> None:
 
             print(f"📜 logging to {log_filename}")
 
-            conf_root = _config.plugins.generators
+            conf_root = _config.plugins.targets
             for part in _config.plugins.target_type.split("."):
                 if not part in conf_root:
                     conf_root[part] = {}
                 conf_root = conf_root[part]
             if _config.plugins.target_name:
-                # if passed generator options and config files are already loaded
+                # if passed target options and config files are already loaded
                 # cli provided name overrides config from file
                 conf_root["name"] = _config.plugins.target_name
 
-            # Can this check be deferred to the generator instantiation?
+            # Can this check be deferred to the target instantiation?
             if (
                 _config.plugins.target_type
                 in ("openai", "replicate", "ggml", "huggingface", "litellm")
@@ -883,17 +883,17 @@ def main(arguments=None) -> None:
 
             from garak import _plugins
 
-            generator = _plugins.load_plugin(
-                f"generators.{_config.plugins.target_type}", config_root=_config
+            target = _plugins.load_plugin(
+                f"targets.{_config.plugins.target_type}", config_root=_config
             )
 
             if (
                 not _cli_config_supplied
-                and generator.parallel_capable
+                and target.parallel_capable
                 and _config.system.parallel_attempts is False
             ):
                 command.hint(
-                    f"This run can be sped up 🥳 Generator '{generator.fullname}' supports parallelism! Consider using `--parallel_attempts 16` (or more) to greatly accelerate your run. 🐌",
+                    f"This run can be sped up 🥳 Target '{target.fullname}' supports parallelism! Consider using `--parallel_attempts 16` (or more) to greatly accelerate your run. 🐌",
                     logging=logging,
                 )
 
@@ -903,14 +903,14 @@ def main(arguments=None) -> None:
 
                 if parsed_specs["judge"] == []:
                     command.seedwise_run(
-                        generator,
+                        target,
                         parsed_specs["seed"],
                         evaluator,
                         parsed_specs["attacker"],
                     )
                 else:
                     command.pxd_run(
-                        generator,
+                        target,
                         parsed_specs["seed"],
                         parsed_specs["judge"],
                         evaluator,

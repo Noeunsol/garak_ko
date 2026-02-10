@@ -17,8 +17,8 @@ from pathlib import Path
 from garak import _config
 from garak.exception import GarakException, ConfigFailure
 
-PLUGIN_TYPES = ("seeds", "judges", "generators", "harnesses", "attackers")
-PLUGIN_CLASSES = ("Seed", "Judge", "Generator", "Harness", "Attacker")
+PLUGIN_TYPES = ("seeds", "judges", "targets", "harnesses", "attackers")
+PLUGIN_CLASSES = ("Seed", "Judge", "Target", "Harness", "Attacker")
 TIME_FORMAT = "%Y-%m-%d %H:%M:%S %z"
 
 
@@ -344,7 +344,7 @@ def enumerate_plugins(
 ) -> List[tuple[str, bool]]:
     """A function for listing all modules & plugins of the specified kind.
 
-    garak's plugins are organised into four packages - seeds, judges, generators
+    garak's plugins are organised into four packages - seeds, judges, targets
     and harnesses. Each package contains a base module defining the core plugin
     classes. The other modules in the package define classes that inherit from the
     base module's classes.
@@ -354,7 +354,7 @@ def enumerate_plugins(
     in the package and see which classes can be enumerated from these.
 
     :param category: the name of the plugin package to be scanned; should
-      be one of seeds, judges, generators, or harnesses.
+      be one of seeds, judges, targets, or harnesses.
     :type category: str
     """
 
@@ -388,15 +388,15 @@ def load_plugin(path, break_on_fail=True, config_root=_config) -> object:
             case 2:
                 category, module_name = parts
                 try:
-                    generator_mod = importlib.import_module(
+                    target_mod = importlib.import_module(
                         f"garak.{category}.{module_name}"
                     )
                 except ModuleNotFoundError as e:
                     raise ValueError(
                         f"Unknown plugin module specification: {category}.{module_name}"
                     ) from e
-                if generator_mod.DEFAULT_CLASS:
-                    plugin_class_name = generator_mod.DEFAULT_CLASS
+                if target_mod.DEFAULT_CLASS:
+                    plugin_class_name = target_mod.DEFAULT_CLASS
                 else:
                     raise ValueError(
                         f"module {module_name} has no default class; pass module.ClassName to target_type"

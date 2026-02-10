@@ -1,6 +1,6 @@
 {
     "rest": {
-        "RestGenerator": {
+        "RestTarget": {
             "name": "example service",
             "uri": "http://localhost:37176/endpoint",
             "method": "post",

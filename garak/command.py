@@ -50,7 +50,7 @@ def start_run():
 
     logging.info("run started at %s", _config.transient.starttime_iso)
     # print("ASSIGN UUID", args)
-    if _config.system.lite and "seeds" not in _config.transient.cli_args and not _config.transient.cli_args.list_seeds and not _config.transient.cli_args.list_judges and not _config.transient.cli_args.list_generators and not getattr(_config.transient.cli_args, "list_attackers", False) and not getattr(_config.transient.cli_args, "list_attackers", False) and not _config.transient.cli_args.list_config and not _config.transient.cli_args.plugin_info and not _config.run.interactive:  # type: ignore
+    if _config.system.lite and "seeds" not in _config.transient.cli_args and not _config.transient.cli_args.list_seeds and not _config.transient.cli_args.list_judges and not _config.transient.cli_args.list_targets and not getattr(_config.transient.cli_args, "list_attackers", False) and not getattr(_config.transient.cli_args, "list_attackers", False) and not _config.transient.cli_args.list_config and not _config.transient.cli_args.plugin_info and not _config.run.interactive:  # type: ignore
         hint(
             "The current/default config is optimised for speed rather than thoroughness. Try e.g. --config full for a stronger test, or specify some seeds.",
             logging=logging,
@@ -162,10 +162,10 @@ def end_run():
 
 def print_plugins(prefix: str, color, selected_plugins=None):
     """
-    Print plugins for a category (seeds/judges/generators/attackers).
+    Print plugins for a category (seeds/judges/targets/attackers).
 
     Args:
-        prefix: Plugin category (seeds/judges/generators/attackers)
+        prefix: Plugin category (seeds/judges/targets/attackers)
         color: Color for output formatting
         selected_plugins: Optional list of specific plugins to show. If None, shows all.
     """
@@ -213,10 +213,10 @@ def print_judges(selected_judges=None):
     print_plugins("judges", Fore.LIGHTBLUE_EX, selected_judges)
 
 
-def print_generators():
+def print_targets():
     from colorama import Fore
 
-    print_plugins("generators", Fore.LIGHTMAGENTA_EX)
+    print_plugins("targets", Fore.LIGHTMAGENTA_EX)
 
 
 def print_attackers():
@@ -252,24 +252,24 @@ def plugin_info(plugin_name):
 
 
 # TODO set config vars - debug, threshold
-# TODO load generator
+# TODO load target
 # TODO set seed config string
 
 
 # do a run
-def seedwise_run(generator, seed_names, evaluator, attackers):
+def seedwise_run(target, seed_names, evaluator, attackers):
     import garak.harnesses.seedwise
 
     seedwise_h = garak.harnesses.seedwise.SeedwiseHarness()
-    seedwise_h.run(generator, seed_names, evaluator, attackers)
+    seedwise_h.run(target, seed_names, evaluator, attackers)
 
 
-def pxd_run(generator, seed_names, judge_names, evaluator, attackers):
+def pxd_run(target, seed_names, judge_names, evaluator, attackers):
     import garak.harnesses.pxd
 
     pxd_h = garak.harnesses.pxd.PxD()
     pxd_h.run(
-        generator,
+        target,
         seed_names,
         judge_names,
         evaluator,

@@ -23,14 +23,14 @@ logger = getLogger(__name__)
 def _get_list_parser():
     # Create parser for list command
     list_parser = cmd2.Cmd2ArgumentParser(
-        description="List available seeds, decorators, or generators",
+        description="List available seeds, decorators, or targets",
         epilog="This command only accepts a single string and lists the relevant attributes.",
     )
     list_parser.add_argument(
         "type",
         type=str,
-        choices=("seeds", "judges", "generators"),
-        help="Specify seeds, judges, or generators.",
+        choices=("seeds", "judges", "targets"),
+        help="Specify seeds, judges, or targets.",
     )
     return list_parser
 
@@ -75,7 +75,7 @@ class GarakCommands(cmd2.CommandSet):
     @cmd2.with_argparser(list_parser)
     def do_list(self, args):
         if not args.type:
-            print("Choose seeds, judges, or generators.")
+            print("Choose seeds, judges, or targets.")
 
         if args.type == "seeds":
             logger.debug("Listing seeds")
@@ -85,13 +85,13 @@ class GarakCommands(cmd2.CommandSet):
             logger.debug("Listing judges")
             print_plugins("judges", Fore.LIGHTBLUE_EX)
 
-        elif args.type == "generators":
-            logger.debug("Listing generators")
-            print_plugins("generators", Fore.LIGHTMAGENTA_EX)
+        elif args.type == "targets":
+            logger.debug("Listing targets")
+            print_plugins("targets", Fore.LIGHTMAGENTA_EX)
 
         else:
             logger.debug("Invalid choice to `list` command.")
-            print("Choose seeds, judges or generators.")
+            print("Choose seeds, judges or targets.")
 
         list_parser = _get_list_parser()
 
@@ -111,32 +111,32 @@ class GarakCommands(cmd2.CommandSet):
             logger.warning("No seed set and no seed specified.")
             return None
         try:
-            if self._cmd.generator:
-                generator_module_name = self._cmd.generator.split(".")[0]
-                generator_name = self._cmd.generator
+            if self._cmd.target:
+                target_module_name = self._cmd.target.split(".")[0]
+                target_name = self._cmd.target
             else:
-                generator_module_name = self._cmd.target_type
-                generator_name = self._cmd.target_type
+                target_module_name = self._cmd.target_type
+                target_name = self._cmd.target_type
 
-            gen_conf = {generator_module_name: {"name": self._cmd.target_model}}
-            _config._combine_into(gen_conf, _config.plugins.generators)
+            gen_conf = {target_module_name: {"name": self._cmd.target_model}}
+            _config._combine_into(gen_conf, _config.plugins.targets)
 
             from garak import _plugins
 
-            generator = _plugins.load_plugin(
-                f"generators.{generator_name}", config_root=_config
+            target = _plugins.load_plugin(
+                f"targets.{target_name}", config_root=_config
             )
 
         except ImportError as e:
             logger.error(e)
-            print("Could not load generator from Garak generators.")
+            print("Could not load target from Garak targets.")
         except AttributeError as e:
             logger.error(e)
-            print("Please check your generator model name.")
+            print("Please check your target model name.")
 
         evaluator = ThresholdEvaluator(self._cmd.eval_threshold)
         harness = garak.harnesses.seedwise.SeedwiseHarness()
-        harness.run(generator, [self._cmd.seed], evaluator)
+        harness.run(target, [self._cmd.seed], evaluator)
         logger.info("Run complete, ending")
         print("Run complete!")
 
@@ -159,7 +159,7 @@ class GarakTerminal(cmd2.Cmd):
         self.add_settable(cmd2.Settable("seed", str, "Seed to execute", self))
         self.add_settable(cmd2.Settable("judge", str, "Judge to execute", self))
         self.add_settable(
-            cmd2.Settable("generator", str, "Generator settings path", self)
+            cmd2.Settable("target", str, "Target settings path", self)
         )
         self.add_settable(
             cmd2.Settable(
@@ -171,7 +171,7 @@ class GarakTerminal(cmd2.Cmd):
         self.target_model = ""
         self.seed = ""
         self.judge = ""
-        self.generator = ""
+        self.target = ""
         self.eval_threshold = 0.5
         # Disable shell, script, alias, and edit commands
         self.disable_command("alias", "Command not available.")

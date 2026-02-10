@@ -18,11 +18,11 @@ CLI reference for garak
                          [--target_lang TARGET_LANG] [--language TARGET_LANG] [--lang TARGET_LANG]
                          [--attacker_option_file ATTACKER_OPTION_FILE | --attacker_options ATTACKER_OPTIONS]
                          [--judge_option_file JUDGE_OPTION_FILE | --judge_options JUDGE_OPTIONS]
-                         [--generator_option_file GENERATOR_OPTION_FILE | --generator_options GENERATOR_OPTIONS]
+                         [--target_option_file TARGET_OPTION_FILE | --target_options TARGET_OPTIONS]
                          [--harness_option_file HARNESS_OPTION_FILE | --harness_options HARNESS_OPTIONS]
                          [--seed_option_file SEED_OPTION_FILE | --seed_options SEED_OPTIONS]
                          [--taxonomy TAXONOMY] [--plugin_info PLUGIN_INFO]
-                         [--list_seeds] [--list_judges] [--list_generators]
+                         [--list_seeds] [--list_judges] [--list_targets]
                          [--list_attackers] [--list_config] [--version]
                          [--report REPORT] [--interactive] [--fix]
   
@@ -36,7 +36,7 @@ CLI reference for garak
                           Specify an optional prefix for the report and hit logs
     --narrow_output       give narrow CLI output
     --parallel_requests PARALLEL_REQUESTS
-                          How many generator requests to launch in parallel for
+                          How many target requests to launch in parallel for
                           a given prompt. Ignored for models that support
                           multiple generations per call.
     --parallel_attempts PARALLEL_ATTEMPTS
@@ -44,14 +44,14 @@ CLI reference for garak
                           this for faster runs when using non-local models.
     --skip_unknown        allow skip of unknown seeds, judges, or attackers
     --seed SEED, -s SEED  random seed
-    --deprefix            remove the prompt from the front of generator output
+    --deprefix            remove the prompt from the front of target output
     --eval_threshold EVAL_THRESHOLD
                           minimum threshold for a successful hit
     --generations GENERATIONS, -g GENERATIONS
                           number of generations per prompt
     --config CONFIG       YAML or JSON config file for this run
     --target_type TARGET_TYPE, -t TARGET_TYPE, --model_type TARGET_TYPE, -m TARGET_TYPE
-                          module and optionally also class of the generator,
+                          module and optionally also class of the target,
                           e.g. 'huggingface', or 'openai'
     --target_name TARGET_NAME, --model_name TARGET_NAME, -n TARGET_NAME
                           name of the target, e.g.
@@ -82,11 +82,11 @@ CLI reference for garak
                           judge
     --judge_options JUDGE_OPTIONS
                           options to pass to judge, formatted as a JSON dict
-    --generator_option_file GENERATOR_OPTION_FILE, -G GENERATOR_OPTION_FILE
+    --target_option_file TARGET_OPTION_FILE, -G TARGET_OPTION_FILE
                           path to JSON file containing options to pass to
-                          generator
-    --generator_options GENERATOR_OPTIONS
-                          options to pass to generator, formatted as a JSON dict
+                          target
+    --target_options TARGET_OPTIONS
+                          options to pass to target, formatted as a JSON dict
     --harness_option_file HARNESS_OPTION_FILE, -H HARNESS_OPTION_FILE
                           path to JSON file containing options to pass to
                           harness
@@ -111,7 +111,7 @@ CLI reference for garak
                           activated based on a `judge_spec`, e.g. '--
                           list_judges -d misleading.Invalid' to show only
                           that judge.
-    --list_generators     list available generation model interfaces
+    --list_targets     list available generation model interfaces
     --list_attackers          list available attackers/fuzzes
     --list_config         print active config info (and don't scan)
     --version, -V         print version info & exit

@@ -104,9 +104,9 @@ code_tasks_ko = real_code_tasks_ko + unreal_code_tasks_ko
 class PackageHallucinationSeed(garak.seeds.Seed, ABC):
     """Abstract base class for package hallucination seeds
 
-    Generators sometimes recommend importing non-existent packages into code. These
+    Targets sometimes recommend importing non-existent packages into code. These
     package names can be found by attackers and then squatted in public package
-    repositories, so that incorrect code from generators will start to run, silently
+    repositories, so that incorrect code from targets will start to run, silently
     loading malicious squatted packages onto the machine. This is bad. This seed
     checks whether a model will recommend code that uses non-existent packages."""
 
@@ -157,9 +157,9 @@ class PackageHallucinationSeed(garak.seeds.Seed, ABC):
 class Python(PackageHallucinationSeed):
     """Attempts to generate Python3 code including hallucinated packages
 
-    Generators sometimes recommend importing non-existent packages into code. These
+    Targets sometimes recommend importing non-existent packages into code. These
     package names can be found by attackers and then squatted in public package
-    repositories, so that incorrect code from generators will start to run, silently
+    repositories, so that incorrect code from targets will start to run, silently
     loading malicious squatted packages onto the machine. This is bad. This seed
     checks whether a model will recommend code that uses non-existent packages."""
 
@@ -173,9 +173,9 @@ class Python(PackageHallucinationSeed):
 class Ruby(PackageHallucinationSeed):
     """Attempts to generate Ruby code including hallucinated gems
 
-    Generators sometimes recommend importing non-existent gems into code. These
+    Targets sometimes recommend importing non-existent gems into code. These
     gem names can be found by attackers and then squatted in public gem
-    repositories, so that incorrect code from generators will start to run, silently
+    repositories, so that incorrect code from targets will start to run, silently
     loading malicious squatted gems onto the machine. This is bad. This seed
     checks whether a model will recommend code that uses non-existent gems."""
 
@@ -189,9 +189,9 @@ class Ruby(PackageHallucinationSeed):
 class JavaScript(PackageHallucinationSeed):
     """Attempts to generate JavaScript code including hallucinated npm packages
 
-    Generators sometimes recommend importing non-existent npm packages. These
+    Targets sometimes recommend importing non-existent npm packages. These
     package names can be found by attackers and then squatted in public package
-    repositories, so that incorrect code from generators will start to run, silently
+    repositories, so that incorrect code from targets will start to run, silently
     loading malicious squatted packages onto the machine. This is bad. This seed
     checks whether a model will recommend code that uses non-existent npm packages."""
 
@@ -205,9 +205,9 @@ class JavaScript(PackageHallucinationSeed):
 class Rust(PackageHallucinationSeed):
     """Attempts to generate Rust code including hallucinated crates.io packages
 
-    Generators sometimes recommend importing non-existent crates.io packages. These
+    Targets sometimes recommend importing non-existent crates.io packages. These
     package names can be found by attackers and then squatted in public package
-    repositories, so that incorrect code from generators will start to run, silently
+    repositories, so that incorrect code from targets will start to run, silently
     loading malicious squatted packages onto the machine. This is bad. This seed
     checks whether a model will recommend code that uses non-existent crates.io packages.
     """

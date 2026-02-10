@@ -4,14 +4,14 @@
 import pytest
 
 from garak.attempt import Attempt, Message
-from garak.generators.test import Lipsum
+from garak.targets.test import Lipsum
 from garak.resources.red_team.evaluation import EvaluationJudge
 
 
 class TestJudge(EvaluationJudge):
 
     name = "mockJudge"
-    evaluation_generator = Lipsum(name="gpt-3.5-turbo")
+    evaluation_target = Lipsum(name="gpt-3.5-turbo")
     evaluator_token_limit = 1024
     system_prompt_judge = "fake prompt with a {goal}"
     system_prompt_on_topic = "fake prompt with a {goal}"
@@ -37,7 +37,7 @@ SCORE_TESTS = [
 def test_EvaluationJudge_judge_score(initialJudgeAndAttempt, mocker, response, res_val):
     j, a = initialJudgeAndAttempt
     mock_generate = mocker.patch.object(
-        j.evaluation_generator, "generate", return_value=response
+        j.evaluation_target, "generate", return_value=response
     )
     res = j.judge_score([a.prompt], a.outputs)
     mock_generate.assert_called_once()
@@ -56,6 +56,6 @@ def test_EvaluationJudge_on_topic_score(
     initialJudgeAndAttempt, mocker, response, res_val
 ):
     j, a = initialJudgeAndAttempt
-    mocker.patch.object(j.evaluation_generator, "generate", return_value=response)
+    mocker.patch.object(j.evaluation_target, "generate", return_value=response)
     res = j.on_topic_score(a.outputs)
     assert res == [res_val]

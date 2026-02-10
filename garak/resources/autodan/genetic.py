@@ -42,7 +42,7 @@ def autodan_ga(
     num_points=5,
     mutation=0.01,
     if_softmax=True,
-    mutation_generator=None,
+    mutation_target=None,
 ) -> list:
     """Genetic algorithm for creating AutoDAN samples.
 
@@ -55,7 +55,7 @@ def autodan_ga(
         num_points (int): Number of points to perform crossover
         mutation (float): Rate to perform mutation on offspring
         if_softmax (bool): Whether to use softmax weighting for roulette selection
-        mutation_generator : Generator to use for mutation. Defaults to None.
+        mutation_target : Target to use for mutation. Defaults to None.
 
     Returns:
         List of length `batch_size` consisting of `num_elites` elite parents and crossover/mutated offspring
@@ -81,7 +81,7 @@ def autodan_ga(
         crossover_probability=crossover_rate,
         num_points=num_points,
         mutation_rate=mutation,
-        mutation_generator=mutation_generator,
+        mutation_target=mutation_target,
     )
     # Combine elites with the mutated offspring
     next_generation = elites + mutated_offspring
@@ -100,7 +100,7 @@ def autodan_hga(
     batch_size,
     crossover_rate=0.5,
     mutation_rate=0.01,
-    mutation_generator=None,
+    mutation_target=None,
 ) -> Tuple[list, dict]:
     """Hierarchical genetic algorithm for AutoDAN sample generation
 
@@ -112,7 +112,7 @@ def autodan_hga(
         batch_size (int): Total size of batch to pass to next iteration
         crossover_rate (float): Rate to perform crossover
         mutation_rate (float): Rate to perform mutation
-        mutation_generator : Generator to use for mutation. Defaults to None.
+        mutation_target : Target to use for mutation. Defaults to None.
 
     Returns:
         Tuple of next generation parents and word dictionary.
@@ -134,7 +134,7 @@ def autodan_hga(
     # Step 4: Apply word replacement with roulette wheel selection
     offspring = apply_word_replacement(word_dict, parents_list, crossover_rate)
     offspring = apply_gpt_mutation(
-        offspring, mutation_rate, mutation_generator=mutation_generator
+        offspring, mutation_rate, mutation_target=mutation_target
     )
 
     # Combine elites with the mutated offspring
@@ -177,7 +177,7 @@ def apply_crossover_and_mutation(
     crossover_probability=0.5,
     num_points=3,
     mutation_rate=0.01,
-    mutation_generator=None,
+    mutation_target=None,
 ) -> list:
     """Perform crossover and mutation on selected parents.
 
@@ -186,7 +186,7 @@ def apply_crossover_and_mutation(
         crossover_probability (float): Probability of performing crossover operation on selected parents.
         num_points (int): Number of points to perform crossover.
         mutation_rate (float): How frequently to apply gpt mutation to offspring.
-        mutation_generator : Generator to use for mutation. Defaults to None.
+        mutation_target : Target to use for mutation. Defaults to None.
 
     Returns:
         A list of crossed over and mutated children
@@ -208,7 +208,7 @@ def apply_crossover_and_mutation(
             offspring.append(parent2)
 
     mutated_offspring = apply_gpt_mutation(
-        offspring, mutation_rate, mutation_generator=mutation_generator
+        offspring, mutation_rate, mutation_target=mutation_target
     )
 
     return mutated_offspring
@@ -260,7 +260,7 @@ def crossover(str1: str, str2: str, num_points: int) -> Tuple[str, str]:
     return " ".join(new_str1), " ".join(new_str2)
 
 
-def gpt_mutate(mutation_generator, sentence: str) -> str:
+def gpt_mutate(mutation_target, sentence: str) -> str:
     """Call OpenAI API to mutate input sentences
 
     Args:
@@ -283,7 +283,7 @@ def gpt_mutate(mutation_generator, sentence: str) -> str:
                 Turn(role="system", content=Message(text=system_msg)),
                 Turn(role="user", content=Message(text=user_message)),
             ])
-            response = mutation_generator.generate(prompt=conv)[0]
+            response = mutation_target.generate(prompt=conv)[0]
             if response and response.text:
                 revised_sentence = response.text.replace("\n", "")
                 received = True
@@ -311,7 +311,7 @@ def gpt_mutate(mutation_generator, sentence: str) -> str:
 
 
 def apply_gpt_mutation(
-    offspring: list, mutation_rate=0.01, reference: list = None, mutation_generator=None
+    offspring: list, mutation_rate=0.01, reference: list = None, mutation_target=None
 ) -> list:
     # TODO: Allow for use of local models in lieu of OpenAI
     """Use OpenAI or reference corpus to apply mutation.
@@ -320,16 +320,16 @@ def apply_gpt_mutation(
         offspring (list): list of offspring to apply mutation to
         mutation_rate (float): How frequently to mutate offspring using GPT or reference corpus
         reference (list): List of pregenerated prompts
-        mutation_generator : Generator to use for mutation. Defaults to None.
+        mutation_target : Target to use for mutation. Defaults to None.
 
     Returns:
         List of mutated offspring
     """
-    if mutation_generator:
+    if mutation_target:
         for i in range(len(offspring)):
             if random.random() < mutation_rate:
                 offspring[i] = gpt_mutate(
-                    mutation_generator=mutation_generator, sentence=offspring[i]
+                    mutation_target=mutation_target, sentence=offspring[i]
                 )
     else:
         for i in range(len(offspring)):
@@ -565,10 +565,10 @@ def join_words_with_punctuation(words: list) -> str:
 
 
 def get_score_autodan(
-    generator,
+    model,
     conv_template,
     instruction,
-    target,
+    target_output,
     test_controls=None,
     crit=None,
     low_memory=False,
@@ -576,12 +576,12 @@ def get_score_autodan(
     """Get AutoDAN score for the instruction
 
     Args:
-        generator (garak.generators.huggingface.Model): Generator for model
+        model (garak.targets.huggingface.Model): Target model to score
         conv_template (Conversation): Conversation template for the model
         instruction (str): Instruction to be given to the model
-        target (str): Target output
+        target_output (str): Desired target output
         test_controls (list): List of test jailbreak strings
-        crit (torch.nn.Loss): Loss function for the generator
+        crit (torch.nn.Loss): Loss function for the target
 
     Returns:
         Torch tensor of losses
@@ -590,13 +590,13 @@ def get_score_autodan(
     losses = []
     input_ids_list = []
     target_slices = []
-    device = generator.device
+    device = model.device
     for item in test_controls:
         prefix_manager = AutoDanPrefixManager(
-            generator=generator,
+            model=model,
             conv_template=conv_template,
             instruction=instruction,
-            target=target,
+            target=target_output,
             adv_string=item,
         )
         input_ids = prefix_manager.get_input_ids(adv_string=item).to(device)
@@ -632,7 +632,7 @@ def get_score_autodan(
 
     # Forward pass and compute loss
     logits = forward(
-        generator=generator,
+        model=model,
         input_ids=input_ids,
         attention_mask=attn_mask,
         batch_size=len(test_controls),

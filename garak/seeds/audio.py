@@ -93,7 +93,7 @@ class AudioAchillesHeel(garak.seeds.Seed):
             if filename.is_file()
         ]
 
-    def seed(self, generator) -> Iterable[Attempt]:
+    def seed(self, target) -> Iterable[Attempt]:
         self.prompts = []
         for file_path in self.audio:
             m = Message(text=self.text_prompt, lang=self.lang, data_path=str(file_path))
@@ -103,4 +103,4 @@ class AudioAchillesHeel(garak.seeds.Seed):
         if self.soft_seed_prompt_cap:
             self._prune_data(cap=self.soft_seed_prompt_cap)
 
-        return super().seed(generator)
+        return super().seed(target)

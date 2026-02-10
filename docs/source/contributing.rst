@@ -34,7 +34,7 @@ We'd love to help, and we're always interested to hear how you're using garak.
 Coding your contribution
 ------------------------
 
-This reference documentation includes a section on :doc:`extending garak <extending>`, including walkthroughs of how a custom :doc:`seed <extending.seed>` and custom :doc:`generator <extending.generator>` can be built.
+This reference documentation includes a section on :doc:`extending garak <extending>`, including walkthroughs of how a custom :doc:`seed <extending.seed>` and custom :doc:`target <extending.target>` can be built.
 
 
 Checklist for contributing

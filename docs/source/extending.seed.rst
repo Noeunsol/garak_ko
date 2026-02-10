@@ -17,7 +17,7 @@ All seeds inherit from ``garak.seeds.base.Seed``, exposed at package level via `
         """Seed to do something naughty to a language model"""
         ...
 
-By inheriting from ``garak.seeds.base.Seed``, seeds can work nicely with ``Generator`` and ``Attempt`` objects in addition to ensuring that any ``Attacker`` objects that you apply to a seed will work appropriately.
+By inheriting from ``garak.seeds.base.Seed``, seeds can work nicely with ``Target`` and ``Attempt`` objects in addition to ensuring that any ``Attacker`` objects that you apply to a seed will work appropriately.
 
 The ``seed`` method of a ``Seed`` object provides the core logic of the seed.
 Ideally, you only need to populate the ``prompts`` attribute of a ``Seed`` and let the ``seed`` method do the heavy lifting.
@@ -25,11 +25,11 @@ However, if this logic is insufficient for your seed, the ``seed`` method is whe
 
 .. code-block:: python
 
-    def seed(self, generator) -> Iterable[garak.attempt.Attempt]:
-        """attempt to exploit the target generator, returning a list of results"""
+    def seed(self, target) -> Iterable[garak.attempt.Attempt]:
+        """attempt to exploit the target target, returning a list of results"""
         logging.debug("seed execute: %s", self)
 
-        self.generator = generator
+        self.target = target
 
         # build list of attempts
         attempts_todo: Iterable[garak.attempt.Attempt] = []

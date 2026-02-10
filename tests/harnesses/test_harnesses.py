@@ -35,13 +35,13 @@ def test_harness_modality_match():
     tv = {"text", "vision"}
     tvi = {"text", "vision", "image"}
 
-    # seed, generator
+    # seed, target
     assert garak.harnesses.base._modality_match(t, t, True) is True
     assert garak.harnesses.base._modality_match(ti, ti, True) is True
     assert garak.harnesses.base._modality_match(t, tv, True) is False
     assert garak.harnesses.base._modality_match(ti, t, True) is False
 
-    # when strict is false, generator must support all seed modalities, but can also support more
+    # when strict is false, target must support all seed modalities, but can also support more
     assert garak.harnesses.base._modality_match(t, t, False) is True
     assert garak.harnesses.base._modality_match(ti, t, False) is False
     assert garak.harnesses.base._modality_match(t, tvi, False) is True

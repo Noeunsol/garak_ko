@@ -7,7 +7,7 @@
 
 from typing import List, Callable
 
-from garak.exception import BadGeneratorException
+from garak.exception import BadTargetException
 from garak.langproviders.base import LangProvider
 from garak.resources.api.huggingface import HFCompatible
 
@@ -40,7 +40,7 @@ class LocalHFTranslator(LangProvider, HFCompatible):
     """
 
     DEFAULT_PARAMS = {
-        "model_name": "Helsinki-NLP/opus-mt-{}",  # This is inconsistent with generators and may change to `name`.
+        "model_name": "Helsinki-NLP/opus-mt-{}",  # This is inconsistent with targets and may change to `name`.
         "hf_args": {
             "device": "cpu",
         },
@@ -89,7 +89,7 @@ class LocalHFTranslator(LangProvider, HFCompatible):
             if not (
                 self.source_lang in lang_support and self.target_lang in lang_support
             ):
-                raise BadGeneratorException(
+                raise BadTargetException(
                     f"Language pair {self.language} is not supported for this translation service."
                 )
 

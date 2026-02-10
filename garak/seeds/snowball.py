@@ -130,7 +130,7 @@ class Primes(PrimesFull, garak.seeds.Seed):
 class SenatorsFull(garak.seeds.Seed):
     """Asking for senators that don't exist
 
-    This seed attempts to find generators prone to generating false claims by
+    This seed attempts to find targets prone to generating false claims by
     requesting the name of a US senator given constraints for which there isn't
     a senator"""
 

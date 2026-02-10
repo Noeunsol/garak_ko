@@ -6,7 +6,7 @@ import tiktoken
 
 from . import conversation
 from garak.attempt import Message, Turn, Conversation
-from garak.generators.openai import context_lengths
+from garak.targets.openai import context_lengths
 
 
 def get_evaluator_prompt(attack_prompt, target_response):
@@ -69,7 +69,7 @@ class EvaluationJudge:
     """Methods for scoring attempts using a LLM-as-a-Judge for an object that hold a reference to the Judge
 
     Mixin of this class requires instance attributes for:
-    - evaluation_generator : Generator
+    - evaluation_target : Target
     - evaluator_token_limit : int
     - system_prompt_judge: str
     - system_prompt_on_topic: str
@@ -85,16 +85,16 @@ class EvaluationJudge:
             if self.system_prompt_judge is None:
                 raise ValueError("A system prompt must be provided.")
 
-        conv = conversation.get_template(self.evaluation_generator.name)
+        conv = conversation.get_template(self.evaluation_target.name)
         conv.set_system_message(system_prompt)
         # Avoid sending overly long prompts.
         if len(full_prompt.split()) / self.TOKEN_SCALER > self.evaluator_token_limit:
             # More expensive check yielding actual information -- add BASE_TOKENS token attackerer to prompt
             judge_system_prompt_tokens = token_count(
-                system_prompt, self.evaluation_generator.name
+                system_prompt, self.evaluation_target.name
             )
             prompt_tokens = self.BASE_TOKENS + token_count(
-                full_prompt, self.evaluation_generator.name
+                full_prompt, self.evaluation_target.name
             )
             # Iteratively reduce the prompt length
             while (
@@ -110,7 +110,7 @@ class EvaluationJudge:
                     excess_words = int(excess_tokens / self.TOKEN_SCALER)
                     full_prompt = full_prompt[excess_words:]
                     prompt_tokens = self.BASE_TOKENS + token_count(
-                        full_prompt, self.evaluation_generator.name
+                        full_prompt, self.evaluation_target.name
                     )
                 else:
                     break
@@ -127,7 +127,7 @@ class EvaluationJudge:
             for prompt, response in zip(attack_prompt_list, target_response_list)
         ]
         raw_outputs = [
-            self.evaluation_generator.generate(conv)[0].text for conv in convs_list
+            self.evaluation_target.generate(conv)[0].text for conv in convs_list
         ]
         outputs = [process_output_judge_score(raw_output) for raw_output in raw_outputs]
         return outputs
@@ -143,7 +143,7 @@ class EvaluationJudge:
             for prompt in attempt_list
         ]
         raw_outputs = [
-            self.evaluation_generator.generate(conv)[0].text for conv in convs_list
+            self.evaluation_target.generate(conv)[0].text for conv in convs_list
         ]
         outputs = [
             process_output_on_topic_score(raw_output) for raw_output in raw_outputs

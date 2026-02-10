@@ -11,10 +11,10 @@ class APIKeyMissingError(GarakException):
 
 
 class TargetNameMissingError(GarakException):
-    """A generator requires target_name to be set, but it wasn't"""
+    """A target requires target_name to be set, but it wasn't"""
 
 
-class GeneratorBackoffTrigger(GarakException):
+class TargetBackoffTrigger(GarakException):
     """Thrown when backoff should be triggered"""
 
 
@@ -22,8 +22,8 @@ class PluginConfigurationError(GarakException):
     """Plugin config/description is not usable"""
 
 
-class BadGeneratorException(PluginConfigurationError):
-    """Generator invocation requested is not usable"""
+class BadTargetException(PluginConfigurationError):
+    """Target invocation requested is not usable"""
 
 
 class RateLimitHit(Exception):

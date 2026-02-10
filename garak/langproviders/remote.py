@@ -7,7 +7,7 @@
 
 import logging
 
-from garak.exception import BadGeneratorException
+from garak.exception import BadTargetException
 from garak.langproviders.base import LangProvider
 import time
 import random
@@ -57,7 +57,7 @@ class RivaTranslator(LangProvider):
             self.source_lang in self.lang_support
             and self.target_lang in self.lang_support
         ):
-            raise BadGeneratorException(
+            raise BadTargetException(
                 f"Language pair {self.language} is not supported for {self.__class__.__name__} services at {self.uri}."
             )
         self._source_lang = self.lang_overrides.get(self.source_lang, self.source_lang)
@@ -130,7 +130,7 @@ class DeeplTranslator(LangProvider):
             self.source_lang in self.lang_support
             and self.target_lang in self.lang_support
         ):
-            raise BadGeneratorException(
+            raise BadTargetException(
                 f"Language pair {self.language} is not supported for {self.__class__.__name__} services."
             )
         self._source_lang = self.source_lang
@@ -183,9 +183,9 @@ class GoogleTranslator(LangProvider):
                     self.api_key = proposed_key
                 else:
                     if hasattr(
-                        self, "generator_family_name"
+                        self, "target_family_name"
                     ):  # special case may refactor later
-                        family_name = self.generator_family_name
+                        family_name = self.target_family_name
                     else:
                         family_name = self.__module__.split(".")[-1].title()
                     raise APIKeyMissingError(

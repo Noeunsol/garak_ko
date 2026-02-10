@@ -5,7 +5,7 @@ import garak
 from garak import _plugins, _config
 import garak.attackers.base
 import garak.judges.base
-import garak.generators.base
+import garak.targets.base
 import garak.harnesses.base
 import garak.seeds.base
 
@@ -21,9 +21,9 @@ HARNESSES = [
 
 ATTACKERS = [classname for (classname, active) in _plugins.enumerate_plugins("attackers")]
 
-GENERATORS = [
-    "generators.test.Blank"
-]  # generator options are complex, hardcode test.Blank only for now
+TARGETS = [
+    "targets.test.Blank"
+]  # target options are complex, hardcode test.Blank only for now
 
 
 @pytest.fixture
@@ -93,12 +93,12 @@ def test_instantiate_attackers(plugin_configuration):
     ensure_pickle_support(b)
 
 
-@pytest.mark.parametrize("classname", GENERATORS)
-def test_instantiate_generators(plugin_configuration):
+@pytest.mark.parametrize("classname", TARGETS)
+def test_instantiate_targets(plugin_configuration):
     classname, config_root = plugin_configuration
     try:
         g = _plugins.load_plugin(classname, config_root=config_root)
     except ModuleNotFoundError:
         pytest.skip("required deps not present")
-    assert isinstance(g, garak.generators.base.Generator)
+    assert isinstance(g, garak.targets.base.Target)
     ensure_pickle_support(g)

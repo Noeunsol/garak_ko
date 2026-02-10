@@ -19,7 +19,7 @@ import garak.resources.theme
 class Evaluator:
     """Class to be subclassed by evaluators.
 
-    Provides eval + CLI output based on judge assessments of generator outputs
+    Provides eval + CLI output based on judge assessments of target outputs
     that come from seed calls."""
 
     _last_seed_printed = None
@@ -113,14 +113,14 @@ class Evaluator:
                                     "attempt_id": str(attempt.uuid),
                                     "attempt_seq": attempt.seq,
                                     "attempt_idx": idx,
-                                    "generator": f"{_config.plugins.target_type} {_config.plugins.target_name}",
+                                    "target": f"{_config.plugins.target_type} {_config.plugins.target_name}",
                                     "seed": self.seedname,
                                     "judge": judge,
                                     "generations_per_prompt": _config.run.generations,
                                 },
                                 ensure_ascii=False,
                             )
-                            + "\n"  # generator,seed,prompt,trigger,result,judge,score,run id,attemptid,
+                            + "\n"  # target,seed,prompt,trigger,result,judge,score,run id,attemptid,
                         )
 
             outputs_evaluated = passes + fails

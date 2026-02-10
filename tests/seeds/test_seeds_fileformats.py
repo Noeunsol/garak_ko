@@ -19,11 +19,11 @@ def test_hf_files_load():
 # files could be their own thing if Turns start taking named/typed entries
 def test_hf_files_hf_repo():
     p = garak._plugins.load_plugin("seeds.fileformats.HF_Files")
-    garak._config.plugins.generators["huggingface"] = {
+    garak._config.plugins.targets["huggingface"] = {
         "Model": {"name": "gpt2", "hf_args": {"device": "cpu"}},
     }
     g = garak._plugins.load_plugin(
-        "generators.huggingface.Model", config_root=garak._config
+        "targets.huggingface.Model", config_root=garak._config
     )
     r = p.seed(g)
     assert isinstance(r, list), ".seed should return a list"

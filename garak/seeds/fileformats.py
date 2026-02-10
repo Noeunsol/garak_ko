@@ -22,10 +22,10 @@ import garak.resources.theme
 
 
 class HF_Files(garak.seeds.Seed):
-    """Get a manifest of files associated with a Hugging Face generator
+    """Get a manifest of files associated with a Hugging Face target
 
     This seed returns a list of filenames associated with a Hugging Face
-    generator, if that applies to the generator. Not enabled for all types,
+    target, if that applies to the target. Not enabled for all types,
     e.g. some endpoints."""
 
     lang = "*"
@@ -41,7 +41,7 @@ class HF_Files(garak.seeds.Seed):
     ]
     active = False
 
-    supported_generators = {"Model", "Pipeline", "LLaVA"}
+    supported_targets = {"Model", "Pipeline", "LLaVA"}
 
     # support mainstream any-to-any large models
     # legal element for str list `modality['in']`: 'text', 'image', 'audio', 'video', '3d'
@@ -53,27 +53,27 @@ class HF_Files(garak.seeds.Seed):
         self._load_config(config_root)
         super().__init__(config_root=config_root)
 
-    def seed(self, generator) -> Iterable[garak.attempt.Attempt]:
-        """attempt to gather target generator model file list, returning a list of results"""
+    def seed(self, target) -> Iterable[garak.attempt.Attempt]:
+        """attempt to gather target target model file list, returning a list of results"""
         logging.debug("seed execute: %s", self)
 
-        package_path = generator.__class__.__module__
+        package_path = target.__class__.__module__
         if package_path.split(".")[-1] != "huggingface":
             return []
-        if generator.__class__.__name__ not in self.supported_generators:
+        if target.__class__.__name__ not in self.supported_targets:
             return []
-        attempt = self._mint_attempt(generator.name)
+        attempt = self._mint_attempt(target.name)
 
-        repo_filenames = huggingface_hub.list_repo_files(generator.name)
+        repo_filenames = huggingface_hub.list_repo_files(target.name)
         local_filenames = []
         for repo_filename in tqdm.tqdm(
             repo_filenames,
             leave=False,
-            desc=f"Gathering files in {generator.name}",
+            desc=f"Gathering files in {target.name}",
             colour=f"#{garak.resources.theme.SEED_RGB}",
         ):
             local_filename = huggingface_hub.hf_hub_download(
-                generator.name, repo_filename, force_download=False
+                target.name, repo_filename, force_download=False
             )
             local_filenames.append(local_filename)
 

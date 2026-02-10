@@ -71,7 +71,7 @@ Let's take a look at the core config.
         attackers_include_original_prompt: false
         attacker_max:
         judges: {}
-        generators: {}
+        targets: {}
         attackers: {}
         harnesses: {}
         seeds:
@@ -94,8 +94,8 @@ such as ``show_100_pass_modules``.
 System Config Items
 """""""""""""""""""
 
-* ``parallel_attempts`` - For parallelisable generators, how many attempts should be run in parallel? Raising this is a great way of speeding up garak runs for API-based models
-* ``parallel_requests`` - For generators not supporting multiple responses per prompt: how many requests to send in parallel with the same prompt? (raising ``parallel_attempts`` generally yields higher performance, depending on how high ``generations`` is set)
+* ``parallel_attempts`` - For parallelisable targets, how many attempts should be run in parallel? Raising this is a great way of speeding up garak runs for API-based models
+* ``parallel_requests`` - For targets not supporting multiple responses per prompt: how many requests to send in parallel with the same prompt? (raising ``parallel_attempts`` generally yields higher performance, depending on how high ``generations`` is set)
 * ``lite`` - Should we display a caution message that the run might not give very thorough results?
 * ``verbose`` - Degree of verbosity (values above 0 are experimental, the report & log are authoritative)
 * ``narrow_output`` - Support output on narrower CLIs
@@ -122,7 +122,7 @@ We find that using ``parallel_attempts`` usually gives a faster run completion t
 Run Config Items
 """"""""""""""""
 
-* ``system_prompt`` -- If given and not overriden by the seed itself, seeds will pass the specified system prompt when possible for generators that support chat modality.
+* ``system_prompt`` -- If given and not overriden by the seed itself, seeds will pass the specified system prompt when possible for targets that support chat modality.
 * ``seed_tags`` - If given, the seed selection is filtered according to these tags; seeds that don't match the tags are not selected
 * ``generations`` - How many times to send each prompt for inference
 * ``deprefix`` - Remove the prompt from the start of the output (some models return the prompt as part of their output)
@@ -136,7 +136,7 @@ Run Config Items
 Plugins Config Items
 """"""""""""""""""""
 
-* ``target_type`` - The type of target generator, e.g. "nim" or "huggingface"
+* ``target_type`` - The type of target target, e.g. "nim" or "huggingface"
 * ``target_name`` - The specific name of the target to be used (optional - if blank, type-specific default is used)
 * ``seed_spec`` - A comma-separated list of seed modules or seed classnames (in ``module.classname``) format to be used. If a module is given, only ``active`` plugin in that module are chosen, this is equivalent to passing `-p` to the CLI
 * ``judge_spec`` - An optional spec of judges to be used, if overriding those recommended in seeds. Specifying ``judge_spec`` means the ``pxd`` harness will be used. This is equivalent to passing `-d` to the CLI
@@ -145,12 +145,12 @@ Plugins Config Items
 * ``attackers_include_original_prompt`` - When buffing, should the original pre-attacker prompt still be included in those posed to the model?
 * ``attacker_max`` - Upper bound on how many items a attacker should return
 * ``judges`` - Root node for judge plugin configs
-* ``generators`` - Root note for generator plugin configs
+* ``targets`` - Root note for target plugin configs
 * ``attackers`` - Root note for attacker plugin configs
 * ``harnesses`` - Root note for harness plugin configs
 * ``seeds`` - Root note for seed plugin configs
 
-For an example of how to use the ``judges``, ``generators``, ``attackers``,
+For an example of how to use the ``judges``, ``targets``, ``attackers``,
 ``harnesses``, and ``seeds`` root entries, see :ref:`Configuring plugins with YAML <config_with_yaml>` below.
 
 Reporting Config Items
@@ -230,9 +230,9 @@ Using a Custom JSON Config
 Some plugins can take a JSON config specified on the command line. This config
 has the same structure as a YAML config, starting with the plugin model/type.
 The config can either be written to a file and the path passed, with
-`--generator_option_file` or `--seed_option_file`, or directly as JSON on the
-command prompt, with `--generator_options` or `--seed_options`. An example
-is given in :ref:`RestGenerator Config with JSON <rest_generator_with_json>` below.
+`--target_option_file` or `--seed_option_file`, or directly as JSON on the
+command prompt, with `--target_options` or `--seed_options`. An example
+is given in :ref:`RestTarget Config with JSON <rest_target_with_json>` below.
 
 
 Configuring Plugins
@@ -240,7 +240,7 @@ Configuring Plugins
 
 Garak's functions are through its plugins. Most parts of garak are plugins,
 like the ``seeds`` and ``judges`` that do the actual examination of the target,
-the ``generators`` that interface with models, and even the ``harnesses``
+the ``targets`` that interface with models, and even the ``harnesses``
 that manage run orchestration. Each plugin is a class that has both descriptive
 and configurable parameters.
 
@@ -311,14 +311,14 @@ model, and optionally class, and set variables in the end. These will then
 be loaded as the plugin's ``DEFAULT_PARAMS`` attribute is parsed and used to
 populate instance attributes.
 
-Here's an example of setting the temperature on an OpenAIGenerator:
+Here's an example of setting the temperature on an OpenAITarget:
 
 .. code-block:: yaml
 
     plugins:
-        generators:
+        targets:
             openai:
-                OpenAIGenerator:
+                OpenAITarget:
                     temperature: 1.0
 
 As noted the class is optional, if the configuration defines keys at the module level
@@ -328,28 +328,28 @@ is an example that is equivalent to the configuration above:
 .. code-block:: yaml
 
     plugins:
-        generators:
+        targets:
             openai:
                 temperature: 1.0
 
-Example: RestGenerator
+Example: RestTarget
 ^^^^^^^^^^^^^^^^^^^^^^
 
-RestGenerator is a slightly complex generator, though mostly because it exposes
+RestTarget is a slightly complex target, though mostly because it exposes
 so many config values, allowing flexible integrations. This example sets
 ``target_type: rest`` to ensure that this model is selected for the run; that might
 not always be wanted, and it isn't compulsory.
 
-RestGenerator with YAML
+RestTarget with YAML
 """""""""""""""""""""""
 
 .. code-block:: yaml
 
     plugins:
         target_type: rest
-        generators:
+        targets:
             rest:
-                RestGenerator:
+                RestTarget:
                     uri: https://api.example.ai/v1/
                     key_env_var: EXAMPLE_KEY
                     headers: Authentication: $KEY
@@ -362,18 +362,18 @@ This defines a REST endpoint where:
 * The API key can be found in the ``EXAMPLE_KEY`` environment variable's value (if unspecified, `REST_API_KEY` is checked)
 * The HTTP header ``"Authentication:"`` should be sent in every request, with the API key as its parameter
 * The output is JSON and the top-level field ``text`` holds the model's response
-* Wait up to 60 seconds before timing out (the generator will backoff and retry when this is reached)
+* Wait up to 60 seconds before timing out (the target will backoff and retry when this is reached)
 
-.. _rest_generator_with_json:
+.. _rest_target_with_json:
 
-RestGenerator config with JSON
+RestTarget config with JSON
 """"""""""""""""""""""""""""""
 
 .. code-block:: JSON
 
     {
         "rest": {
-            "RestGenerator": {
+            "RestTarget": {
                 "name": "example service",
                 "uri": "https://127.0.0.1/llm",
                 "method": "post",
@@ -407,18 +407,18 @@ Configuration in Code
 The preferred way to instantiate a plugin is using ``garak._plugins.load_plugin()``.
 This function takes two parameters:
 
-* ``name``, the plugin's package, module, and class - e.g. ``generator.test.Lipsum``
+* ``name``, the plugin's package, module, and class - e.g. ``target.test.Lipsum``
 * (optional) ``config_root``, either garak._config or a dictionary of a config, beginning at a top-level plugin type.
 
 ``load_plugin()`` returns a configured instance of the requested plugin.
 
-OpenAIGenerator Config with Dictionary
+OpenAITarget Config with Dictionary
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: python
 
     >>> import garak._plugins
-    >>> c = {"generators":{"openai":{"OpenAIGenerator":{"seed":30,"name":"gpt-4"}}}}
-    >>> garak._plugins.load_plugin("generators.openai.OpenAIGenerator", config_root=c)
-    🦜 loading generator: OpenAI: gpt-4
-    <garak.generators.openai.OpenAIGenerator object at 0x71bc97693d70>
+    >>> c = {"targets":{"openai":{"OpenAITarget":{"seed":30,"name":"gpt-4"}}}}
+    >>> garak._plugins.load_plugin("targets.openai.OpenAITarget", config_root=c)
+    🦜 loading target: OpenAI: gpt-4
+    <garak.targets.openai.OpenAITarget object at 0x71bc97693d70>

@@ -10,8 +10,8 @@ import numpy as np
 import gc
 
 from garak._plugins import load_plugin
-from garak.generators import Generator
-from garak.generators.huggingface import Model
+from garak.targets import Target
+from garak.targets.huggingface import Model
 from garak.attempt import Conversation, Turn, Message
 import garak._config
 from garak.data import path as data_path
@@ -77,7 +77,7 @@ allow_non_ascii = False
 
 
 def autodan_generate(
-    generator: Generator,
+    model: Target,
     prompt: str,
     target: str,
     num_steps: int = 100,
@@ -86,8 +86,8 @@ def autodan_generate(
     crossover_rate: float = 0.5,
     num_points: int = 5,
     mutation_rate: float = 0.1,
-    mutation_generator_name: str = "gpt-3.5-turbo",
-    mutation_generator_type: str = "openai",
+    mutation_target_name: str = "gpt-3.5-turbo",
+    mutation_target_type: str = "openai",
     hierarchical: bool = False,
     out_path: Path = cached_autodan_resource_data / "autodan_prompts.txt",
     init_prompt_path: Path = autodan_resource_data / "autodan_init.txt",
@@ -98,7 +98,7 @@ def autodan_generate(
     """Execute base AutoDAN generation
 
     Args:
-        generator (garak.generators.Generator): Loaded Garak generator
+        model (garak.targets.Target): Loaded Garak target model
         prompt(str): Malicious instruction to model
         target (str): Output we wish the model to return
         num_steps (int): How many steps to optimize over
@@ -107,8 +107,8 @@ def autodan_generate(
         crossover_rate (float): Probability of performing crossover
         num_points (int): How many points in an input to perform crossover on
         mutation_rate (float): Probability of mutating a parent string
-        mutation_generator_name (str): Name of model to use as the mutation generator
-        mutation_generator_type (str): Type of model to use as the mutation generator
+        mutation_target_name (str): Name of model to use as the mutation target
+        mutation_target_type (str): Type of model to use as the mutation target
         hierarchical (bool): Whether ot use hierarchical GA
         out_path (Path): Path to write generated AutoDAN string
         init_prompt_path (Path): Path to initial prompts
@@ -119,7 +119,7 @@ def autodan_generate(
     Returns:
         None
     """
-    if not isinstance(generator, Model):
+    if not isinstance(model, Model):
         msg = "AutoDAN generation currently only supports HuggingFace models."
         logger.error(msg)
         raise TypeError(msg)
@@ -131,14 +131,14 @@ def autodan_generate(
 
     adv_string_init = open(init_prompt_path, "r", encoding="utf-8").readlines()[0]
 
-    conv_template = load_conversation_template(generator.name)
+    conv_template = load_conversation_template(model.name)
     crit = nn.CrossEntropyLoss(reduction="mean")
 
     config_root = {
-        "generators": {mutation_generator_type: {"name": mutation_generator_name}}
+        "targets": {mutation_target_type: {"name": mutation_target_name}}
     }
-    mutation_generator = load_plugin(
-        "generators." + mutation_generator_type, config_root=config_root
+    mutation_target = load_plugin(
+        "targets." + mutation_target_type, config_root=config_root
     )
 
     # Feel like this could just be text instead of storing it as tensors.
@@ -165,10 +165,10 @@ def autodan_generate(
     for j in tqdm(range(num_steps), leave=True):
         with torch.no_grad():
             losses = get_score_autodan(
-                generator=generator,
+                model=model,
                 conv_template=conv_template,
                 instruction=prompt,
-                target=target,
+                target_output=target,
                 test_controls=new_adv_prefixes,
                 crit=crit,
                 low_memory=low_memory,
@@ -180,7 +180,7 @@ def autodan_generate(
 
             adv_prefix = best_new_adv_prefix
             conv = Conversation(turns=[Turn(role="user", content=Message(text=adv_prefix))])
-            gen_output = generator.generate(prompt=conv)[0]
+            gen_output = model.generate(prompt=conv)[0]
             success = False
             if gen_output and gen_output.text:
                 success = check_for_attack_success(gen_output.text, REJECTION_STRINGS)
@@ -201,7 +201,7 @@ def autodan_generate(
                     batch_size=batch_size,
                     crossover_rate=crossover_rate,
                     mutation_rate=mutation_rate,
-                    mutation_generator=mutation_generator,
+                    mutation_target=mutation_target,
                 )
             else:
                 unfiltered_new_adv_prefixes = autodan_ga(
@@ -212,11 +212,11 @@ def autodan_generate(
                     crossover_rate=crossover_rate,
                     num_points=num_points,
                     mutation=mutation_rate,
-                    mutation_generator=mutation_generator,
+                    mutation_target=mutation_target,
                 )
 
             new_adv_prefixes = unfiltered_new_adv_prefixes
-            generator.clear_history()
+            model.clear_history()
             gc.collect()
             torch.cuda.empty_cache()
 

@@ -37,5 +37,5 @@ def test_attacker_load_and_transform(klassname):
     assert isinstance(b, garak.attackers.base.Attacker)
     a = attempt.Attempt()
     a.prompt = attempt.Message("I'm just a plain and simple tailor", lang=b.lang)
-    attackered_a = list(b.transform(a))  # unroll the generator
+    attackered_a = list(b.transform(a))  # unroll the target
     assert isinstance(attackered_a, list)

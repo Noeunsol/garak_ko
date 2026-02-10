@@ -5,7 +5,7 @@ import tempfile
 import importlib
 
 import garak.attempt
-import garak.generators
+import garak.targets
 import garak.seeds.base
 import pytest
 from garak import _config, _plugins
@@ -27,7 +27,7 @@ def test_atkgen_config():
     p = garak._plugins.load_plugin("seeds.atkgen.Tox")
     rt_mod, rt_klass = p.red_team_model_type.split(".")
     assert p.red_team_model_config == {
-        "generators": {
+        "targets": {
             rt_mod: {
                 rt_klass: {
                     "hf_args": {"device": "cpu", "torch_dtype": "float32"},
@@ -43,14 +43,14 @@ def test_atkgen_one_pass():
     _config.plugins.seeds["atkgen"]["generations"] = 1  # we only need one conversation
     p = _plugins.load_plugin("seeds.atkgen.Tox", config_root=garak._config)
     p.max_calls_per_conv = 1  # we don't need a full conversation
-    g = garak._plugins.load_plugin("generators.test.Repeat", config_root=garak._config)
+    g = garak._plugins.load_plugin("targets.test.Repeat", config_root=garak._config)
     with tempfile.NamedTemporaryFile(mode="w+", encoding="utf-8") as temp_report_file:
         _config.transient.reportfile = temp_report_file
         _config.transient.report_filename = temp_report_file.name
         result = p.seed(g)
     assert isinstance(
-        p.redteamer, garak.generators.base.Generator
-    ), "atkgen redteamer should be a generator"
+        p.redteamer, garak.targets.base.Target
+    ), "atkgen redteamer should be a target"
     assert isinstance(result, list), "seed results should be a list"
     assert isinstance(
         result[0], garak.attempt.Attempt
@@ -64,7 +64,7 @@ def test_atkgen_custom_model():
     red_team_model_type = "test.Single"
     red_team_model_name = ""
     _config.load_base_config()
-    rt_custom_generator_config = {
+    rt_custom_target_config = {
         "seeds": {
             "atkgen": {
                 "Tox": {
@@ -76,7 +76,7 @@ def test_atkgen_custom_model():
         }
     }
     p = _plugins.load_plugin(
-        "seeds.atkgen.Tox", config_root=rt_custom_generator_config
+        "seeds.atkgen.Tox", config_root=rt_custom_target_config
     )
     p.max_calls_per_conv = 1  # we don't need a full conversation
     assert (
@@ -85,7 +85,7 @@ def test_atkgen_custom_model():
     assert (
         p.red_team_model_name == red_team_model_name
     ), "red team model name config should be loaded"
-    g = _plugins.load_plugin("generators.test.Repeat", config_root=garak._config)
+    g = _plugins.load_plugin("targets.test.Repeat", config_root=garak._config)
     with tempfile.NamedTemporaryFile(mode="w+", encoding="utf-8") as temp_report_file:
         _config.transient.reportfile = temp_report_file
         _config.transient.report_filename = temp_report_file.name
@@ -122,12 +122,12 @@ def test_atkgen_seed(classname):
     with tempfile.NamedTemporaryFile(mode="w+", encoding="utf-8") as temp_report_file:
         _config.transient.reportfile = temp_report_file
         _config.transient.report_filename = temp_report_file.name
-        _config.plugins.generators = {}
+        _config.plugins.targets = {}
         atkgen_instance = atkgen_class(config_root=_config)
-        generator = _plugins.load_plugin(
-            "generators.test.Repeat", config_root=_config
-        )  # Replace with an actual generator instance if available
-        attempts = atkgen_instance.seed(generator)
+        target = _plugins.load_plugin(
+            "targets.test.Repeat", config_root=_config
+        )  # Replace with an actual target instance if available
+        attempts = atkgen_instance.seed(target)
         assert isinstance(
             attempts, list
         ), "seed method should return a list of attempts"
@@ -150,7 +150,7 @@ def test_atkgen_verbose_output(capsys):
     _config.plugins.seeds["atkgen"]["generations"] = 1  # we only need one conversation
     p = _plugins.load_plugin("seeds.atkgen.Tox", config_root=garak._config)
     p.max_calls_per_conv = 1  # we don't need a full conversation
-    g = _plugins.load_plugin("generators.test.Repeat", config_root=garak._config)
+    g = _plugins.load_plugin("targets.test.Repeat", config_root=garak._config)
 
     with tempfile.NamedTemporaryFile(mode="w+", encoding="utf-8") as temp_report_file:
         _config.transient.reportfile = temp_report_file

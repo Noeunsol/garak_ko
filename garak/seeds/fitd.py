@@ -144,7 +144,7 @@ class FITD(garak.seeds.IterativeSeed):
             logging.critical(msg)
             raise ValueError() from e
         rt_config = {
-            "generators": {
+            "targets": {
                 rt_model_module: {
                     rt_model_class: self.red_team_model_config
                     | {"name": self.red_team_model_name},
@@ -152,7 +152,7 @@ class FITD(garak.seeds.IterativeSeed):
             }
         }
         self.red_team_model = garak._plugins.load_plugin(
-            f"generators.{self.red_team_model_type}", config_root=rt_config
+            f"targets.{self.red_team_model_type}", config_root=rt_config
         )
 
     def set_up_judge(self):
@@ -166,7 +166,7 @@ class FITD(garak.seeds.IterativeSeed):
         )
 
     def _get_red_team_response(self, prompt: str) -> str:
-        """Abstracting out call to attack gen LLM which is a garak Generator"""
+        """Abstracting out call to attack gen LLM which is a garak Target"""
         conv = garak.attempt.Conversation(
             [
                 garak.attempt.Turn(
@@ -180,7 +180,7 @@ class FITD(garak.seeds.IterativeSeed):
                 prompt=conv, generations_this_call=1
             )
         except Exception as e:
-            msg = "Generator raised an error terminating seed."
+            msg = "Target raised an error terminating seed."
             logging.exception(msg, e)
             raise GarakException(msg) from e
         if (
@@ -584,7 +584,7 @@ class FITD(garak.seeds.IterativeSeed):
                     # Note that once judges are updated to have a Skip value different from None, this needs to be updated.
                     should_terminate.append(False)
                 else:
-                    # None response in Attempt probably means something is wrong with the generator; Worth ending the run here.
+                    # None response in Attempt probably means something is wrong with the target; Worth ending the run here.
                     should_terminate.append(True)
             logging.debug(
                 "fitd.FITD # _should_terminate_conversation: Using judge, should_terminate = %s for attempt ID %s"

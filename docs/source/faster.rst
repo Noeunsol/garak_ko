@@ -14,14 +14,14 @@ speed runs up.
 Target types
 ------------
 
-Generators in garak can broadly be thought of as one of two types: local models, and remote endpoints.
-Local models are generators that load the target on the local machine,  like ``huggingface.Pipeline``; remote endpoints are those that access a target hosted remotely, like ``openai.OpenAICompatible`` or ``nim.NVOpenAIChat``.
+Targets in garak can broadly be thought of as one of two types: local models, and remote endpoints.
+Local models are targets that load the target on the local machine,  like ``huggingface.Pipeline``; remote endpoints are those that access a target hosted remotely, like ``openai.OpenAICompatible`` or ``nim.NVOpenAIChat``.
 
-Local generators consume resources on the same machine as which garak runs.
+Local targets consume resources on the same machine as which garak runs.
 This means they only run on machine, and more often than not, it also means that there aren't resources to run more than one instance of a model.
 That has the effect of making runs only possible in serial.
-Local generators also have to some some orchestration of getting models up and running and keeping them running. 
-Since there are so many different kinds of model around, and each of these is often pushing the limits of what's technically and scientifically possible at the time of its release, local generators tend to be a bit prone to mid-run failures, e.g. when a previously-unseen edge case is encountered.
+Local targets also have to some some orchestration of getting models up and running and keeping them running. 
+Since there are so many different kinds of model around, and each of these is often pushing the limits of what's technically and scientifically possible at the time of its release, local targets tend to be a bit prone to mid-run failures, e.g. when a previously-unseen edge case is encountered.
 
 Remote endpoints mean that all this orchestration is sent away to some dedicated service.
 This has a few advantages.
@@ -30,7 +30,7 @@ Second, it can be possible for multiple instances of the target to run in parall
 Third, the people running the endpoint have often done some quality checking and testing to make sure that the endpoint runs well, reducing the chance of the target crashing weirdly.
 Fourth, because orchestration -- loading and serving models -- happens remotely, if there is a failure, the solution can be as simple (from garak's point of view) as re-sending the inference request to the target endpoint. Garak is generally pretty gentle but tenacious when it comes to dealing with endpoint failure - we know that runs can take a while and we want to mitigate the need to "babysit" them, by having garak politely try to recover the target.
 
-As you might be able to guess by now, there are some good advantages to using remote endpoint generators, and some notable disadvantages to local model generators. Garak maintainers strongly recommend using remote generators if you're trying to do things quickly. Not least because it enables parallelization.
+As you might be able to guess by now, there are some good advantages to using remote endpoint targets, and some notable disadvantages to local model targets. Garak maintainers strongly recommend using remote targets if you're trying to do things quickly. Not least because it enables parallelization.
 
 
 Parallelization within garak

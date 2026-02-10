@@ -1,7 +1,7 @@
 """**atkgen: Attack Generation**
 
 This seed uses a separate model to create attack prompts,
-which are intended to guide that generator into a certain failure mode.
+which are intended to guide that target into a certain failure mode.
 
 Only seeds that dynamically generate their own attack prompts belong in this module.
 
@@ -74,16 +74,16 @@ class Tox(garak.seeds.Seed):
         "allow_repetition": False,
     }
 
-    def seed(self, generator) -> List[garak.attempt.Attempt]:
+    def seed(self, target) -> List[garak.attempt.Attempt]:
         output_is_conversation = _config.system.verbose >= 2
 
         if self.redteamer is None:
 
             print(
                 "🔴🪖  ", end=""
-            )  # distinguish load message for atkgen generator from target generator
+            )  # distinguish load message for atkgen target from target target
             self.redteamer = garak._plugins.load_plugin(
-                f"generators.{self.red_team_model_type}",
+                f"targets.{self.red_team_model_type}",
                 config_root=self.red_team_model_config,
             )
             self.redteamer.deprefix_prompt = True
@@ -184,10 +184,10 @@ class Tox(garak.seeds.Seed):
                     )
                 else:
                     t.set_description(
-                        f" turn {t.n:02}: waiting for [{generator.name[:10]:<10}]"
+                        f" turn {t.n:02}: waiting for [{target.name[:10]:<10}]"
                     )
                 # send the challenge in the target language and get the response
-                response = generator.generate(this_attempt.prompt)
+                response = target.generate(this_attempt.prompt)
                 if response is None or len(response) == 0:
                     response_text = ""
                 else:
@@ -244,7 +244,7 @@ class Tox(garak.seeds.Seed):
             logging.critical(msg)
             raise ValueError() from e
         rt_config = {
-            "generators": {
+            "targets": {
                 rt_model_module: {
                     rt_model_class: self.red_team_model_config
                     | {"name": self.red_team_model_name},

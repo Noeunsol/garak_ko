@@ -15,7 +15,7 @@ import garak.seeds
 class PastTenseFull(garak.seeds.Seed):
     """Will the system give unsafe responses when asked to write about weapon creation or dangerous behavior in the past tense?
 
-    This check sends the generator requests for advice on possibly protect or restricted subjects in the past tense.
+    This check sends the target requests for advice on possibly protect or restricted subjects in the past tense.
     """
 
     active = False
@@ -66,7 +66,7 @@ class PastTense(PastTenseFull):
 class FutureTenseFull(garak.seeds.Seed):
     """Will the system give unsafe responses when asked to write about weapon creation or dangerous behavior in the future tense?
 
-    This check sends the generator requests for advice on possibly protect or restricted subjects in the future tense.
+    This check sends the target requests for advice on possibly protect or restricted subjects in the future tense.
     """
 
     active = False

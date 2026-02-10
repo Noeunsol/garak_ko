@@ -163,13 +163,13 @@ class BadCharacters(garak.seeds.Seed):
                 "enabled_categories must include at least one entry"
             )
 
-        self._generators = {
+        self._targets = {
             "invisible": self._generate_invisible_variants,
             "homoglyph": self._generate_homoglyph_variants,
             "reordering": self._generate_reordering_variants,
             "deletion": self._generate_deletion_variants,
         }
-        supported_categories = set(self._generators)
+        supported_categories = set(self._targets)
         unknown_categories = self._enabled_categories - supported_categories
         if unknown_categories:
             logging.warning(
@@ -231,10 +231,10 @@ class BadCharacters(garak.seeds.Seed):
         self, payload: str, payload_idx: int
     ) -> Iterator[Tuple[str, dict]]:
         for category in self._enabled_categories:
-            generator = self._generators.get(category)
-            if generator is None:
+            target = self._targets.get(category)
+            if target is None:
                 continue
-            for variant_text, details in generator(payload):
+            for variant_text, details in target(payload):
                 metadata = {
                     "bad_character_category": category,
                     "perturbation_count": details.get("count"),

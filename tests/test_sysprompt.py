@@ -17,7 +17,7 @@ def test_system_prompt():
     _config.transient.report_filename = temp_report_file.name
 
     p = garak._plugins.load_plugin("seeds.test.Blank")
-    g = garak._plugins.load_plugin("generators.test.Blank")
+    g = garak._plugins.load_plugin("targets.test.Blank")
     p.generations = 1
     results = p.seed(g)
     assert (

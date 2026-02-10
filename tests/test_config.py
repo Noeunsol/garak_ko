@@ -20,7 +20,7 @@ import garak.cli
 SITE_YAML_FILENAME = "TESTONLY.site.yaml.bak"
 CONFIGURABLE_YAML = """
 plugins:
-  generators:
+  targets:
     huggingface:
       hf_args:
         torch_dtype: float16
@@ -29,7 +29,7 @@ plugins:
             device: cuda
   seeds:
     test:
-      generators:
+      targets:
         huggingface:
             Pipeline:
                 hf_args:
@@ -38,7 +38,7 @@ plugins:
       test:
         val: tests
         Blank:
-          generators:
+          targets:
             huggingface:
                 hf_args:
                     torch_dtype: float16
@@ -48,7 +48,7 @@ plugins:
   attackers:
       test:
         Blank:
-          generators:
+          targets:
             huggingface:
                 hf_args:
                     device: cuda:0
@@ -377,9 +377,9 @@ def test_seed_options_yaml(capsys):
         assert _config.plugins.seeds["test"]["Blank"]["gen_x"] == 37176
 
 
-# test generator_options YAML
+# test target_options YAML
 # more refactor for namespace keys
-def test_generator_options_yaml(capsys):
+def test_target_options_yaml(capsys):
     with tempfile.NamedTemporaryFile(buffering=0, delete=False, suffix=".yaml") as tmp:
         tmp.write(
             "\n".join(
@@ -388,7 +388,7 @@ def test_generator_options_yaml(capsys):
                     "plugins:",
                     "  target_type: test.Blank",
                     "  seed_spec: test.Blank",
-                    "  generators:",
+                    "  targets:",
                     "    test:",
                     "      test_val: test_value",
                     "      Blank:",
@@ -402,9 +402,9 @@ def test_generator_options_yaml(capsys):
             ["--config", tmp.name, "--list_config"]
         )  # add list_config as the action so we don't actually run
         os.remove(tmp.name)
-        assert _config.plugins.generators["test"]["Blank"]["gen_x"] == 37176
+        assert _config.plugins.targets["test"]["Blank"]["gen_x"] == 37176
         assert (
-            _config.plugins.generators["test"]["Blank"]["test_val"]
+            _config.plugins.targets["test"]["Blank"]["test_val"]
             == "test_blank_value"
         )
 
@@ -435,7 +435,7 @@ def test_run_from_yaml(capsys):
         line = ANSI_ESCAPE.sub("", line)
         all_output += line
 
-    assert "loading generator: Test: Blank" in all_output
+    assert "loading target: Test: Blank" in all_output
     assert "queue of seeds: test.Blank" in all_output
     assert "ok on   10/  10" in all_output
     assert "any.AnyOutput:" in all_output
@@ -443,25 +443,25 @@ def test_run_from_yaml(capsys):
     assert "garak run complete" in all_output
 
 
-# cli generator options file loads
+# cli target options file loads
 # more refactor for namespace keys
 @pytest.mark.usefixtures("allow_site_config")
-def test_cli_generator_options_file():
+def test_cli_target_options_file():
     # write an options file
     with tempfile.NamedTemporaryFile(mode="w+", delete=False) as tmp:
-        json.dump({"test": {"Blank": {"this_is_a": "generator"}}}, tmp)
+        json.dump({"test": {"Blank": {"this_is_a": "target"}}}, tmp)
         tmp.close()
         # invoke cli
         garak.cli.main(
-            ["--generator_option_file", tmp.name, "--list_config"]
+            ["--target_option_file", tmp.name, "--list_config"]
         )  # add list_config as the action so we don't actually run
         os.remove(tmp.name)
 
         # check it was loaded
-        assert _config.plugins.generators["test"]["Blank"] == {"this_is_a": "generator"}
+        assert _config.plugins.targets["test"]["Blank"] == {"this_is_a": "target"}
 
 
-# cli generator options file loads
+# cli target options file loads
 # more refactor for namespace keys
 def test_cli_seed_options_file():
     # write an options file
@@ -518,12 +518,12 @@ def test_cli_seed_options_overrides_yaml_seed_options():
 
 
 # cli should override yaml options
-def test_cli_generator_options_overrides_yaml_seed_options():
+def test_cli_target_options_overrides_yaml_seed_options():
     cli_generations_count = 9001
     with tempfile.NamedTemporaryFile(
         buffering=0, delete=False, suffix=".yaml"
-    ) as generator_yaml_file:
-        generator_yaml_file.write(
+    ) as target_yaml_file:
+        target_yaml_file.write(
             "\n".join(
                 [
                     "---",
@@ -532,16 +532,16 @@ def test_cli_generator_options_overrides_yaml_seed_options():
                 ]
             ).encode("utf-8")
         )
-        generator_yaml_file.close()
+        target_yaml_file.close()
         args = [
             "--config",
-            generator_yaml_file.name,
+            target_yaml_file.name,
             "-g",
             str(cli_generations_count),
             "--list_config",
         ]  # add list_config as the action so we don't actually run
         garak.cli.main(args)
-        os.remove(generator_yaml_file.name)
+        os.remove(target_yaml_file.name)
     # check it was loaded
     assert _config.run.generations == cli_generations_count
 
@@ -599,13 +599,13 @@ def test_blank_seed_instance_loads_cli_config():
     assert seed.goal == revised_goal
 
 
-# check that generator picks up yaml config items
+# check that target picks up yaml config items
 # more refactor for namespace keys
-def test_blank_generator_instance_loads_yaml_config():
+def test_blank_target_instance_loads_yaml_config():
     import garak._plugins
 
-    generator_name = "test.Blank"
-    generator_namespace, generator_klass = generator_name.split(".")
+    target_name = "test.Blank"
+    target_namespace, target_klass = target_name.split(".")
     revised_temp = 0.9001
     with tempfile.NamedTemporaryFile(buffering=0, delete=False, suffix=".yaml") as tmp:
         tmp.write(
@@ -613,53 +613,53 @@ def test_blank_generator_instance_loads_yaml_config():
                 [
                     f"---",
                     f"plugins:",
-                    f"  generators:",
-                    f"      {generator_namespace}:",
+                    f"  targets:",
+                    f"      {target_namespace}:",
                     f"        temperature: {revised_temp}",
-                    f"        {generator_klass}:",
+                    f"        {target_klass}:",
                     f"          test_val: test_blank_value",
                 ]
             ).encode("utf-8")
         )
         tmp.close()
         garak.cli.main(
-            ["--config", tmp.name, "--target_type", generator_name, "--seeds", "none"]
+            ["--config", tmp.name, "--target_type", target_name, "--seeds", "none"]
         )
         os.remove(tmp.name)
-    gen = garak._plugins.load_plugin(f"generators.{generator_name}")
+    gen = garak._plugins.load_plugin(f"targets.{target_name}")
     assert gen.temperature == revised_temp
     assert gen.test_val == "test_blank_value"
 
 
-# check that generator picks up cli config items
+# check that target picks up cli config items
 # more refactor for namespace keys
-def test_blank_generator_instance_loads_cli_config():
+def test_blank_target_instance_loads_cli_config():
     import garak._plugins
 
-    generator_name = "test.Repeat"
-    generator_namespace, generator_klass = generator_name.split(".")
+    target_name = "test.Repeat"
+    target_namespace, target_klass = target_name.split(".")
     revised_temp = 0.9001
     args = [
         "--target_type",
         "test.Blank",
         "--seeds",
         "none",
-        "--generator_options",
+        "--target_options",
         json.dumps(
-            {generator_namespace: {generator_klass: {"temperature": revised_temp}}}
+            {target_namespace: {target_klass: {"temperature": revised_temp}}}
         )
         .replace(" ", "")
         .strip(),
     ]
     garak.cli.main(args)
-    gen = garak._plugins.load_plugin(f"generators.{generator_name}")
+    gen = garak._plugins.load_plugin(f"targets.{target_name}")
     assert gen.temperature == revised_temp
 
 
 # test parsing of seedspec
 def test_seedspec_loading():
     assert _config.parse_plugin_spec(None, "judges") == ([], [])
-    assert _config.parse_plugin_spec("", "generators") == ([], [])
+    assert _config.parse_plugin_spec("", "targets") == ([], [])
     assert _config.parse_plugin_spec("Auto", "seeds") == ([], [])
     assert _config.parse_plugin_spec("NONE", "seeds") == ([], [])
     # reject unmatched spec entires
@@ -766,8 +766,8 @@ def test_report_prefix_with_hitlog_no_explode():
 
 
 def test_nested():
-    _config.plugins.generators["a"]["b"]["c"]["d"] = "e"
-    assert _config.plugins.generators["a"]["b"]["c"]["d"] == "e"
+    _config.plugins.targets["a"]["b"]["c"]["d"] = "e"
+    assert _config.plugins.targets["a"]["b"]["c"]["d"] == "e"
 
 
 def test_get_user_agents():
@@ -832,8 +832,8 @@ def test_agent_is_used_aiohttp(httpserver: HTTPServer):
 
 
 def test_api_key_in_config():
-    _config.plugins.generators["a"]["b"]["c"]["api_key"] = "something"
-    assert _config._key_exists(_config.plugins.generators, "api_key")
+    _config.plugins.targets["a"]["b"]["c"]["api_key"] = "something"
+    assert _config._key_exists(_config.plugins.targets, "api_key")
 
 
 # test max_workers applies when used in site config

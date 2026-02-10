@@ -29,7 +29,7 @@ from logging import getLogger
 
 CONTROL_INIT = "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
 
-from garak.generators.huggingface import Model
+from garak.targets.huggingface import Model
 from garak.resources.gcg import attack_manager
 from garak.resources.gcg import gcg_attack
 
@@ -41,7 +41,7 @@ gcg_cache_data = garak._config.transient.cache_dir / "data" / "gcg"
 
 
 def run_gcg(
-    target_generator: garak.generators.Generator = None,
+    target_target: garak.targets.Target = None,
     model_names: list[str] = None,
     transfer: bool = False,
     progressive: bool = False,
@@ -70,7 +70,7 @@ def run_gcg(
     """Function to generate GCG attack strings
 
     Args:
-        target_generator (Generator): Generator to target with GCG attack
+        target_target (Target): Target to target with GCG attack
         transfer (bool): Whether the attack generated is for a transfer attack
         progressive (bool): Whether to use progressive goals
         stop_success (bool): Whether to stop on a successful attack
@@ -103,8 +103,8 @@ def run_gcg(
     """
     mp.set_start_method("spawn", force=True)
 
-    if target_generator is not None and model_names is not None:
-        msg = "You have specified a list of model names and a target generator. Using the already loaded generator!"
+    if target_target is not None and model_names is not None:
+        msg = "You have specified a list of model names and a target target. Using the already loaded target!"
         logger.warning(msg)
 
     if "test_data" in kwargs:
@@ -115,12 +115,12 @@ def run_gcg(
     if "logfile" in kwargs:
         logfile = kwargs["logfile"]
     else:
-        if target_generator is not None:
-            model_string = target_generator.name
+        if target_target is not None:
+            model_string = target_target.name
         elif model_names is not None:
             model_string = "_".join([x.replace("/", "-") for x in model_names])
         else:
-            msg = "You must specify either a target generator or a list of model names to run GCG!"
+            msg = "You must specify either a target target or a list of model names to run GCG!"
             logger.error(msg)
             raise RuntimeError(msg)
         # TODO: why is the log file being placed in the cache folder?
@@ -144,17 +144,17 @@ def run_gcg(
         train_data=train_data, test_data=test_data, n_train=n_train, n_test=n_test
     )
 
-    generators = list()
-    if target_generator:
-        generators.append(target_generator)
+    targets = list()
+    if target_target:
+        targets.append(target_target)
     elif model_names:
-        generators.append(Model(model_name) for model_name in model_names)
+        targets.append(Model(model_name) for model_name in model_names)
     else:
-        msg = "You must specify either a target generator or a list of model names to run GCG!"
+        msg = "You must specify either a target target or a list of model names to run GCG!"
         logger.error(msg)
         raise Exception(msg)
     # TODO: Specify additional args for get_workers
-    workers, test_workers = attack_manager.get_workers(generators=generators)
+    workers, test_workers = attack_manager.get_workers(targets=targets)
 
     managers = {
         "AP": gcg_attack.GCGAttackPrompt,

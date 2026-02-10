@@ -7,7 +7,7 @@ import pytest
 import tempfile
 import importlib
 from garak import _config, _plugins
-from garak.generators.test import Blank
+from garak.targets.test import Blank
 
 
 @pytest.mark.parametrize("classname", ["seeds.fitd.FITD"])
@@ -38,8 +38,8 @@ def test_fitd_seed(classname):
 
         _config.transient.reportfile = temp_report_file
         _config.transient.report_filename = temp_report_file.name
-        generator = _plugins.load_plugin("generators.test.Blank", config_root=_config)
-        attempts = fitd_seed.seed(generator)
+        target = _plugins.load_plugin("targets.test.Blank", config_root=_config)
+        attempts = fitd_seed.seed(target)
         assert isinstance(
             attempts, list
         ), f"{classname} seed should return a list of attempts"

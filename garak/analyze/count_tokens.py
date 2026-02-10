@@ -44,7 +44,7 @@ def count_tokens(report_path: str) -> None:
                         if isinstance(o, str):
                             return o
                         if isinstance(o, dict):
-                            # common keys seen in generator outputs
+                            # common keys seen in target outputs
                             for k in ("text", "content", "response"):
                                 v = o.get(k)
                                 if isinstance(v, str):

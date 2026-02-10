@@ -9,12 +9,12 @@ from garak import _config, _plugins
 from garak.resources.red_team.evaluation import EvaluationJudge, get_token_limit
 from garak.attempt import Attempt, Message
 from garak.judges.base import Judge
-from garak.exception import GarakException, BadGeneratorException
-from garak.generators.openai import OpenAICompatible
+from garak.exception import GarakException, BadTargetException
+from garak.targets.openai import OpenAICompatible
 
 
 class ModelAsJudge(Judge, EvaluationJudge):
-    """Generic configurable judge to utilize a generator as a judge
+    """Generic configurable judge to utilize a target as a judge
 
     For system prompt interactions this judge relies on the `FastChat <https://github.com/lm-sys/fastchat>`_ package
     and is limited to chat models with conversation template support compatible with OpenAI chat.
@@ -46,10 +46,10 @@ class ModelAsJudge(Judge, EvaluationJudge):
         ]
     )
 
-    def _load_generator(self):
-        # setup model object as self.generator?
-        model_root = {"generators": {}}
-        conf_root = model_root["generators"]
+    def _load_target(self):
+        # setup model object as self.target?
+        model_root = {"targets": {}}
+        conf_root = model_root["targets"]
         for part in self.judge_model_type.split("."):
             if not part in conf_root:
                 conf_root[part] = {}
@@ -62,25 +62,25 @@ class ModelAsJudge(Judge, EvaluationJudge):
             conf_root["name"] = self.judge_model_name
 
         try:
-            self.evaluation_generator = _plugins.load_plugin(
-                f"generators.{self.judge_model_type}", config_root=model_root
+            self.evaluation_target = _plugins.load_plugin(
+                f"targets.{self.judge_model_type}", config_root=model_root
             )
         except GarakException as e:
             if isinstance(e.__cause__, GarakException):
                 raise e.__cause__
-            raise BadGeneratorException(
-                f"{self.name} failed to load generator for {self.judge_model_type}"
+            raise BadTargetException(
+                f"{self.name} failed to load target for {self.judge_model_type}"
             )
-        if not isinstance(self.evaluation_generator, OpenAICompatible):
-            raise BadGeneratorException(
-                f"Generator support in the {self.__class__} plugins must be compatible with OpenAI chat format."
+        if not isinstance(self.evaluation_target, OpenAICompatible):
+            raise BadTargetException(
+                f"Target support in the {self.__class__} plugins must be compatible with OpenAI chat format."
             )
 
-        self.evaluator_token_limit = get_token_limit(self.evaluation_generator.name)
+        self.evaluator_token_limit = get_token_limit(self.evaluation_target.name)
 
     def __init__(self, config_root=_config):
         super().__init__(config_root=config_root)
-        self._load_generator()
+        self._load_target()
 
     def detect(self, attempt: Attempt) -> List[float | None]:
         results = []

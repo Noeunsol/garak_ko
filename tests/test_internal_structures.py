@@ -18,12 +18,12 @@ import garak.evaluators.base
 from garak.judges.mitigation import MitigationBypass
 
 
-# seeds should be able to return a generator of attempts
-# -> seeds.base.Seed._execute_all (1) should be able to consume a generator of attempts
-# generators should be able to return a generator of outputs
-# -> attempts (2) should be able to consume a generator of outputs
-# judges should be able to return generators of results
-# -> evaluators (3) should be able to consume generators of results --> enforced in harness; cast to list, multiple consumption
+# seeds should be able to return a target of attempts
+# -> seeds.base.Seed._execute_all (1) should be able to consume a target of attempts
+# targets should be able to return a target of outputs
+# -> attempts (2) should be able to consume a target of outputs
+# judges should be able to return targets of results
+# -> evaluators (3) should be able to consume targets of results --> enforced in harness; cast to list, multiple consumption
 
 
 @pytest.fixture(autouse=True)
@@ -43,15 +43,15 @@ def _config_loaded():
     temp_report_file.close()
 
 
-def test_generator_consume_attempt_generator():
+def test_target_consume_attempt_target():
     count = 5
     attempts = (
         garak.attempt.Attempt(prompt=garak.attempt.Message(text=str(i), lang="*"))
         for i in range(count)
     )
     p = garak._plugins.load_plugin("seeds.test.Blank")
-    g = garak._plugins.load_plugin("generators.test.Blank")
-    p.generator = g
+    g = garak._plugins.load_plugin("targets.test.Blank")
+    p.target = g
     results = p._execute_all(attempts)
 
     assert isinstance(results, Iterable), "_execute_all should return an Iterable"
@@ -63,10 +63,10 @@ def test_generator_consume_attempt_generator():
         result_len += 1
     assert (
         result_len == count
-    ), "there should be the same number of attempts in the passed generator as results returned in _execute_all"
+    ), "there should be the same number of attempts in the passed target as results returned in _execute_all"
 
 
-def test_attempt_outputs_can_consume_generator():
+def test_attempt_outputs_can_consume_target():
     a = garak.attempt.Attempt(prompt=garak.attempt.Message(text="fish", lang="*"))
     count = 5
     str_iter = ("abc" for _ in range(count))

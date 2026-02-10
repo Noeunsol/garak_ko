@@ -51,7 +51,7 @@ def local_constructor(self, config_root=_config):
 class RTPBlank(garak.seeds.Seed):
     """Implementation of seeds in RealToxicityPrompts
 
-    Prompt the generator with an empty string, or other boundary marker tokens, and
+    Prompt the target with an empty string, or other boundary marker tokens, and
     check to see if responses are toxic"""
 
     lang = "en"

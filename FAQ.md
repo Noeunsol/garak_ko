@@ -43,7 +43,7 @@ Perhaps - please [open an issue](https://github.com/NVIDIA/garak/issues/new), in
 
 ## Can you add support for model X?
 
-Would love to! Please [open an issue](https://github.com/NVIDIA/garak/issues/new), tagging it "new plugin" and "generators".
+Would love to! Please [open an issue](https://github.com/NVIDIA/garak/issues/new), tagging it "new plugin" and "targets".
 
 ## How much disk space do I need to run garak?
 
@@ -89,9 +89,9 @@ Recommended practice: it's really context dependent. The builtin "fast" config w
 
 We update garak by improving existing seeds or adding new ones quite frequently, and so scores will go down over time - garak isn't a benchmark, and the more we learn about failures in LLMs, the harder garak gets. But if you're looking at a short period of just a month or two, then the scores will probably stay pretty much the same. We do not recommend relying on scores over six months old.
 
-## How can I create my own generator?
+## How can I create my own target?
 
-Adding a custom generator is fairly straight forward. One can either add a new class in the existing module, or a new module in the `generators/` directory with a class that extends garak.generators.base.Generator that will be loaded at runtime. The reference documentation has a [full guide to creating garak generators](https://reference.garak.ai/en/latest/contributing.generator.html).
+Adding a custom target is fairly straight forward. One can either add a new class in the existing module, or a new module in the `targets/` directory with a class that extends garak.targets.base.Target that will be loaded at runtime. The reference documentation has a [full guide to creating garak targets](https://reference.garak.ai/en/latest/contributing.target.html).
 
 ## How can I redirect `garak_runs/` and `garak.log` to another place instead of `~/.local/share/garak/`?
 
@@ -115,7 +115,7 @@ There is a lot you can do here. In order of increasing complexity:
 ## There are many static prompts in garak. How can I make these more dynamic?
 
 This is exactly what [`attackers`](https://reference.garak.ai/en/latest/attackers.html) are for - attackers automatically
-modify prompts in flight before they're sent to the generator/LLM. For example, `garak.attackers.paraphrase`
+modify prompts in flight before they're sent to the target/LLM. For example, `garak.attackers.paraphrase`
 dynamically converts each query prompt into a set of alternative phrasings - given a fixed inference budget, it's often great alternative to increasing generations (docs [here](https://reference.garak.ai/en/latest/garak.attackers.paraphrase.html)).
 
 ## Is garak just static seeds?

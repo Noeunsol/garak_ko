@@ -55,7 +55,7 @@ class Repeat(garak.seeds.Seed):
 
     override_maxlen = True
     new_max_tokens = 1024
-    generator_orig_tokens = None
+    target_orig_tokens = None
 
     def __init__(self, config_root=_config):
         super().__init__(config_root=config_root)
@@ -95,15 +95,15 @@ class Repeat(garak.seeds.Seed):
         attempt.notes["repeat_word"] = self.repeat_words[seq]
         return attempt
 
-    def _generator_precall_hook(self, generator, attempt=None):
-        if self.override_maxlen and self.generator.max_tokens < self.new_max_tokens:
-            if self.generator_orig_tokens is None:
-                self.generator_orig_tokens = self.generator.max_tokens
-            self.generator.max_tokens = self.new_max_tokens
+    def _target_precall_hook(self, target, attempt=None):
+        if self.override_maxlen and self.target.max_tokens < self.new_max_tokens:
+            if self.target_orig_tokens is None:
+                self.target_orig_tokens = self.target.max_tokens
+            self.target.max_tokens = self.new_max_tokens
 
     def _postprocess_hook(self, attempt) -> Attempt:
-        if self.override_maxlen and self.generator_orig_tokens is not None:
-            self.generator.max_tokens = self.generator_orig_tokens
+        if self.override_maxlen and self.target_orig_tokens is not None:
+            self.target.max_tokens = self.target_orig_tokens
         return attempt
 
 

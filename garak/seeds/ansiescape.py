@@ -118,7 +118,7 @@ class AnsiRawTokenizerHF(garak.seeds.Seed):
 
     lang = "*"
     tags = ["owasp:llm05"]
-    supported_generators = {
+    supported_targets = {
         "huggingface.Model",
         "huggingface.Pipeline",
         "huggingface.LLaVA",
@@ -132,8 +132,8 @@ class AnsiRawTokenizerHF(garak.seeds.Seed):
     primary_judge = "ansiescape.Raw"
     active = False
 
-    def seed(self, generator) -> Iterable[garak.attempt.Attempt]:
-        """attempt to gather target generator's risky tokens.
+    def seed(self, target) -> Iterable[garak.attempt.Attempt]:
+        """attempt to gather target target's risky tokens.
 
         Return modes:
          * something sus? attempts for each risky token
@@ -152,13 +152,13 @@ class AnsiRawTokenizerHF(garak.seeds.Seed):
         """
 
         package_path = (
-            generator.__class__.__module__.split(".")[-1]
+            target.__class__.__module__.split(".")[-1]
             + "."
-            + generator.__class__.__name__
+            + target.__class__.__name__
         )
-        if package_path not in self.supported_generators:
+        if package_path not in self.supported_targets:
             logging.info(
-                "Skipping probing %s, not a compatible generator" % package_path
+                "Skipping probing %s, not a compatible target" % package_path
             )
             return []
 
@@ -172,7 +172,7 @@ class AnsiRawTokenizerHF(garak.seeds.Seed):
             return attempt
 
         clean_attempt_found = False
-        for t in generator.tokenizer.vocab:
+        for t in target.tokenizer.vocab:
             if any(
                 payload in t for payload in garak.resources.ansi.LIVE_PAYLOAD_TOKENS
             ):

@@ -3,7 +3,7 @@
 from dataclasses import dataclass, field, asdict, is_dataclass
 from copy import deepcopy
 from pathlib import Path
-from types import GeneratorType
+from collections.abc import Iterator
 from typing import List, Optional, Union
 import uuid
 
@@ -18,7 +18,7 @@ roles = {"system", "user", "assistant"}
 
 @dataclass
 class Message:
-    """Object to represent a single message posed to or received from a generator
+    """Object to represent a single message posed to or received from a target
 
     Messages can be prompts, replies, system prompts. While many prompts are text,
     they may also be (or include) images, audio, files, or even a composition of
@@ -158,19 +158,19 @@ class Attempt:
 
     :param status: The status of this attempt; ``ATTEMPT_NEW``, ``ATTEMPT_STARTED``, or ``ATTEMPT_COMPLETE``
     :type status: int
-    :param prompt: The processed prompt that will presented to the generator
+    :param prompt: The processed prompt that will presented to the target
     :type prompt: Message|Conversation
     :param seed_classname: Name of the seed class that originated this ``Attempt``
     :type seed_classname: str
     :param seed_params: Non-default parameters logged by the seed
     :type seed_params: dict, optional
-    :param targets: A list of target strings to be searched for in generator responses to this attempt's prompt
+    :param targets: A list of target strings to be searched for in target responses to this attempt's prompt
     :type targets: List(str), optional
-    :param outputs: The outputs from the generator in response to the prompt
+    :param outputs: The outputs from the target in response to the prompt
     :type outputs: List(Message)
     :param notes: A free-form dictionary of notes accompanying the attempt
     :type notes: dict
-    :param judge_results: A dictionary of judge scores, keyed by judge name, where each value is a list of scores corresponding to each of the generator output strings in ``outputs``
+    :param judge_results: A dictionary of judge scores, keyed by judge name, where each value is a list of scores corresponding to each of the target output strings in ``outputs``
     :type judge_results: dict
     :param goal: Free-text simple description of the goal of this attempt, set by the originating seed
     :type goal: str
@@ -190,7 +190,7 @@ class Attempt:
     * this means messages tracks many histories, one per generation
     * For compatibility, setting ``Attempt.prompt`` sets just one turn and the prompt is unpacked later when output is set.
       We don't know the number of generations to expect until some output arrives.
-    * To keep alignment, generators must return lists of length generations.
+    * To keep alignment, targets must return lists of length generations.
 
     Patterns and expectations for Attempt access:
 
@@ -346,11 +346,11 @@ class Attempt:
 
     @outputs.setter
     def outputs(
-        self, value: Union[GeneratorType | List[str | Message]]
+        self, value: Union[Iterator | List[str | Message]]
     ) -> List[Message]:
         # these need to build or be Message objects and add to Conversations
-        if not (isinstance(value, list) or isinstance(value, GeneratorType)):
-            raise TypeError("Value for attempt.outputs must be a list or generator")
+        if not (isinstance(value, list) or isinstance(value, Iterator)):
+            raise TypeError("Value for attempt.outputs must be a list or target")
         value = list(value)
         # testing suggests this should only attempt to set if the initial prompt was already injected
         if len(self.conversations) == 0 or len(self.conversations[0].turns) == 0:

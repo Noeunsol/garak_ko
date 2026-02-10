@@ -5,7 +5,7 @@ import yaml
 
 import pytest
 
-TOP_PATHS = ["seeds", "judges", "harnesses", "generators", "evaluators", "attackers"]
+TOP_PATHS = ["seeds", "judges", "harnesses", "targets", "evaluators", "attackers"]
 DOC_SOURCE = Path("docs/source")
 
 module_names = {}
@@ -102,20 +102,20 @@ def test_docs_evaluators(classname: str):
     ), "evaluator docs must be linked to in evaluators.rst"
 
 
-@pytest.mark.parametrize("classname", module_names["generators"])
-def test_docs_generators(classname: str):
-    file_path = DOC_SOURCE / f"garak.generators.{classname}.rst"
+@pytest.mark.parametrize("classname", module_names["targets"])
+def test_docs_targets(classname: str):
+    file_path = DOC_SOURCE / f"garak.targets.{classname}.rst"
     assert (
         file_path.is_file()
-    ), f"There must be an entry for each generator family in the docs; missing {file_path}"
+    ), f"There must be an entry for each target family in the docs; missing {file_path}"
     assert (
         file_path.stat().st_size
     ), "plugin docs cannot be empty. you can just use a stub to read python docstrings, look at existing doc files"
-    category_file = DOC_SOURCE / "generators.rst"
-    target_doc = f"garak.generators.{classname}\n"
+    category_file = DOC_SOURCE / "targets.rst"
+    target_doc = f"garak.targets.{classname}\n"
     assert (
         open(category_file, "r", encoding="utf-8").read().find(target_doc) != -1
-    ), "generator docs must be linked to in generators.rst"
+    ), "target docs must be linked to in targets.rst"
 
 
 @pytest.mark.parametrize("classname", module_names["attackers"])
@@ -140,8 +140,8 @@ seeds = [classname for (classname, active) in _plugins.enumerate_plugins("seeds"
 judges = [
     classname for (classname, active) in _plugins.enumerate_plugins("judges")
 ]
-generators = [
-    classname for (classname, active) in _plugins.enumerate_plugins("generators")
+targets = [
+    classname for (classname, active) in _plugins.enumerate_plugins("targets")
 ]
 harnesses = [
     classname for (classname, active) in _plugins.enumerate_plugins("harnesses")
@@ -151,7 +151,7 @@ attackers = [classname for (classname, active) in _plugins.enumerate_plugins("at
 # evaluators = [
 #    classname for (classname, active) in _plugins.enumerate_plugins("evaluators")
 # ]
-plugins = sorted(seeds + judges + generators + attackers)
+plugins = sorted(seeds + judges + targets + attackers)
 
 
 @pytest.mark.parametrize("plugin_name", plugins)

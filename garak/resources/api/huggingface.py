@@ -52,7 +52,7 @@ class HFCompatible:
 
         for k in params_to_process:
             if k == "model":
-                continue  # special case `model` comes from `name` in the generator
+                continue  # special case `model` comes from `name` in the target
             if k in params:
                 val = params[k]
                 if k == "torch_dtype" and hasattr(torch, val):

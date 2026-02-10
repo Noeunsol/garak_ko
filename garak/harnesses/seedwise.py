@@ -44,8 +44,8 @@ class SeedwiseHarness(Harness):
         ``None``, then judges are queued based on the from the seed's
         ``recommended_judges`` value; see :class:`garak.seeds.base.Seed` for the defaults.
 
-        :param model: an instantiated generator providing an interface to the model to be examined
-        :type model: garak.generators.base.Generator
+        :param model: an instantiated target providing an interface to the model to be examined
+        :type model: garak.targets.base.Target
         :param seednames: a list of seed names to be run
         :type seednames: List[str]
         :param evaluator: an instantiated evaluator for judging judge results

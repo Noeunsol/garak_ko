@@ -7,10 +7,10 @@ and returns text. ``garak`` has a few constructs used to simplify and
 organise this process.
 
 
-generators
+targets
 ----------
-:doc:`generators` wrap a target LLM or dialogue system. They take a prompt
-and return the output. The rest is abstracted away. Generator classes
+:doc:`targets` wrap a target LLM or dialogue system. They take a prompt
+and return the output. The rest is abstracted away. Target classes
 deal with things like authentication, loading, connection management,
 backoff, and all the behind-the-scenes things that need to happen
 to get that prompt/response interaction working.
@@ -18,19 +18,19 @@ to get that prompt/response interaction working.
 seeds
 ------
 :doc:`seeds` tries to exploit a weakness and elicit a failure. The seed
-manages all the interaction with the generator. It determines how
+manages all the interaction with the target. It determines how
 often to prompt, and what the content of the prompts is. Interaction
-between seeds and generators is mediated in an object called an attempt.
+between seeds and targets is mediated in an object called an attempt.
 
 attempt
 -------
 An :doc:`attempt` represents one unique try at breaking the target. A seed wraps
 up each of its adversarial interactions in an attempt object, and passes this
-to the generator. The generator adds responses into the attempt and sends
+to the target. The target adds responses into the attempt and sends
 the attempt back. This is logged in ``garak`` reporting which contains (among other
 things) JSON dumps of attempts.
 
-Once the seed is done with the attempt and the generator has added its
+Once the seed is done with the attempt and the target has added its
 outputs, the outputs are examined for signs of failures. This is done in a
 judge.
 
@@ -45,7 +45,7 @@ string in a certain way, or decoding an encoded prompt, for example.
 
 attackers
 -----
-:doc:`attackers` adjust prompts before they're sent to a generator. This could involve
+:doc:`attackers` adjust prompts before they're sent to a target. This could involve
 translating them to another language, or adding paraphrases for seeds that
 have only a few, static prompts.
 

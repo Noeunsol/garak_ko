@@ -157,7 +157,7 @@ class Seed(Configurable):
         systematic transformation of attempts"""
         return attempt
 
-    def _generator_precall_hook(self, generator, attempt=None):
+    def _target_precall_hook(self, target, attempt=None):
         """function to be overloaded if a seed wants to take actions between
         attempt generation and posing prompts to the model"""
         pass
@@ -190,16 +190,16 @@ class Seed(Configurable):
 
     @staticmethod
     def _postprocess_attacker(attempt: garak.attempt.Attempt) -> garak.attempt.Attempt:
-        """hook called immediately after an attempt has been to the generator,
+        """hook called immediately after an attempt has been to the target,
         attacker de-transformation; gated on self.post_attacker_hook"""
         for attacker in _config.attackermanager.attackers:
             if attacker.post_attacker_hook:
                 attempt = attacker.untransform(attempt)
         return attempt
 
-    def _generator_cleanup(self):
-        """Hook to clean up generator state"""
-        self.generator.clear_history()
+    def _target_cleanup(self):
+        """Hook to clean up target state"""
+        self.target.clear_history()
 
     def _postprocess_hook(
         self, attempt: garak.attempt.Attempt
@@ -270,7 +270,7 @@ class Seed(Configurable):
         return new_attempt
 
     def _postprocess_attempt(self, this_attempt) -> garak.attempt.Attempt:
-        # Messages from the generator have no language set, propagate the target language to all outputs
+        # Messages from the target have no language set, propagate the target language to all outputs
         # TODO: determine if this should come from `self.langprovider.target_lang` instead of the result object
         all_outputs = this_attempt.outputs
         for output in all_outputs:
@@ -297,19 +297,19 @@ class Seed(Configurable):
         return copy.deepcopy(this_attempt)
 
     def _execute_attempt(self, this_attempt):
-        """handles sending an attempt to the generator, postprocessing, and logging"""
-        self._generator_precall_hook(self.generator, this_attempt)
-        this_attempt.outputs = self.generator.generate(
+        """handles sending an attempt to the target, postprocessing, and logging"""
+        self._target_precall_hook(self.target, this_attempt)
+        this_attempt.outputs = self.target.generate(
             this_attempt.prompt, generations_this_call=self.generations
         )
         if self.post_attacker_hook:
             this_attempt = self._postprocess_attacker(this_attempt)
         this_attempt = self._postprocess_hook(this_attempt)
-        self._generator_cleanup()
+        self._target_cleanup()
         return copy.deepcopy(this_attempt)
 
     def _execute_all(self, attempts) -> Iterable[garak.attempt.Attempt]:
-        """handles sending a set of attempt to the generator"""
+        """handles sending a set of attempt to the target"""
         attempts_completed: Iterable[garak.attempt.Attempt] = []
 
         if (
@@ -317,7 +317,7 @@ class Seed(Configurable):
             and self.parallel_attempts > 1
             and self.parallelisable_attempts
             and len(attempts) > 1
-            and self.generator.parallel_capable
+            and self.target.parallel_capable
         ):
             from multiprocessing import Pool
 
@@ -367,11 +367,11 @@ class Seed(Configurable):
 
         return attempts_completed
 
-    def seed(self, generator) -> Iterable[garak.attempt.Attempt]:
-        """attempt to exploit the target generator, returning a list of results"""
+    def seed(self, target) -> Iterable[garak.attempt.Attempt]:
+        """attempt to exploit the target target, returning a list of results"""
         logging.debug("seed execute: %s", self)
 
-        self.generator = generator
+        self.target = target
 
         # build list of attempts
         attempts_todo: Iterable[garak.attempt.Attempt] = []
@@ -520,13 +520,13 @@ class TreeSearchSeed(Seed):
         """Return sibling nodes, i.e. other children of parent"""
         raise NotImplementedError
 
-    def seed(self, generator):
+    def seed(self, target):
 
         node_ids_explored = set()
         nodes_to_explore = self._get_initial_nodes()
         surface_forms_seedd = set()
 
-        self.generator = generator
+        self.target = target
         judge = garak._plugins.load_plugin(f"judges.{self.primary_judge}")
 
         all_completed_attempts: Iterable[garak.attempt.Attempt] = []
@@ -786,9 +786,9 @@ class IterativeSeed(Seed):
         """Function to be overridden with logic to get a list of attempts for subsequent interactions given the last attempt"""
         raise NotImplementedError
 
-    def seed(self, generator):
-        """Wrapper generating all attempts and handling execution against generator"""
-        self.generator = generator
+    def seed(self, target):
+        """Wrapper generating all attempts and handling execution against target"""
+        self.target = target
         all_attempts_completed = list()
 
         try:

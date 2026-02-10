@@ -78,12 +78,12 @@ class Configurable:
         namespace_parts = self.__module__.split(".")
         # last part is the namespace, second to last is the plugin type
         # this will support something like:
-        # plugins['judges'][x]['generators']['rest']['RestGenerator']
-        # plugins['judges'][x]['generators']['rest']
-        # plugins['seeds'][y]['generators']['rest']['RestGenerator']
+        # plugins['judges'][x]['targets']['rest']['RestTarget']
+        # plugins['judges'][x]['targets']['rest']
+        # plugins['seeds'][y]['targets']['rest']['RestTarget']
         if len(namespace_parts) > 2:
-            # example class expected garak.generators.huggingface.Pipeline
-            # spec_type = generators
+            # example class expected garak.targets.huggingface.Pipeline
+            # spec_type = targets
             # namespace = huggingface
             # classname = Pipeline
             # current expected spec_type values are `_plugins.PLUGIN_TYPES`
@@ -98,7 +98,7 @@ class Configurable:
                 plugins_config = getattr(local_root, spec_type)
             if namespace in plugins_config:
                 # example values:
-                # generators: `nim`/`openai`/`huggingface`
+                # targets: `nim`/`openai`/`huggingface`
                 # seeds: `dan`/`gcg`/`xss`/`tap`/`promptinject`
                 attributes = plugins_config[namespace]
                 self._apply_config(attributes)
@@ -172,9 +172,9 @@ class Configurable:
                 self.api_key = os.getenv(self.key_env_var, default=None)
                 if self.api_key is None:
                     if hasattr(
-                        self, "generator_family_name"
+                        self, "target_family_name"
                     ):  # special case may refactor later
-                        family_name = self.generator_family_name
+                        family_name = self.target_family_name
                     else:
                         family_name = self.__module__.split(".")[-1].title()
                     raise APIKeyMissingError(

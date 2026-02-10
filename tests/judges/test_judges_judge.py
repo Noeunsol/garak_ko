@@ -5,7 +5,7 @@ import pytest
 from garak.attempt import Attempt, Message
 import garak.judges.base
 import garak.judges.judge
-from garak.exception import BadGeneratorException
+from garak.exception import BadTargetException
 
 JUDGE_CLASSES = [garak.judges.judge.ModelAsJudge, garak.judges.judge.Refusal]
 
@@ -39,7 +39,7 @@ def test_model_as_judge_type(klass):
             },
         }
     }
-    with pytest.raises(BadGeneratorException) as exc_info:
+    with pytest.raises(BadTargetException) as exc_info:
         klass(config_root=judge_config)
     assert "must be compatible with" in str(exc_info.value)
 
@@ -63,7 +63,7 @@ DETECT_TESTS = [
 def test_klass_detect(judge_config, mocker, klass, response, res_val):
     d = klass(config_root=judge_config)
     mock_generate = mocker.patch.object(
-        d.evaluation_generator, "generate", return_value=response
+        d.evaluation_target, "generate", return_value=response
     )
     a = Attempt(seed_classname="test.Test", prompt=Message(text="test prompt"))
     a.outputs = [Message("fake")]

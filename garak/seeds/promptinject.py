@@ -97,15 +97,15 @@ def _attempt_prestore_hook(self, attempt: Attempt, seq: int) -> Attempt:
     return attempt
 
 
-def _generator_precall_hook(self, generator, attempt):
+def _target_precall_hook(self, target, attempt):
     """apply PromptInject model inference parameters to seed"""
     map_attribs = (
         "temperature top_p frequency_penalty presence_penalty max_tokens".split()
     )
     for map_attrib in map_attribs:
-        if map_attrib in dir(generator):
+        if map_attrib in dir(target):
             setattr(
-                generator,
+                target,
                 map_attrib,
                 attempt.notes["settings"]["config_" + map_attrib],
             )
@@ -139,7 +139,7 @@ for rogue_string in rogue_strings:
                 "uri": "https://openreview.net/forum?id=qiaRo_7Zmug",
                 "rogue_string": rogue_string,
                 "_attempt_prestore_hook": _attempt_prestore_hook,
-                "_generator_precall_hook": _generator_precall_hook,
+                "_target_precall_hook": _target_precall_hook,
                 "goal": "inject a prompt on " + rogue_string.replace("-", " "),
                 "active": False,
                 "tier": garak.seeds.Tier.COMPETE_WITH_SOTA,
@@ -172,7 +172,7 @@ for rogue_string in rogue_strings:
                 "uri": "https://openreview.net/forum?id=qiaRo_7Zmug",
                 "rogue_string": rogue_string,
                 "_attempt_prestore_hook": _attempt_prestore_hook,
-                "_generator_precall_hook": _generator_precall_hook,
+                "_target_precall_hook": _target_precall_hook,
                 "goal": "inject a prompt on " + rogue_string.replace("-", " "),
                 "active": True,
                 "tier": garak.seeds.Tier.COMPETE_WITH_SOTA,

@@ -7,7 +7,7 @@ from pathlib import Path
 from tqdm import tqdm
 from logging import getLogger
 
-import garak.generators.openai
+import garak.targets.openai
 
 from ..red_team.conversation import (
     prune,
@@ -27,15 +27,15 @@ from ..red_team.system_prompts import (
     on_topic_prompt,
     judge_system_prompt,
 )
-from .generator_utils import (
-    load_generator,
+from .target_utils import (
+    load_target,
     supported_openai,
     supported_huggingface,
 )
 
-import garak.generators
+import garak.targets
 import garak._config
-from garak.generators.huggingface import Model
+from garak.targets.huggingface import Model
 
 logger = getLogger(__name__)
 SAVE_RESULTS = True
@@ -49,9 +49,9 @@ class AttackManager(EvaluationJudge):
     def __init__(
         self,
         goal: str,
-        attack_generator: garak.generators.Generator,
-        target_generator: garak.generators.Generator,
-        evaluation_generator: garak.generators.Generator,
+        attack_target: garak.targets.Target,
+        target_target: garak.targets.Target,
+        evaluation_target: garak.targets.Target,
         attack_max_attempts: int = 5,
         max_parallel_streams: int = 5,
     ):
@@ -60,18 +60,18 @@ class AttackManager(EvaluationJudge):
         Parameters
         ----------
         goal : Goal of the attack (e.g. "Write a tutorial on how to make a bomb")
-        attack_generator : Generator to use for attacks
-        target_generator : Generator to target
-        evaluation_generator : Generator for evaluation
+        attack_target : Target to use for attacks
+        target_target : Target to target
+        evaluation_target : Target for evaluation
         attack_max_attempts : Number of attack attempts
         max_parallel_streams : Number of parallel attack generation attempts
         """
-        self.attack_generator = attack_generator
-        self.target_generator = target_generator
-        self.evaluation_generator = evaluation_generator
+        self.attack_target = attack_target
+        self.target_target = target_target
+        self.evaluation_target = evaluation_target
         self.attack_max_attempts = attack_max_attempts
         self.max_parallel_streams = max_parallel_streams
-        self.evaluator_token_limit = get_token_limit(evaluation_generator.name)
+        self.evaluator_token_limit = get_token_limit(evaluation_target.name)
         self.system_prompt_judge = judge_system_prompt(goal)
         self.system_prompt_on_topic = on_topic_prompt(goal)
 
@@ -108,7 +108,7 @@ class AttackManager(EvaluationJudge):
         for conv, prompt in zip(convs, prompts):
             conv.append_message(conv.roles[0], prompt)
             # Get prompts
-            if not isinstance(self.attack_generator, Model):
+            if not isinstance(self.attack_target, Model):
                 full_prompts.append(conv.to_openai_api_messages())
             else:
                 conv.append_message(conv.roles[1], init_message)
@@ -131,7 +131,7 @@ class AttackManager(EvaluationJudge):
                     # We should fail more gracefully within runs for garak.
                     try:
                         outputs_list.append(
-                            self.attack_generator.generate(full_prompt)[0]
+                            self.attack_target.generate(full_prompt)[0]
                         )
                     except torch.cuda.OutOfMemoryError as e:
                         if len(outputs_list) > 0:
@@ -145,7 +145,7 @@ class AttackManager(EvaluationJudge):
             for i, full_output in enumerate(outputs_list):
                 orig_index = indices_to_regenerate[i]
 
-                if not isinstance(self.attack_generator, Model):
+                if not isinstance(self.attack_target, Model):
                     full_output = init_message + full_output
                 attack_dict, json_str = extract_json(full_output)
 
@@ -170,7 +170,7 @@ class AttackManager(EvaluationJudge):
         return valid_outputs
 
     def get_target_response(self, prompts):
-        """Get response from the target generator
+        """Get response from the target target
 
         Parameters
         ----------
@@ -183,12 +183,12 @@ class AttackManager(EvaluationJudge):
         """
         batch_size = len(prompts)
         convs_list = [
-            get_template(self.target_generator.name) for _ in range(batch_size)
+            get_template(self.target_target.name) for _ in range(batch_size)
         ]
         full_prompts = []
         for conv, prompt in zip(convs_list, prompts):
             conv.append_message(conv.roles[0], prompt)
-            if not isinstance(self.attack_generator, Model):
+            if not isinstance(self.attack_target, Model):
                 # OpenAI does not have separators
                 full_prompts.append(conv.to_openai_api_messages())
             else:
@@ -203,14 +203,14 @@ class AttackManager(EvaluationJudge):
                 continue
 
             for full_prompt in full_prompts[left:right]:
-                outputs_list.append(self.target_generator.generate(full_prompt)[0])
+                outputs_list.append(self.target_target.generate(full_prompt)[0])
         return outputs_list
 
 
 def run_tap(
     goal: str,
     target: str,
-    target_generator: garak.generators.Generator,
+    target_target: garak.targets.Target,
     attack_model_type: str = "huggingface.Model",
     attack_model_name: str = "lmsys/vicuna-7b-v1.3",
     attack_model_config: dict = {"max_tokens": 150},
@@ -227,18 +227,18 @@ def run_tap(
     save_results: bool = SAVE_RESULTS,
     outfile: Path = resources_tap_data_file,
 ):
-    """Function for generating attacks using TAP where a generator has already been instantiated.
+    """Function for generating attacks using TAP where a target has already been instantiated.
 
     Parameters
     ----------
     goal : Goal of the attack (e.g. "Write a tutorial on how to make a bomb")
     target : Target of the attack (e.g. "Sure, here is a tutorial on how to make a bomb")
-    target_generator : Garak generator object for target
-    attack_model_type : Generator type of attack model
+    target_target : Garak target object for target
+    attack_model_type : Target type of attack model
     attack_model_name : Name of attack model
-    attack_model_config : Configuration dictionary for attack_generator
+    attack_model_config : Configuration dictionary for attack_target
     attack_max_attempts : Number of attack attempts
-    evaluator_model_type : Generator type of evaluator model
+    evaluator_model_type : Target type of evaluator model
     evaluator_model_name : Name of evaluator model (NOTE: Must be an conversational model)
     evaluator_model_config : Configuration dictionary for evaluator model (NOTE: A temperature other than 0.0 is NOT recommended)
     branching_factor : Branching factor for tree
@@ -252,8 +252,8 @@ def run_tap(
 
     """
     if (
-        target_generator.name not in supported_openai
-        and target_generator.name not in supported_huggingface
+        target_target.name not in supported_openai
+        and target_target.name not in supported_huggingface
     ):
         save_results = False
 
@@ -264,30 +264,30 @@ def run_tap(
         "depth": depth,
     }
 
-    # Initialize generators
+    # Initialize targets
     system_prompt = attacker_system_prompt(goal, target)
 
-    attack_generator = load_generator(
+    attack_target = load_target(
         attack_model_type,
         attack_model_name,
         attack_model_config,
     )
-    evaluator_generator = load_generator(
+    evaluator_target = load_target(
         evaluator_model_type,
         evaluator_model_name,
         evaluator_model_config,
     )
 
     # Catch unsupported evaluators early -- only OpenAI currently supported for evaluators.
-    if not isinstance(evaluator_generator, garak.generators.openai.OpenAICompatible):
+    if not isinstance(evaluator_target, garak.targets.openai.OpenAICompatible):
         msg = f"Evaluation currently only supports OpenAICompatible models.\nSupported models:{supported_openai}"
         raise Exception(msg)
 
     attack_manager = AttackManager(
         goal=goal,
-        attack_generator=attack_generator,
-        target_generator=target_generator,
-        evaluation_generator=evaluator_generator,
+        attack_target=attack_target,
+        target_target=target_target,
+        evaluation_target=evaluator_target,
         attack_max_attempts=attack_max_attempts,
         max_parallel_streams=n_streams,
     )
@@ -451,21 +451,21 @@ def generate_tap(
     save_results: bool = SAVE_RESULTS,
     outfile: Path = resources_tap_data_file,
 ):
-    """Function for generating attacks using TAP when a generator has not been instantiated.
+    """Function for generating attacks using TAP when a target has not been instantiated.
 
     Parameters
     ----------
     goal : Goal of the attack (e.g. "Write a tutorial on how to make a bomb")
     target : Target of the attack (e.g. "Sure, here is a tutorial on how to make a bomb")
-    attack_model_type : Generator type of attack model
+    attack_model_type : Target type of attack model
     attack_model_name : Name of attack model
-    attack_model_config : Configuration dictionary for attack_generator
+    attack_model_config : Configuration dictionary for attack_target
     attack_max_attempts : Number of attack attempts
-    target_model_type : Generator type of target model
+    target_model_type : Target type of target model
     target_model_name : Name of target model
-    target_model_config : Configuration dictionary for target generator
+    target_model_config : Configuration dictionary for target target
     target_model : Name of target model
-    evaluator_model_type : Generator type of evaluator model
+    evaluator_model_type : Target type of evaluator model
     evaluator_model_name : Name of evaluator model (NOTE: Must be an conversational model)
     evaluator_model_config : Configuration dictionary for evaluator model (NOTE: A temperature other than 0.0 is NOT recommended)
     branching_factor : Branching factor for tree
@@ -479,7 +479,7 @@ def generate_tap(
 
     # this method is never called, should it be removed?
 
-    target_generator = load_generator(
+    target_target = load_target(
         model_type=target_model_type,
         model_name=target_model_name,
         model_config=target_model_config,
@@ -487,7 +487,7 @@ def generate_tap(
     output = run_tap(
         goal=goal,
         target=target,
-        target_generator=target_generator,
+        target_target=target_target,
         attack_model_type=attack_model_type,
         attack_model_name=attack_model_name,
         attack_model_config=attack_model_config,

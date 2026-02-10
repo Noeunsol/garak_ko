@@ -28,7 +28,7 @@ The description of this technique is:
     This significantly improves upon the previous state-of-the-art black-box method for
     generating jailbreaks.
 
-This requires three LLMs: (1) the target model / generator; (2) a model to generate
+This requires three LLMs: (1) the target model / target; (2) a model to generate
 jailbreak attacks; (3) a model to evaluate and rank how well the jailbreaks are
 doing. Thus, the hardware requirements can be quite high if one is running
 everything on a local machine. The evaluator model (3) needs to be particularly
@@ -168,8 +168,8 @@ class TAP(garak.seeds.Seed):
             if self.target == TARGET:
                 self.target = TARGET_KO
 
-    def seed(self, generator) -> List[garak.attempt.Attempt]:
-        self.generator = generator
+    def seed(self, target) -> List[garak.attempt.Attempt]:
+        self.target = target
 
         if self.run_tap is None:
             from garak.resources.tap import run_tap
@@ -180,7 +180,7 @@ class TAP(garak.seeds.Seed):
             tap_outputs = self.run_tap(
                 goal=self.goal_str,
                 target=self.target,
-                target_generator=self.generator,
+                target_target=self.target,
                 attack_model_type=self.attack_model_type,
                 attack_model_name=self.attack_model_name,
                 attack_model_config=self.attack_model_config,
@@ -306,8 +306,8 @@ class PAIR(garak.seeds.Seed):
             if self.target == TARGET:
                 self.target = TARGET_KO
 
-    def seed(self, generator) -> List[garak.attempt.Attempt]:
-        self.generator = generator
+    def seed(self, target) -> List[garak.attempt.Attempt]:
+        self.target = target
 
         if self.run_tap is None:
             from garak.resources.tap import run_tap
@@ -318,7 +318,7 @@ class PAIR(garak.seeds.Seed):
             pair_outputs = self.run_tap(
                 goal=self.goal_str,
                 target=self.target,
-                target_generator=self.generator,
+                target_target=self.target,
                 attack_model_type=self.attack_model_type,
                 attack_model_name=self.attack_model_name,
                 attack_model_config=self.attack_model_config,

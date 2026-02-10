@@ -26,7 +26,7 @@ from garak import _config
 from garak.attempt import Message, Conversation
 import garak.seeds
 from garak.data import path as data_path
-from garak.generators.base import Generator
+from garak.targets.base import Target
 
 
 class FigStepFull(garak.seeds.Seed):
@@ -128,11 +128,11 @@ class FigStepFull(garak.seeds.Seed):
                 f"Incorrect number ({len(self.prompts)}) of image prompts in dataset, expect {len(self.safebench_image_filenames)}."
             )
 
-    def seed(self, generator):
-        if not isinstance(generator, Generator):
-            raise ValueError("Incorrect class type of incoming argument `generator`.")
+    def seed(self, target):
+        if not isinstance(target, Target):
+            raise ValueError("Incorrect class type of incoming argument `target`.")
 
-        return super().seed(generator)
+        return super().seed(target)
 
 
 class FigStep(FigStepFull, garak.seeds.Seed):
@@ -146,5 +146,5 @@ class FigStep(FigStepFull, garak.seeds.Seed):
 
     safebench_image_catalog = data_path / "safebenchtiny_filenames.txt"
 
-    def seed(self, generator):
-        return super().seed(generator)
+    def seed(self, target):
+        return super().seed(target)

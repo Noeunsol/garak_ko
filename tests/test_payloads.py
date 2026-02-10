@@ -173,4 +173,6 @@ def test_module_load():
 
 
 def test_module_search():
-    assert isinstance(garak.payloads.search(""), types.GeneratorType)
+    from collections.abc import Iterator
+
+    assert isinstance(garak.payloads.search(""), Iterator)

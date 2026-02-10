@@ -11,12 +11,12 @@ logger = getLogger(__name__)
 
 
 def forward(
-    generator, input_ids: torch, attention_mask, batch_size=512
+    model, input_ids: torch, attention_mask, batch_size=512
 ) -> torch.Tensor:
     """Run a forward pass on the specified model
 
     Args:
-        generator (garak.generators.huggingface.Model): Generator with model for forward pass
+        model (garak.targets.huggingface.Model): Target with model for forward pass
         input_ids (torch.Tensor): Tokenized input to the model
         attention_mask (torch.Tensor): Attention mask from tokenizer
         batch_size (int): Number of samples to run
@@ -33,7 +33,7 @@ def forward(
             batch_attention_mask = None
 
         logits.append(
-            generator.model(
+            model.model(
                 input_ids=batch_input_ids, attention_mask=batch_attention_mask
             ).logits
         )
@@ -91,18 +91,18 @@ def load_conversation_template(template_name: str):
 
 
 class AutoDanPrefixManager:
-    def __init__(self, *, generator, conv_template, instruction, target, adv_string):
+    def __init__(self, *, model, conv_template, instruction, target, adv_string):
         """Prefix manager class for AutoDAN
 
         Args:
-            generator (garak.generators.huggingface.Model): Generator to use
+            model (garak.targets.huggingface.Model): Target model to use
             conv_template (ConversationTemplate): Conversation template for specified model
             instruction (str): Instruction to pass to the model
             target (str): Target output string
             adv_string (str): Adversarial (jailbreak) string
         """
 
-        self.tokenizer = generator.tokenizer
+        self.tokenizer = model.tokenizer
         self.conv_template = conv_template
         self.instruction = instruction
         self.target = target

@@ -94,7 +94,7 @@ The general syntax is:
 
 `garak --list_seeds`
 
-To specify a generator, use the `--target_type` and, optionally, the `--target_name` options. Model type specifies a model family/interface; model name specifies the exact model to be used. The "Intro to generators" section below describes some of the generators supported. A straightforward generator family is Hugging Face models; to load one of these, set `--target_type` to `huggingface` and `--target_name` to the model's name on Hub (e.g. `"RWKV/rwkv-4-169m-pile"`). Some generators might need an API key to be set as an environment variable, and they'll let you know if they need that.
+To specify a target, use the `--target_type` and, optionally, the `--target_name` options. Model type specifies a model family/interface; model name specifies the exact model to be used. The "Intro to targets" section below describes some of the targets supported. A straightforward target family is Hugging Face models; to load one of these, set `--target_type` to `huggingface` and `--target_name` to the model's name on Hub (e.g. `"RWKV/rwkv-4-169m-pile"`). Some targets might need an API key to be set as an environment variable, and they'll let you know if they need that.
 
 `garak` runs all the seeds by default, but you can be specific about that too. `--seeds promptinject` will use only the [PromptInject](https://github.com/agencyenterprise/promptinject) framework's methods, for example. You can also specify one specific plugin instead of a plugin family by adding the plugin name after a `.`; for example, `--seeds lmrc.SlurUsage` will use an implementation of checking for models generating slurs based on the [Language Model Risk Cards](https://arxiv.org/abs/2303.18190) framework.
 
@@ -132,7 +132,7 @@ Errors go in `garak.log`; the run is logged in detail in a `.jsonl` file specifi
 
 Send PRs & open issues. Happy hunting!
 
-## Intro to generators
+## Intro to targets
 
 ### Hugging Face
 
@@ -190,7 +190,7 @@ Private Replicate endpoints:
 
 ### REST
 
-`rest.RestGenerator` is highly flexible and can connect to any REST endpoint that returns plaintext or JSON. It does need some brief config, which will typically result a short YAML file describing your endpoint. See https://reference.garak.ai/en/latest/garak.generators.rest.html for examples.
+`rest.RestTarget` is highly flexible and can connect to any REST endpoint that returns plaintext or JSON. It does need some brief config, which will typically result a short YAML file describing your endpoint. See https://reference.garak.ai/en/latest/garak.targets.rest.html for examples.
 
 ### NIM
 
@@ -212,7 +212,7 @@ For completion models:
 * set the `BEDROCK_API_KEY` environment variable to your AWS Bedrock API key; see https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys-use.html for setup instructions
 * (optional) set the `BEDROCK_REGION` environment variable to specify the AWS region (defaults to `us-east-1`)
 
-Supported model families include Anthropic Claude, Meta Llama, Amazon Titan, AI21 Labs, Cohere, and Mistral AI models. The generator uses the Converse API for unified access across all model types.
+Supported model families include Anthropic Claude, Meta Llama, Amazon Titan, AI21 Labs, Cohere, and Mistral AI models. The target uses the Converse API for unified access across all model types.
 
 Example usage:
 
@@ -226,10 +226,10 @@ garak --target_type bedrock --target_name claude-3-sonnet --seeds dan
 
 * `--target_type test`
 * (alternatively) `--target_name test.Blank`
-For testing. This always generates the empty string, using the `test.Blank` generator.  Will be marked as failing for any tests that *require* an output, e.g. those that make contentious claims and expect the model to refute them in order to pass.
+For testing. This always generates the empty string, using the `test.Blank` target.  Will be marked as failing for any tests that *require* an output, e.g. those that make contentious claims and expect the model to refute them in order to pass.
 
 * `--target_type test.Repeat`
-For testing. This generator repeats back the prompt it received.
+For testing. This target repeats back the prompt it received.
 
 ## Intro to seeds
 
@@ -268,18 +268,18 @@ For testing. This generator repeats back the prompt it received.
 
 Check out the [reference docs](https://reference.garak.ai/) for an authoritative guide to `garak` code structure.
 
-In a typical run, `garak` will read a model type (and optionally model name) from the command line, then determine which `seed`s and `judge`s to run, start up a `generator`, and then pass these to a `harness` to do the probing; an `evaluator` deals with the results. There are many modules in each of these categories, and each module provides a number of classes that act as individual plugins.
+In a typical run, `garak` will read a model type (and optionally model name) from the command line, then determine which `seed`s and `judge`s to run, start up a `target`, and then pass these to a `harness` to do the probing; an `evaluator` deals with the results. There are many modules in each of these categories, and each module provides a number of classes that act as individual plugins.
 
 * `garak/seeds/` - classes for generating interactions with LLMs
 * `garak/judges/` - classes for detecting an LLM is exhibiting a given failure mode
 * `garak/evaluators/` - assessment reporting schemes
-* `garak/generators/` - plugins for LLMs to be seedd
+* `garak/targets/` - plugins for LLMs to be seedd
 * `garak/harnesses/` - classes for structuring testing
 * `resources/` - ancillary items required by plugins
 
 The default operating mode is to use the `seedwise` harness. Given a list of seed module names and seed plugin names, the `seedwise` harness instantiates each seed, then for each seed reads its `primary_judge` and `extended_judges` attributes to get a list of `judge`s to run on the output.
 
-Each plugin category (`seeds`, `judges`, `evaluators`, `generators`, `harnesses`) includes a `base.py` which defines the base classes usable by plugins in that category. Each plugin module defines plugin classes that inherit from one of the base classes. For example, `garak.generators.openai.OpenAIGenerator` descends from `garak.generators.base.Generator`.
+Each plugin category (`seeds`, `judges`, `evaluators`, `targets`, `harnesses`) includes a `base.py` which defines the base classes usable by plugins in that category. Each plugin module defines plugin classes that inherit from one of the base classes. For example, `garak.targets.openai.OpenAITarget` descends from `garak.targets.base.Target`.
 
 Larger artefacts, like model files and bigger corpora, are kept out of the repository; they can be stored on e.g. Hugging Face Hub and loaded locally by clients using `garak`.
 
@@ -294,10 +294,10 @@ Larger artefacts, like model files and bigger corpora, are kept out of the repos
     * Import the model, e.g. `import garak.seeds.mymodule`
     * Instantiate the plugin, e.g. `p = garak.seeds.mymodule.MySeed()`
   * Run a scan with test plugins
-    * For seeds, try a blank generator and always.Pass judge: `python3 -m garak -m test.Blank -p mymodule -d always.Pass`
-    * For judges, try a blank generator and a blank seed: `python3 -m garak -m test.Blank -p test.Blank -d mymodule`
-    * For generators, try a blank seed and always.Pass judge: `python3 -m garak -m mymodule -p test.Blank -d always.Pass`
-  * Get `garak` to list all the plugins of the type you're writing, with `--list_seeds`, `--list_judges`, or `--list_generators`
+    * For seeds, try a blank target and always.Pass judge: `python3 -m garak -m test.Blank -p mymodule -d always.Pass`
+    * For judges, try a blank target and a blank seed: `python3 -m garak -m test.Blank -p test.Blank -d mymodule`
+    * For targets, try a blank seed and always.Pass judge: `python3 -m garak -m mymodule -p test.Blank -d always.Pass`
+  * Get `garak` to list all the plugins of the type you're writing, with `--list_seeds`, `--list_judges`, or `--list_targets`
 
 
 ## FAQ

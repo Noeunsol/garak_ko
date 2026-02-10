@@ -11,7 +11,8 @@ import json
 import jsonschema
 import logging
 import pathlib
-from typing import Generator, List, Union
+from collections.abc import Iterator
+from typing import List, Union
 
 
 import garak._config
@@ -173,7 +174,7 @@ class Director:
 
     def search(
         self, types: Union[List[str], None] = None, include_children=True
-    ) -> Generator[str, None, None]:
+    ) -> Iterator[str]:
         """Return list of payload names, optionally filtered by types"""
         for payload in self.__class__.payload_list:
             if types is None:
@@ -234,7 +235,7 @@ class Director:
 @staticmethod
 def search(
     types: Union[List[str], None] = None, include_children=True
-) -> Generator[str, None, None]:
+) -> Iterator[str]:
     return Director().search(types, include_children)
 
 

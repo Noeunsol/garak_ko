@@ -9,7 +9,7 @@ import torch
 import numpy as np
 
 import garak._config
-from garak.generators import Generator
+from garak.targets import Target
 from garak.resources.common import REJECTION_STRINGS, load_advbench
 from tqdm import tqdm
 
@@ -21,30 +21,30 @@ SYSTEM_PROMPT = (
 beast_resource_data = garak._config.transient.cache_dir / "data" / "beast"
 
 
-def _format_chat(generator: Generator, prompt: str):
+def _format_chat(target: Target, prompt: str):
     chat = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": prompt},
     ]
-    formatted_prompt = generator.tokenizer.apply_chat_template(chat, tokenize=False)
+    formatted_prompt = target.tokenizer.apply_chat_template(chat, tokenize=False)
     return formatted_prompt
 
 
 @torch.no_grad()
-def _evaluate(generator, prompt, candidate):
-    candidate_str = generator.tokenizer.decode(candidate)
+def _evaluate(target, prompt, candidate):
+    candidate_str = target.tokenizer.decode(candidate)
     input_str = prompt + candidate_str
-    outputs = generator.generate(input_str)
+    outputs = target.generate(input_str)
     result = _check_jailbreak(outputs)
     return result, outputs[0]
 
 
 @torch.no_grad()
-def _evaluate_target(generator, prompt, candidate, target):
+def _evaluate_target(model, prompt, candidate, target):
     result = False
-    candidate_str = generator.tokenizer.decode(candidate)
+    candidate_str = model.tokenizer.decode(candidate)
     input_str = prompt + candidate_str
-    outputs = generator.generate(input_str)
+    outputs = model.generate(input_str)
     for output in outputs:
         if target in output:
             result = True
@@ -54,7 +54,7 @@ def _evaluate_target(generator, prompt, candidate, target):
 
 @torch.no_grad()
 def _get_perplexity(
-    generator: Generator,
+    target: Target,
     target_tokens: torch.Tensor,
     input_tokens: torch.Tensor,
     return_logits: bool = False,
@@ -68,7 +68,7 @@ def _get_perplexity(
         "output_hidden_states": True,
         "return_dict": True,
     }
-    output = generator.model(**kwargs)
+    output = target.model(**kwargs)
     softmax = torch.nn.Softmax(dim=-1)
     logs = None
 
@@ -105,32 +105,32 @@ def _get_perplexity(
 
 @torch.no_grad()
 def _score_candidates(
-    generator: Generator, input_str: str, response_str: str, candidate: list[int]
+    target: Target, input_str: str, response_str: str, candidate: list[int]
 ) -> float:
     """Function to score the value of jailbreak candidates
 
     Args:
-        generator: Target generator
-        input_str: Prompt input to generator
-        response_str: Desired response from generator
+        target: Target target
+        input_str: Prompt input to target
+        response_str: Desired response from target
         candidate: Candidate adversarial suffix
 
     Returns:
         score: Float score value of adversarial suffix
     """
     if candidate:
-        candidate_str = generator.tokenizer.decode(candidate)
+        candidate_str = target.tokenizer.decode(candidate)
     else:
         candidate_str = ""
 
-    formatted_prompt = _format_chat(generator, input_str + candidate_str)
-    tokens = generator.tokenizer.encode(
+    formatted_prompt = _format_chat(target, input_str + candidate_str)
+    tokens = target.tokenizer.encode(
         formatted_prompt, return_tensors="pt", add_special_tokens=False
-    ).to(generator.model.device)
+    ).to(target.model.device)
     target = [
-        generator.tokenizer.encode(
+        target.tokenizer.encode(
             response_str, return_tensors="pt", add_special_tokens=False
-        ).to(generator.model.device)
+        ).to(target.model.device)
     ]
     scores = np.zeros(len(tokens))
 
@@ -140,16 +140,16 @@ def _score_candidates(
             tokens_.append(torch.cat([tokens[j : j + 1], t], dim=1))
         tokens_ = torch.cat(tokens_, dim=0).type(tokens.dtype)
         if tokens.shape == tokens_.shape:
-            bos = generator.tokenizer.encode(
-                generator.tokenizer.bos_token,
+            bos = target.tokenizer.encode(
+                target.tokenizer.bos_token,
                 return_tensors="pt",
                 add_special_tokens=False,
-            ).to(generator.model.device)
+            ).to(target.model.device)
             bos = torch.cat([bos] * len(tokens_), dim=0)
             tokens_ = torch.cat([bos, tokens_], dim=1).type(tokens_.dtype)
-            scores += -np.stack(_get_perplexity(generator, tokens_[:, :1], tokens_))
+            scores += -np.stack(_get_perplexity(target, tokens_[:, :1], tokens_))
         else:
-            scores += -np.stack(_get_perplexity(generator, tokens, tokens_))
+            scores += -np.stack(_get_perplexity(target, tokens, tokens_))
 
     scores = scores / len(target)
     return scores
@@ -173,15 +173,15 @@ def _check_jailbreak(outputs: list[str]) -> bool:
 
 @torch.no_grad()
 def _sample_tokens(
-    generator: Generator,
+    target: Target,
     prompt: str,
     k: int,
     suffix_ids: Union[list[int], torch.Tensor, None] = None,
 ) -> list[int]:
-    """Sample the generator for a new response
+    """Sample the target for a new response
 
     Args:
-        generator: targeted generator
+        target: targeted target
         prompt: prompt to the model
         response: response from the model
         k: number of samples
@@ -190,16 +190,16 @@ def _sample_tokens(
         tokens: List of tokens
     """
     if suffix_ids is not None:
-        suffix_str = generator.tokenizer.decode(suffix_ids)
+        suffix_str = target.tokenizer.decode(suffix_ids)
     else:
         suffix_str = ""
-    formatted_input = _format_chat(generator, prompt + suffix_str)
-    input_ids = generator.tokenizer(
+    formatted_input = _format_chat(target, prompt + suffix_str)
+    input_ids = target.tokenizer(
         formatted_input, return_tensors="pt", add_special_tokens=False
-    ).input_ids.to(generator.model.device)
-    output = generator.model(input_ids)
+    ).input_ids.to(target.model.device)
+    output = target.model(input_ids)
     logits = output.logits[:, -1, :]
-    temp = generator.generation_config.temperature
+    temp = target.generation_config.temperature
     probs = torch.softmax(logits / temp, dim=-1)
     tokens = torch.multinomial(probs, k, replacement=False)
     return tokens[0].tolist()
@@ -207,7 +207,7 @@ def _sample_tokens(
 
 @torch.no_grad()
 def _get_best_candidate(
-    generator: Generator,
+    target: Target,
     prompt: str,
     response: str,
     k1: int,
@@ -219,7 +219,7 @@ def _get_best_candidate(
     """Return the best candidate suffix and its associated score.
 
     Args:
-        generator: Target generator
+        target: Target target
         prompt: Prompt to target model
         response: Desired response from model
         k1: Number of beams
@@ -235,14 +235,14 @@ def _get_best_candidate(
     best_suffix = ""
     best_score = np.Inf
 
-    beams = [[sample] for sample in _sample_tokens(generator, prompt, k1, suffix_ids)]
+    beams = [[sample] for sample in _sample_tokens(target, prompt, k1, suffix_ids)]
     for i in tqdm(range(suffix_len), leave=False):
         candidates = list()
         for beam in beams:
-            for next_token in _sample_tokens(generator, prompt, k2, beam):
+            for next_token in _sample_tokens(target, prompt, k2, beam):
                 candidates.append(beam + [next_token])
         scores = [
-            _score_candidates(generator, prompt, response, candidate)
+            _score_candidates(target, prompt, response, candidate)
             for candidate in candidates
         ]
         sorted_scores = sorted(range(len(scores)), key=lambda j: scores[j])
@@ -256,7 +256,7 @@ def _get_best_candidate(
             best_suffix = best_candidate
 
         if stop_early:
-            success = _evaluate(generator, prompt, best_candidate)
+            success = _evaluate(target, prompt, best_candidate)
             if success:
                 break
 
@@ -264,27 +264,27 @@ def _get_best_candidate(
 
 
 def _attack(
-    generator: Generator,
+    model: Target,
     prompts: list[str],
     responses: Optional[list[str]] = None,
     k1: int = 15,
     k2: int = 15,
     trials: int = 1,
     suffix_len: int = 40,
-    target: Optional[str] = "",
+    target_phrase: Optional[str] = "",
     stop_early: bool = False,
 ) -> list[str]:
     """
 
     Args:
-        generator: target generator to attack
+        model: target model to attack
         prompts: Input prompt
         responses: Responses for input prompts
         k1: Number of candidates in beam
         k2: Number of candidates to evaluate
         trials: Number of generations to run for the attack
         suffix_len: Number of adversarial tokens to generate
-        target: Target output string
+        target_phrase: Target output string
         stop_early: Whether to stop if a successful jailbreak is found
 
     Returns:
@@ -307,7 +307,7 @@ def _attack(
 
         for _ in range(trials):
             best_candidate, score = _get_best_candidate(
-                generator,
+                model,
                 prompt,
                 response,
                 k1,
@@ -317,15 +317,15 @@ def _attack(
                 stop_early,
             )
 
-            if target:
+            if target_phrase:
                 result, response = _evaluate_target(
-                    generator, prompt, best_candidate, target
+                    model, prompt, best_candidate, target_phrase
                 )
             else:
-                result, response = _evaluate(generator, prompt, best_candidate)
+                result, response = _evaluate(model, prompt, best_candidate)
 
             if result:
-                jailbreak_str = generator.tokenizer.decode(best_candidate)
+                jailbreak_str = model.tokenizer.decode(best_candidate)
                 logging.info("BEAST found a likely successful jailbreak")
                 suffixes.append(jailbreak_str)
 
@@ -336,7 +336,7 @@ def _attack(
 
 
 def run_beast(
-    target_generator: garak.generators.Generator = None,
+    target_target: garak.targets.Target = None,
     prompts: Optional[list[str]] = None,
     responses: Optional[list[str]] = None,
     k1: int = 15,
@@ -351,7 +351,7 @@ def run_beast(
     """Function to run BEAST attack
 
     Args:
-        target_generator (Generator): Generator to target with attack
+        target_target (Target): Target to target with attack
         prompts (list[str]): List of prompts (optional)
         responses (list[str]): Corresponding list of responses (optional)
         k1 (int): Number of candidates in beam
@@ -367,17 +367,17 @@ def run_beast(
         suffixes (list[str]): List of adversarial suffixes as strings
 
     """
-    if not hasattr(target_generator, "model") or not hasattr(
-        target_generator, "tokenizer"
+    if not hasattr(target_target, "model") or not hasattr(
+        target_target, "tokenizer"
     ):
         raise ValueError(
-            f"{target_generator.name} does not have both a `model` and `tokenizer` attribute. "
+            f"{target_target.name} does not have both a `model` and `tokenizer` attribute. "
             f"Cannot run BEAST."
         )
 
-    if not hasattr(target_generator.tokenizer, "apply_chat_template"):
+    if not hasattr(target_target.tokenizer, "apply_chat_template"):
         raise ValueError(
-            f"{target_generator.name} tokenizer does not have a chat template to apply."
+            f"{target_target.name} tokenizer does not have a chat template to apply."
         )
 
     if not prompts:
@@ -386,14 +386,14 @@ def run_beast(
         responses = data["target"].tolist()
 
     suffixes = _attack(
-        generator=target_generator,
+        model=target_target,
         prompts=prompts,
         responses=responses,
         k1=k1,
         k2=k2,
         trials=trials,
         suffix_len=suffix_len,
-        target=target,
+        target_phrase=target,
         stop_early=stop_early,
     )
 

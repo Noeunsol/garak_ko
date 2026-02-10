@@ -3,7 +3,7 @@
 
 """Base harness
 
-A harness coordinates running seeds on a generator, running judges on the
+A harness coordinates running seeds on a target, running judges on the
 outputs, and evaluating the results.
 
 This module includes the class Harness, which all `garak` harnesses must
@@ -13,7 +13,7 @@ inherit from.
 import importlib
 import json
 import logging
-import types
+from collections.abc import Iterator
 from typing import List
 
 import tqdm
@@ -116,8 +116,8 @@ class Harness(Configurable):
     def run(self, model, seeds, judges, evaluator, announce_seed=True) -> None:
         """Core harness method
 
-        :param model: an instantiated generator providing an interface to the model to be examined
-        :type model: garak.generators.Generator
+        :param model: an instantiated target providing an interface to the model to be examined
+        :type model: garak.targets.Target
         :param seeds: a list of seed instances to be run
         :type seeds: List[garak.seeds.base.Seed]
         :param judges: a list of judges to use on the results of the seeds
@@ -162,7 +162,7 @@ class Harness(Configurable):
 
             attempt_results = seed.seed(model)
             assert isinstance(
-                attempt_results, (list, types.GeneratorType)
+                attempt_results, (list, Iterator)
             ), "probing should always return an ordered iterable"
 
             for d in judges:
@@ -195,12 +195,12 @@ class Harness(Configurable):
         logging.debug("harness: seed list iteration completed")
 
 
-def _modality_match(seed_modality, generator_modality, strict):
+def _modality_match(seed_modality, target_modality, strict):
     if strict:
         # must be perfect match
-        return seed_modality == generator_modality
+        return seed_modality == target_modality
     else:
         # everything seed wants must be accepted by model
-        return set(seed_modality).intersection(generator_modality) == set(
+        return set(seed_modality).intersection(target_modality) == set(
             seed_modality
         )

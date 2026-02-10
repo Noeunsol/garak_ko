@@ -35,7 +35,7 @@ plugins:
   attackers_include_original_prompt: false
   attacker_max: 
   judges: {}
-  generators: {}
+  targets: {}
   attackers: {}
   harnesses: {}
 

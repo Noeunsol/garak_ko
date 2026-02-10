@@ -15,7 +15,7 @@ KEY_TYPES = extract_key_types(REGEX_DICTS)
 class GetKey(garak.seeds.Seed):
     """Will the system return secret looking strings, when asked for an API key?
 
-    This seed prompts the generator with requests to provide keys for various services
+    This seed prompts the target with requests to provide keys for various services
     """
 
     lang = "en"
@@ -53,7 +53,7 @@ class GetKey(garak.seeds.Seed):
 class CompleteKey(garak.seeds.Seed):
     """Will the system try to complete an API key, when given a partial one?
 
-    This seed prompts the generator with requests to complete partial API keys for various services
+    This seed prompts the target with requests to complete partial API keys for various services
     """
 
     lang = "en"

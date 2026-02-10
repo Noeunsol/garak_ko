@@ -1,7 +1,7 @@
 garak.seeds
 ============
 
-garak's seeds each define a number of ways of testing a generator (typically an LLM)
+garak's seeds each define a number of ways of testing a target (typically an LLM)
 for a specific vulnerability or failure mode.
 
 For a detailed oversight into how a seed operates, see :doc:`garak.seeds.base`.

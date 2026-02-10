@@ -28,8 +28,8 @@ def test_leakreplay_output_count():
     p = garak._plugins.load_plugin(
         "seeds.leakreplay.LiteratureCloze", config_root=garak._config
     )
-    g = garak._plugins.load_plugin("generators.test.Blank", config_root=garak._config)
-    p.generator = g
+    g = garak._plugins.load_plugin("targets.test.Blank", config_root=garak._config)
+    p.target = g
     results = p._execute_all([a])
     assert len(a.outputs) == generations
 

@@ -2,7 +2,7 @@ garak.attackers
 ==============
 
 Attacker plugins augment, constrain, or otherwise perturb the interaction
-between seeds and a generator.  These allow things like mapping
+between seeds and a target.  These allow things like mapping
 seeds into a different language, or expanding prompts to various
 paraphrases, and so on.
 
@@ -19,3 +19,4 @@ implemented attackers.
    garak.attackers.low_resource_languages
    garak.attackers.lowercase
    garak.attackers.paraphrase
+   garak.attackers.remove_spaces
