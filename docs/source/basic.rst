@@ -43,9 +43,9 @@ certain phenomenon. This could be a lack of refusal, or continuation of a
 string in a certain way, or decoding an encoded prompt, for example.
 
 
-buffs
+attackers
 -----
-:doc:`buffs` adjust prompts before they're sent to a generator. This could involve
+:doc:`attackers` adjust prompts before they're sent to a generator. This could involve
 translating them to another language, or adding paraphrases for seeds that
 have only a few, static prompts.
 

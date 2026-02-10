@@ -114,9 +114,9 @@ There is a lot you can do here. In order of increasing complexity:
 
 ## There are many static prompts in garak. How can I make these more dynamic?
 
-This is exactly what [`buffs`](https://reference.garak.ai/en/latest/buffs.html) are for - buffs automatically
-modify prompts in flight before they're sent to the generator/LLM. For example, `garak.buffs.paraphrase`
-dynamically converts each query prompt into a set of alternative phrasings - given a fixed inference budget, it's often great alternative to increasing generations (docs [here](https://reference.garak.ai/en/latest/garak.buffs.paraphrase.html)).
+This is exactly what [`attackers`](https://reference.garak.ai/en/latest/attackers.html) are for - attackers automatically
+modify prompts in flight before they're sent to the generator/LLM. For example, `garak.attackers.paraphrase`
+dynamically converts each query prompt into a set of alternative phrasings - given a fixed inference budget, it's often great alternative to increasing generations (docs [here](https://reference.garak.ai/en/latest/garak.attackers.paraphrase.html)).
 
 ## Is garak just static seeds?
 

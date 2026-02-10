@@ -17,7 +17,7 @@ All seeds inherit from ``garak.seeds.base.Probe``, exposed at package level via 
         """Probe to do something naughty to a language model"""
         ...
 
-By inheriting from ``garak.seeds.base.Probe``, seeds can work nicely with ``Generator`` and ``Attempt`` objects in addition to ensuring that any ``Buff`` objects that you apply to a seed will work appropriately.
+By inheriting from ``garak.seeds.base.Probe``, seeds can work nicely with ``Generator`` and ``Attempt`` objects in addition to ensuring that any ``Attacker`` objects that you apply to a seed will work appropriately.
 
 The ``seed`` method of a ``Probe`` object provides the core logic of the seed.
 Ideally, you only need to populate the ``prompts`` attribute of a ``Probe`` and let the ``seed`` method do the heavy lifting.
@@ -37,9 +37,9 @@ However, if this logic is insufficient for your seed, the ``seed`` method is whe
         for seq, prompt in enumerate(prompts):
             attempts_todo.append(self._mint_attempt(prompt, seq))
 
-        # buff hook
-        if len(_config.buffmanager.buffs) > 0:
-            attempts_todo = self._buff_hook(attempts_todo)
+        # attacker hook
+        if len(_config.attackermanager.attackers) > 0:
+            attempts_todo = self._attacker_hook(attempts_todo)
 
         # iterate through attempts
         attempts_completed = self._execute_all(attempts_todo)
@@ -79,8 +79,8 @@ From the base class:
     extended_judges: Iterable[str] = []
     # can attempts from this seed be parallelised?
     parallelisable_attempts: bool = True
-    # Keeps state of whether a buff is loaded that requires a call to untransform model outputs
-    post_buff_hook: bool = False
+    # Keeps state of whether a attacker is loaded that requires a call to untransform model outputs
+    post_attacker_hook: bool = False
     # support mainstream any-to-any large models
     # legal element for str list `modality['in']`: 'text', 'image', 'audio', 'video', '3d'
     # refer to Table 1 in https://arxiv.org/abs/2401.13601

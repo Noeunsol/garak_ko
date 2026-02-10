@@ -89,7 +89,7 @@ class EvaluationJudge:
         conv.set_system_message(system_prompt)
         # Avoid sending overly long prompts.
         if len(full_prompt.split()) / self.TOKEN_SCALER > self.evaluator_token_limit:
-            # More expensive check yielding actual information -- add BASE_TOKENS token buffer to prompt
+            # More expensive check yielding actual information -- add BASE_TOKENS token attackerer to prompt
             judge_system_prompt_tokens = token_count(
                 system_prompt, self.evaluation_generator.name
             )

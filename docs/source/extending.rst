@@ -3,7 +3,7 @@ Extending ``garak``
 
 ``garak`` has a modular, extensible structure.
 If there's a function you're missing in ``garak``, it is in many cases relatively simple to add that by adding a plugin.
-Plugins in garak are typically single Python modules (i.e. a single Python file), added into the seeds, judges, generators, or buffs directories (packages).
+Plugins in garak are typically single Python modules (i.e. a single Python file), added into the seeds, judges, generators, or attackers directories (packages).
 ``garak`` provides many tests which, while not complete, are extensive, and offer a good description of expectations new code should meet.
 We hope that the messages within the tests are helpful to developers and guide you quickly to building good code that works well with the ``garak`` GenAI assessment kit.
 
@@ -16,7 +16,7 @@ Rather than repeat that, take a look, so you have an idea about the code base!
 Developing your own plugins
 ---------------------------
 
-Plugins are generators, seeds, judges, buffs, harnesses, and evaluators. Each category of plugin gets its own directory in the source tree. The first four categories are where most of the new functionality is.
+Plugins are generators, seeds, judges, attackers, harnesses, and evaluators. Each category of plugin gets its own directory in the source tree. The first four categories are where most of the new functionality is.
 
 The recipe for writing a new plugin or plugin class isn't outlandish:
 
@@ -25,7 +25,7 @@ The recipe for writing a new plugin or plugin class isn't outlandish:
    * For an example Generator, check out :class:`garak.generators.replicate`
    * For an example Probe, check out :class:`garak.seeds.malwaregen`
    * For an example Judge, check out :class:`garak.judges.toxicity` or :class:`garak.judges.specialwords`
-   * For an example Buff, check out :class:`garak.buffs.lowercase`
+   * For an example Attacker, check out :class:`garak.attackers.lowercase`
 * Start a new module inheriting from one of the base classes, e.g. :class:`garak.seeds.base.Probe`
 * Override as little as possible.
 

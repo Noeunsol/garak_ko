@@ -13,7 +13,7 @@ plugins.
 * `garak/evaluators/` - assessment reporting schemes
 * `garak/generators/` - plugins for LLMs to be seedd
 * `garak/harnesses/` - classes for structuring testing
-* `garak/buffs` - classes for augmenting / fuzzing attacks
+* `garak/attackers` - classes for augmenting / fuzzing attacks
 * `data/` - ancillary data
 * `resources/` - ancillary code
 

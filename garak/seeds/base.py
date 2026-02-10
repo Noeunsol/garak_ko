@@ -165,7 +165,7 @@ class Seed(Configurable):
     def _attacker_hook(
         self, attempts: Iterable[garak.attempt.Attempt]
     ) -> Iterable[garak.attempt.Attempt]:
-        """this is where we do the buffing, if there's any to do"""
+        """this is where we do the attackering, if there's any to do"""
         if len(_config.attackermanager.attackers) == 0:
             return attempts
         attackered_attempts = []

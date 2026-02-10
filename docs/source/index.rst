@@ -50,7 +50,7 @@ Check out the :doc:`usage` section for further information, including :doc:`inst
 
    basic
    attempt
-   buffs
+   attackers
    cli
    command
    judges

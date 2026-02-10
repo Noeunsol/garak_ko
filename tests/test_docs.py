@@ -5,7 +5,7 @@ import yaml
 
 import pytest
 
-TOP_PATHS = ["seeds", "judges", "harnesses", "generators", "evaluators", "buffs"]
+TOP_PATHS = ["seeds", "judges", "harnesses", "generators", "evaluators", "attackers"]
 DOC_SOURCE = Path("docs/source")
 
 module_names = {}
@@ -118,20 +118,20 @@ def test_docs_generators(classname: str):
     ), "generator docs must be linked to in generators.rst"
 
 
-@pytest.mark.parametrize("classname", module_names["buffs"])
-def test_docs_buffs(classname: str):
-    file_path = DOC_SOURCE / f"garak.buffs.{classname}.rst"
+@pytest.mark.parametrize("classname", module_names["attackers"])
+def test_docs_attackers(classname: str):
+    file_path = DOC_SOURCE / f"garak.attackers.{classname}.rst"
     assert (
         file_path.is_file()
-    ), f"There must be an entry for each buff family in the docs; missing {file_path}"
+    ), f"There must be an entry for each attacker family in the docs; missing {file_path}"
     assert (
         file_path.stat().st_size
     ), "plugin docs cannot be empty. you can just use a stub to read python docstrings, look at existing doc files"
-    category_file = DOC_SOURCE / "buffs.rst"
-    target_doc = f"garak.buffs.{classname}\n"
+    category_file = DOC_SOURCE / "attackers.rst"
+    target_doc = f"garak.attackers.{classname}\n"
     assert (
         open(category_file, "r", encoding="utf-8").read().find(target_doc) != -1
-    ), "buff docs must be linked to in buffs.rst"
+    ), "attacker docs must be linked to in attackers.rst"
 
 
 from garak import _plugins
@@ -146,12 +146,12 @@ generators = [
 harnesses = [
     classname for (classname, active) in _plugins.enumerate_plugins("harnesses")
 ]
-buffs = [classname for (classname, active) in _plugins.enumerate_plugins("buffs")]
+attackers = [classname for (classname, active) in _plugins.enumerate_plugins("attackers")]
 # commented out until enumerate_plugins supports evaluators
 # evaluators = [
 #    classname for (classname, active) in _plugins.enumerate_plugins("evaluators")
 # ]
-plugins = sorted(seeds + judges + generators + buffs)
+plugins = sorted(seeds + judges + generators + attackers)
 
 
 @pytest.mark.parametrize("plugin_name", plugins)

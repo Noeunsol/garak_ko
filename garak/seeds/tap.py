@@ -209,8 +209,8 @@ class TAP(garak.seeds.Seed):
             for seq, prompt in enumerate(prompts):
                 attempts_todo.append(self._mint_attempt(prompt, seq))
 
-            # buff hook
-            attempts_todo = self._buff_hook(attempts_todo)
+            # attacker hook
+            attempts_todo = self._attacker_hook(attempts_todo)
 
             # iterate through attempts
             attempts_completed = []
@@ -347,8 +347,8 @@ class PAIR(garak.seeds.Seed):
             for seq, prompt in enumerate(prompts):
                 attempts_todo.append(self._mint_attempt(prompt, seq))
 
-            # buff hook
-            attempts_todo = self._buff_hook(attempts_todo)
+            # attacker hook
+            attempts_todo = self._attacker_hook(attempts_todo)
 
             # iterate through attempts
             attempts_completed = []

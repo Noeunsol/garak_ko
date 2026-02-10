@@ -46,13 +46,13 @@ def test_generator_list(capsys):
         ) or line.startswith(f"{__app__} {__description__}")
 
 
-def test_buff_list(capsys):
-    cli.main(["--list_buffs"])
+def test_attacker_list(capsys):
+    cli.main(["--list_attackers"])
     result = capsys.readouterr()
     output = ANSI_ESCAPE.sub("", result.out)
     for line in output.strip().split("\n"):
         assert re.match(
-            r"^buffs: [a-z0-9_]+(\.[A-Za-z0-9_]+)?( 🌟)?( 💤)?$", line
+            r"^attackers: [a-z0-9_]+(\.[A-Za-z0-9_]+)?( 🌟)?( 💤)?$", line
         ) or line.startswith(f"{__app__} {__description__}")
 
 

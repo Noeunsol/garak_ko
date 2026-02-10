@@ -101,5 +101,5 @@ class FileIsExecutable(FileJudge):
         with open(filename, "rb") as f:
             m = self.magic.Magic(mime=True)
             header = f.read(2048)
-            mimetype = m.from_buffer(header)
+            mimetype = m.from_attackerer(header)
             return 1.0 if mimetype in self.exec_types else 0.0

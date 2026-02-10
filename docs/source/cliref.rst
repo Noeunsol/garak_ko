@@ -14,16 +14,16 @@ CLI reference for garak
                          [--target_type TARGET_TYPE] [--target_name TARGET_NAME]
                          [--seeds PROBES] [--seed_tags PROBE_TAGS]
                          [--judges JUDGES] [--extended_judges]
-                         [--buffs BUFFS]
+                         [--attackers ATTACKERS]
                          [--target_lang TARGET_LANG] [--language TARGET_LANG] [--lang TARGET_LANG]
-                         [--buff_option_file BUFF_OPTION_FILE | --buff_options BUFF_OPTIONS]
+                         [--attacker_option_file ATTACKER_OPTION_FILE | --attacker_options ATTACKER_OPTIONS]
                          [--judge_option_file JUDGE_OPTION_FILE | --judge_options JUDGE_OPTIONS]
                          [--generator_option_file GENERATOR_OPTION_FILE | --generator_options GENERATOR_OPTIONS]
                          [--harness_option_file HARNESS_OPTION_FILE | --harness_options HARNESS_OPTIONS]
                          [--seed_option_file PROBE_OPTION_FILE | --seed_options PROBE_OPTIONS]
                          [--taxonomy TAXONOMY] [--plugin_info PLUGIN_INFO]
                          [--list_seeds] [--list_judges] [--list_generators]
-                         [--list_buffs] [--list_config] [--version]
+                         [--list_attackers] [--list_config] [--version]
                          [--report REPORT] [--interactive] [--fix]
   
   LLM safety & security scanning tool
@@ -42,7 +42,7 @@ CLI reference for garak
     --parallel_attempts PARALLEL_ATTEMPTS
                           How many seed attempts to launch in parallel. Raise
                           this for faster runs when using non-local models.
-    --skip_unknown        allow skip of unknown seeds, judges, or buffs
+    --skip_unknown        allow skip of unknown seeds, judges, or attackers
     --seed SEED, -s SEED  random seed
     --deprefix            remove the prompt from the front of generator output
     --eval_threshold EVAL_THRESHOLD
@@ -68,15 +68,15 @@ CLI reference for garak
     --extended_judges  If judges aren't specified on the command line,
                           should we run all judges? (default is just the
                           primary judge, if given, else everything)
-    --buffs BUFFS, -b BUFFS
-                          list of buffs to use. Default is none
+    --attackers ATTACKERS, -b ATTACKERS
+                          list of attackers to use. Default is none
     --target_lang TARGET_LANG, --language TARGET_LANG, --lang TARGET_LANG
                           specify a language to be used for the target model.
                           e.g. 'en', 'ko'
-    --buff_option_file BUFF_OPTION_FILE, -B BUFF_OPTION_FILE
-                          path to JSON file containing options to pass to buff
-    --buff_options BUFF_OPTIONS
-                          options to pass to buff, formatted as a JSON dict
+    --attacker_option_file ATTACKER_OPTION_FILE, -B ATTACKER_OPTION_FILE
+                          path to JSON file containing options to pass to attacker
+    --attacker_options ATTACKER_OPTIONS
+                          options to pass to attacker, formatted as a JSON dict
     --judge_option_file JUDGE_OPTION_FILE, -D JUDGE_OPTION_FILE
                           path to JSON file containing options to pass to
                           judge
@@ -112,7 +112,7 @@ CLI reference for garak
                           list_judges -d misleading.Invalid' to show only
                           that judge.
     --list_generators     list available generation model interfaces
-    --list_buffs          list available buffs/fuzzes
+    --list_attackers          list available attackers/fuzzes
     --list_config         print active config info (and don't scan)
     --version, -V         print version info & exit
     --report REPORT, -r REPORT

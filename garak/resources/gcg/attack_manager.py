@@ -180,7 +180,7 @@ class AttackPrompt(object):
 
         self.conv_template.messages = []
 
-        self.test_new_toks = len(self.tokenizer(self.target).input_ids) + 2  # buffer
+        self.test_new_toks = len(self.tokenizer(self.target).input_ids) + 2  # attackerer
         for prefix in self.test_prefixes:
             self.test_new_toks = max(
                 self.test_new_toks, len(self.tokenizer(prefix).input_ids)
