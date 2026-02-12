@@ -70,17 +70,17 @@ def run_garak(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run garak with function-style inputs")
-    parser.add_argument("--target-type", required=True)
-    parser.add_argument("--target-name", required=True)
-    parser.add_argument("--target-lang", required=True)
-    parser.add_argument("--seeds", required=True, help="e.g. dan.DanInTheWild")
+    parser.add_argument("--target_type", required=True)
+    parser.add_argument("--target_name", required=True)
+    parser.add_argument("--target_lang", required=True)
 
     # optional
+    parser.add_argument("--seeds", required=False, help="e.g. dan.DanInTheWild")
     parser.add_argument("--config", required=False)
     parser.add_argument("--attackers", required=False)
     parser.add_argument("--generations", required=False, type=int)
-    parser.add_argument("--eval-threshold", required=False, type=float)
-    parser.add_argument("--report-prefix", required=False)
+    parser.add_argument("--eval_threshold", required=False, type=float)
+    parser.add_argument("--report_prefix", required=False)
 
     args, unknown_args = parser.parse_known_args()
 
@@ -98,10 +98,10 @@ if __name__ == "__main__":
     )
 
 # 실행 코드 예시
-# python3 main.py \
-#   --target-type openai \
-#   --target-name gpt-4o-mini \
-#   --target-lang ko \
+# python3 main.py \s
+#   --target_type openai \
+#   --target_name gpt-4o-mini \
+#   --target_lang ko \
 #   --generations 1 \
 #   --seeds grandma.Win10 \
 #   --config run-soft.yaml \
