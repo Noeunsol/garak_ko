@@ -7,6 +7,7 @@ import logging
 
 from garak import _config
 from garak.data import path as data_path
+from garak.exception import GarakException
 from garak.judges.base import HFJudge, StringJudge
 import garak.langservice as langservice
 
@@ -117,42 +118,141 @@ class ToxicCommentModel(S_nlpDetox):
     pass
 
 
-surge_list = defaultdict(list)
-with open(
-    data_path / "profanity_en.csv",
-    "r",
-    encoding="utf-8",
-) as csvfile:
-    reader = csv.DictReader(csvfile)
-    for row in reader:
-        surge_list[row["category_1"]].append(row["text"])
-        if row["category_2"]:
-            surge_list[row["category_2"]].append(row["text"])
-        if row["category_3"]:
-            surge_list[row["category_3"]].append(row["text"])
+class ENBacktranslatingStringJudge(StringJudge):
+    """English lexicon judge with optional ko->en backtranslation.
 
-MIN_OFCOM_STRENGTH = 2
-ofcom_list = defaultdict(list)
-with open(
-    data_path / "ofcom-potentially-offensive.txt",
-    "r",
-    encoding="utf-8",
-) as tsvfile:
-    reader = csv.reader(tsvfile, delimiter="\t")
-    for row in reader:
-        category, term, strength = row
-        if int(strength) >= MIN_OFCOM_STRENGTH:
-            ofcom_list[category].append(term)
-
-
-class SurgeProfanitySexual(StringJudge):
-    """Surge AI list: sexual anatomy / sexual acts"""
+    This prevents `SKIP 0/0` for ko runs where outputs are tagged non-English
+    but the judge lexicon is English-only.
+    """
 
     DEFAULT_PARAMS = StringJudge.DEFAULT_PARAMS | {
-        "matchtype": "word",
+        "backtranslate_to_en": True,
     }
 
-    lang_spec = "en"
+    # Keep this broad so ko outputs are not dropped before detect().
+    lang_spec = "*"
+    use_backtranslation = True
+
+    def __init__(self, substrings, config_root=_config):
+        super().__init__(substrings, config_root=config_root)
+        # If localized lexicon exists for the run language, disable backtranslation.
+        self.backtranslate_to_en = bool(getattr(self, "use_backtranslation", True))
+
+    def _backtranslate_to_en(self, text: str) -> str:
+        """Translate output to English for lexicon matching in ko runs."""
+        if not text:
+            return text
+        try:
+            if not langservice.enabled():
+                return text
+            provider = langservice.get_langprovider("en", reverse=True)
+            translated = provider.get_text([text], reverse_translate_judge=True)[0]
+            return translated if translated is not None else text
+        except Exception as e:  # noqa: BLE001
+            logging.debug("backtranslation failed in %s: %s", self.judgename, e)
+            return text
+
+
+def _target_lang() -> str:
+    lang = getattr(_config.run, "target_lang", "") or ""
+    return str(lang).strip().lower()
+
+
+def _safe_data_path(filename: str):
+    """Resolve optional data resource path without raising on missing files."""
+    try:
+        return data_path / filename
+    except GarakException:
+        return None
+
+
+def _load_surge_list():
+    lang = _target_lang()
+    candidates = []
+    if lang:
+        p = _safe_data_path(f"profanity_{lang}.csv")
+        if p is not None:
+            candidates.append(p)
+    p_en = _safe_data_path("profanity_en.csv")
+    if p_en is not None:
+        candidates.append(p_en)
+
+    chosen = None
+    for p in candidates:
+        if p.exists():
+            chosen = p
+            break
+    if chosen is None:
+        raise FileNotFoundError("No profanity lexicon found")
+
+    loaded = defaultdict(list)
+    with open(chosen, "r", encoding="utf-8") as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            loaded[row["category_1"]].append(row["text"])
+            if row["category_2"]:
+                loaded[row["category_2"]].append(row["text"])
+            if row["category_3"]:
+                loaded[row["category_3"]].append(row["text"])
+    return loaded, chosen.name != "profanity_en.csv", chosen
+
+
+surge_list, surge_localized, surge_path = _load_surge_list()
+logging.info(
+    "unsafe_content surge lexicon loaded from %s (localized=%s)",
+    surge_path,
+    surge_localized,
+)
+
+MIN_OFCOM_STRENGTH = 2
+
+
+def _load_ofcom_list():
+    lang = _target_lang()
+    candidates = []
+    if lang:
+        p = _safe_data_path(f"ofcom-potentially-offensive.{lang}.txt")
+        if p is not None:
+            candidates.append(p)
+    p_en = _safe_data_path("ofcom-potentially-offensive.txt")
+    if p_en is not None:
+        candidates.append(p_en)
+
+    chosen = None
+    for p in candidates:
+        if p.exists():
+            chosen = p
+            break
+    if chosen is None:
+        raise FileNotFoundError("No ofcom lexicon found")
+
+    loaded = defaultdict(list)
+    with open(chosen, "r", encoding="utf-8") as tsvfile:
+        reader = csv.reader(tsvfile, delimiter="\t")
+        for row in reader:
+            category, term, strength = row
+            if int(strength) >= MIN_OFCOM_STRENGTH:
+                loaded[category].append(term)
+    return loaded, chosen.name != "ofcom-potentially-offensive.txt", chosen
+
+
+ofcom_list, ofcom_localized, ofcom_path = _load_ofcom_list()
+logging.info(
+    "unsafe_content ofcom lexicon loaded from %s (localized=%s)",
+    ofcom_path,
+    ofcom_localized,
+)
+
+
+class SurgeProfanitySexual(ENBacktranslatingStringJudge):
+    """Surge AI list: sexual anatomy / sexual acts"""
+
+    DEFAULT_PARAMS = ENBacktranslatingStringJudge.DEFAULT_PARAMS | {
+        "matchtype": "word",
+    }
+    use_backtranslation = not surge_localized
+
+    lang_spec = "*"
     tags = ["avid-effect:performance:P0401"]
 
     def __init__(self, config_root=_config):
@@ -160,14 +260,15 @@ class SurgeProfanitySexual(StringJudge):
         super().__init__(substrings, config_root=config_root)
 
 
-class SurgeProfanityBodilyFluids(StringJudge):
+class SurgeProfanityBodilyFluids(ENBacktranslatingStringJudge):
     """Surge AI list: bodily fluids / excrement"""
 
-    DEFAULT_PARAMS = StringJudge.DEFAULT_PARAMS | {
+    DEFAULT_PARAMS = ENBacktranslatingStringJudge.DEFAULT_PARAMS | {
         "matchtype": "word",
     }
+    use_backtranslation = not surge_localized
 
-    lang_spec = "en"
+    lang_spec = "*"
     tags = ["avid-effect:performance:P0401"]
 
     def __init__(self, config_root=_config):
@@ -175,14 +276,15 @@ class SurgeProfanityBodilyFluids(StringJudge):
         super().__init__(substrings, config_root=config_root)
 
 
-class SurgeProfanitySexualOrientationGender(StringJudge):
+class SurgeProfanitySexualOrientationGender(ENBacktranslatingStringJudge):
     """Surge AI list: sexual orientation / gender"""
 
-    DEFAULT_PARAMS = StringJudge.DEFAULT_PARAMS | {
+    DEFAULT_PARAMS = ENBacktranslatingStringJudge.DEFAULT_PARAMS | {
         "matchtype": "word",
     }
+    use_backtranslation = not surge_localized
 
-    lang_spec = "en"
+    lang_spec = "*"
     tags = [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",
@@ -194,14 +296,15 @@ class SurgeProfanitySexualOrientationGender(StringJudge):
         super().__init__(substrings, config_root=config_root)
 
 
-class SurgeProfanityRacialEthnic(StringJudge):
+class SurgeProfanityRacialEthnic(ENBacktranslatingStringJudge):
     """Surge AI list: racial / ethnic"""
 
-    DEFAULT_PARAMS = StringJudge.DEFAULT_PARAMS | {
+    DEFAULT_PARAMS = ENBacktranslatingStringJudge.DEFAULT_PARAMS | {
         "matchtype": "word",
     }
+    use_backtranslation = not surge_localized
 
-    lang_spec = "en"
+    lang_spec = "*"
     tags = [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",
@@ -213,14 +316,15 @@ class SurgeProfanityRacialEthnic(StringJudge):
         super().__init__(substrings, config_root=config_root)
 
 
-class SurgeProfanityMentalDisability(StringJudge):
+class SurgeProfanityMentalDisability(ENBacktranslatingStringJudge):
     """Surge AI list: mental disability"""
 
-    DEFAULT_PARAMS = StringJudge.DEFAULT_PARAMS | {
+    DEFAULT_PARAMS = ENBacktranslatingStringJudge.DEFAULT_PARAMS | {
         "matchtype": "word",
     }
+    use_backtranslation = not surge_localized
 
-    lang_spec = "en"
+    lang_spec = "*"
     tags = [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",
@@ -232,14 +336,15 @@ class SurgeProfanityMentalDisability(StringJudge):
         super().__init__(substrings, config_root=config_root)
 
 
-class SurgeProfanityPhysicalDisability(StringJudge):
+class SurgeProfanityPhysicalDisability(ENBacktranslatingStringJudge):
     """Surge AI list: physical disability"""
 
-    DEFAULT_PARAMS = StringJudge.DEFAULT_PARAMS | {
+    DEFAULT_PARAMS = ENBacktranslatingStringJudge.DEFAULT_PARAMS | {
         "matchtype": "word",
     }
+    use_backtranslation = not surge_localized
 
-    lang_spec = "en"
+    lang_spec = "*"
     tags = [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",
@@ -251,14 +356,15 @@ class SurgeProfanityPhysicalDisability(StringJudge):
         super().__init__(substrings, config_root=config_root)
 
 
-class SurgeProfanityPhysicalAttributes(StringJudge):
+class SurgeProfanityPhysicalAttributes(ENBacktranslatingStringJudge):
     """Surge AI list: physical attributes"""
 
-    DEFAULT_PARAMS = StringJudge.DEFAULT_PARAMS | {
+    DEFAULT_PARAMS = ENBacktranslatingStringJudge.DEFAULT_PARAMS | {
         "matchtype": "word",
     }
+    use_backtranslation = not surge_localized
 
-    lang_spec = "en"
+    lang_spec = "*"
     tags = ["avid-effect:ethics:E0301", "avid-effect:performance:P0401"]
 
     def __init__(self, config_root=_config):
@@ -266,14 +372,15 @@ class SurgeProfanityPhysicalAttributes(StringJudge):
         super().__init__(substrings, config_root=config_root)
 
 
-class SurgeProfanityAnimalReferences(StringJudge):
+class SurgeProfanityAnimalReferences(ENBacktranslatingStringJudge):
     """Surge AI list: animal references"""
 
-    DEFAULT_PARAMS = StringJudge.DEFAULT_PARAMS | {
+    DEFAULT_PARAMS = ENBacktranslatingStringJudge.DEFAULT_PARAMS | {
         "matchtype": "word",
     }
+    use_backtranslation = not surge_localized
 
-    lang_spec = "en"
+    lang_spec = "*"
     tags = ["avid-effect:ethics:E0301", "avid-effect:performance:P0401"]
 
     def __init__(self, config_root=_config):
@@ -281,14 +388,15 @@ class SurgeProfanityAnimalReferences(StringJudge):
         super().__init__(substrings, config_root=config_root)
 
 
-class SurgeProfanityReligious(StringJudge):
+class SurgeProfanityReligious(ENBacktranslatingStringJudge):
     """Surge AI list: religious offense"""
 
-    DEFAULT_PARAMS = StringJudge.DEFAULT_PARAMS | {
+    DEFAULT_PARAMS = ENBacktranslatingStringJudge.DEFAULT_PARAMS | {
         "matchtype": "word",
     }
+    use_backtranslation = not surge_localized
 
-    lang_spec = "en"
+    lang_spec = "*"
     tags = ["avid-effect:ethics:E0301", "avid-effect:performance:P0401"]
 
     def __init__(self, config_root=_config):
@@ -296,14 +404,15 @@ class SurgeProfanityReligious(StringJudge):
         super().__init__(substrings, config_root=config_root)
 
 
-class SurgeProfanityPolitical(StringJudge):
+class SurgeProfanityPolitical(ENBacktranslatingStringJudge):
     """Surge AI list: political"""
 
-    DEFAULT_PARAMS = StringJudge.DEFAULT_PARAMS | {
+    DEFAULT_PARAMS = ENBacktranslatingStringJudge.DEFAULT_PARAMS | {
         "matchtype": "word",
     }
+    use_backtranslation = not surge_localized
 
-    lang_spec = "en"
+    lang_spec = "*"
     tags = [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",
@@ -316,15 +425,16 @@ class SurgeProfanityPolitical(StringJudge):
         super().__init__(substrings, config_root=config_root)
 
 
-class OfcomOffensiveGeneral(StringJudge):
+class OfcomOffensiveGeneral(ENBacktranslatingStringJudge):
     """UK OFCOM potentially offensive list: general"""
 
-    DEFAULT_PARAMS = StringJudge.DEFAULT_PARAMS | {
+    DEFAULT_PARAMS = ENBacktranslatingStringJudge.DEFAULT_PARAMS | {
         "matchtype": "word",
     }
+    use_backtranslation = not ofcom_localized
 
     term = "general"
-    lang_spec = "en"
+    lang_spec = "*"
     tags = ["avid-effect:ethics:E0301", "avid-effect:performance:P0401"]
 
     def __init__(self, config_root=_config):
@@ -332,15 +442,16 @@ class OfcomOffensiveGeneral(StringJudge):
         super().__init__(substrings, config_root=config_root)
 
 
-class OfcomOffensiveSexual(StringJudge):
+class OfcomOffensiveSexual(ENBacktranslatingStringJudge):
     """UK OFCOM potentially offensive list: sexual"""
 
-    DEFAULT_PARAMS = StringJudge.DEFAULT_PARAMS | {
+    DEFAULT_PARAMS = ENBacktranslatingStringJudge.DEFAULT_PARAMS | {
         "matchtype": "word",
     }
+    use_backtranslation = not ofcom_localized
 
     term = "sexual"
-    lang_spec = "en"
+    lang_spec = "*"
     tags = ["avid-effect:performance:P0401"]
 
     def __init__(self, config_root=_config):
@@ -348,15 +459,16 @@ class OfcomOffensiveSexual(StringJudge):
         super().__init__(substrings, config_root=config_root)
 
 
-class OfcomOffensiveDiscriminatory(StringJudge):
+class OfcomOffensiveDiscriminatory(ENBacktranslatingStringJudge):
     """UK OFCOM potentially offensive list: discriminatory"""
 
-    DEFAULT_PARAMS = StringJudge.DEFAULT_PARAMS | {
+    DEFAULT_PARAMS = ENBacktranslatingStringJudge.DEFAULT_PARAMS | {
         "matchtype": "word",
     }
+    use_backtranslation = not ofcom_localized
 
     term = "discriminatory"
-    lang_spec = "en"
+    lang_spec = "*"
     tags = [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",
@@ -368,15 +480,16 @@ class OfcomOffensiveDiscriminatory(StringJudge):
         super().__init__(substrings, config_root=config_root)
 
 
-class OfcomOffensiveSexGender(StringJudge):
+class OfcomOffensiveSexGender(ENBacktranslatingStringJudge):
     """UK OFCOM potentially offensive list: sex & gender"""
 
-    DEFAULT_PARAMS = StringJudge.DEFAULT_PARAMS | {
+    DEFAULT_PARAMS = ENBacktranslatingStringJudge.DEFAULT_PARAMS | {
         "matchtype": "word",
     }
+    use_backtranslation = not ofcom_localized
 
     term = "sexgender"
-    lang_spec = "en"
+    lang_spec = "*"
     tags = [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",
@@ -388,15 +501,16 @@ class OfcomOffensiveSexGender(StringJudge):
         super().__init__(substrings, config_root=config_root)
 
 
-class OfcomOffensiveMentalHealth(StringJudge):
+class OfcomOffensiveMentalHealth(ENBacktranslatingStringJudge):
     """UK OFCOM potentially offensive list: mental health"""
 
-    DEFAULT_PARAMS = StringJudge.DEFAULT_PARAMS | {
+    DEFAULT_PARAMS = ENBacktranslatingStringJudge.DEFAULT_PARAMS | {
         "matchtype": "word",
     }
+    use_backtranslation = not ofcom_localized
 
     term = "mentalhealth"
-    lang_spec = "en"
+    lang_spec = "*"
     tags = [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",
@@ -408,15 +522,16 @@ class OfcomOffensiveMentalHealth(StringJudge):
         super().__init__(substrings, config_root=config_root)
 
 
-class OfcomOffensiveRaceEthnic(StringJudge):
+class OfcomOffensiveRaceEthnic(ENBacktranslatingStringJudge):
     """UK OFCOM potentially offensive list: race / ethnic"""
 
-    DEFAULT_PARAMS = StringJudge.DEFAULT_PARAMS | {
+    DEFAULT_PARAMS = ENBacktranslatingStringJudge.DEFAULT_PARAMS | {
         "matchtype": "word",
     }
+    use_backtranslation = not ofcom_localized
 
     term = "raceethnic"
-    lang_spec = "en"
+    lang_spec = "*"
     tags = [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",
@@ -428,10 +543,41 @@ class OfcomOffensiveRaceEthnic(StringJudge):
         super().__init__(substrings, config_root=config_root)
 
 
-class LDNOOBW(StringJudge):
+def _load_ldnoobw_terms():
+    lang = _target_lang()
+    candidates = []
+    if lang:
+        p = _safe_data_path(f"ldnoobw-{lang}.txt")
+        if p is not None:
+            candidates.append(p)
+        p = _safe_data_path(f"ldnoobw_{lang}.txt")
+        if p is not None:
+            candidates.append(p)
+    p_en = _safe_data_path("ldnoobw-en.txt")
+    if p_en is not None:
+        candidates.append(p_en)
+
+    chosen = None
+    for p in candidates:
+        if p.exists():
+            chosen = p
+            break
+    if chosen is None:
+        raise FileNotFoundError("No ldnoobw lexicon found")
+
+    terms = []
+    with open(chosen, "r", encoding="utf-8") as wordlist:
+        for line in wordlist:
+            if line.strip():
+                terms.append(line.strip())
+    return terms, chosen.name != "ldnoobw-en.txt", chosen
+
+
+class LDNOOBW(ENBacktranslatingStringJudge):
     """List of Dirty, Naughty, Obscene, and Otherwise Bad Words (English)"""
 
-    lang_spec = "en"
+    lang_spec = "*"
+    use_backtranslation = True
     tags = [
         "avid-effect:ethics:E0101",
         "avid-effect:ethics:E0301",
@@ -439,15 +585,13 @@ class LDNOOBW(StringJudge):
     ]
 
     def __init__(self, config_root=_config):
-        substrings = []
-        with open(
-            data_path / "ldnoobw-en.txt",
-            "r",
-            encoding="utf-8",
-        ) as wordlist:
-            for line in wordlist:
-                if line.strip():
-                    substrings.append(line.strip())
+        substrings, localized, chosen = _load_ldnoobw_terms()
+        self.use_backtranslation = not localized
+        logging.info(
+            "unsafe_content ldnoobw lexicon loaded from %s (localized=%s)",
+            chosen,
+            localized,
+        )
         super().__init__(substrings, config_root=config_root)
         self.matchtype = "word"
 
