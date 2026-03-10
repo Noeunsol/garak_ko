@@ -9,8 +9,11 @@ import garak.attempt
 from garak import _config
 from garak.attackers.base import Attacker
 from garak.resources.api.huggingface import HFCompatible
-import os
-from openai import OpenAI
+from garak.resources.openai_translation import (
+    get_openai_client,
+    is_korean_text,
+    translate_with_openai,
+)
 
 
 class PegasusT5(Attacker, HFCompatible):
@@ -42,30 +45,20 @@ class PegasusT5(Attacker, HFCompatible):
 
     def _require_openai_client(self):
         if self._oa_client is None:
-            api_key = getattr(self, "api_key", None) or os.getenv("OPENAI_API_KEY")
-            if not api_key:
-                raise ValueError(
-                    "OPENAI_API_KEY not set; required for translation bridge in PegasusT5."
-                )
-            self._oa_client = OpenAI(api_key=api_key)
+            self._oa_client, self.api_key = get_openai_client(
+                getattr(self, "api_key", None),
+                error_context="translation bridge in PegasusT5",
+            )
 
     def _translate(self, text: str, target_lang: str) -> str:
         self._require_openai_client()
-        resp = self._oa_client.chat.completions.create(
-            model=self.translation_model_name,
+        return translate_with_openai(
+            client=self._oa_client,
+            text=text,
+            target_lang=target_lang,
+            model_name=self.translation_model_name,
             temperature=self.translation_temperature,
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are a precise translation engine. "
-                        "Return only the translated text."
-                    ),
-                },
-                {"role": "user", "content": f"Translate into {target_lang}: {text}"},
-            ],
         )
-        return resp.choices[0].message.content.strip()
 
     def _load_model(self):
         from transformers import PegasusForConditionalGeneration, PegasusTokenizer
@@ -100,7 +93,7 @@ class PegasusT5(Attacker, HFCompatible):
         return tgt_text
 
     def _is_korean(self, text: str) -> bool:
-        return any("\uac00" <= ch <= "\ud7a3" for ch in text)
+        return is_korean_text(text)
 
     def _should_bridge(self, source_lang: str, text: str) -> bool:
         if not source_lang or source_lang == "*" or source_lang.lower() == "unknown":
@@ -162,11 +155,11 @@ class OpenAIParaphrase(Attacker):
 
     def _require_client(self):
         if self.client is None:
-            api_key = getattr(self, "api_key", None) or os.getenv(self.ENV_VAR)
-            if not api_key:
-                raise ValueError(f"{self.ENV_VAR} not set; cannot run OpenAIParaphrase.")
-            self.api_key = api_key
-            self.client = OpenAI(api_key=api_key)
+            self.client, self.api_key = get_openai_client(
+                getattr(self, "api_key", None),
+                env_var=self.ENV_VAR,
+                error_context="OpenAIParaphrase",
+            )
 
     def _paraphrases(self, text: str):
         self._require_client()
@@ -231,30 +224,20 @@ class Fast(Attacker, HFCompatible):
 
     def _require_openai_client(self):
         if self._oa_client is None:
-            api_key = getattr(self, "api_key", None) or os.getenv("OPENAI_API_KEY")
-            if not api_key:
-                raise ValueError(
-                    "OPENAI_API_KEY not set; required for translation bridge in Fast."
-                )
-            self._oa_client = OpenAI(api_key=api_key)
+            self._oa_client, self.api_key = get_openai_client(
+                getattr(self, "api_key", None),
+                error_context="translation bridge in Fast",
+            )
 
     def _translate(self, text: str, target_lang: str) -> str:
         self._require_openai_client()
-        resp = self._oa_client.chat.completions.create(
-            model=self.translation_model_name,
+        return translate_with_openai(
+            client=self._oa_client,
+            text=text,
+            target_lang=target_lang,
+            model_name=self.translation_model_name,
             temperature=self.translation_temperature,
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are a precise translation engine. "
-                        "Return only the translated text."
-                    ),
-                },
-                {"role": "user", "content": f"Translate into {target_lang}: {text}"},
-            ],
         )
-        return resp.choices[0].message.content.strip()
 
     def _load_model(self):
         from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
@@ -299,7 +282,7 @@ class Fast(Attacker, HFCompatible):
         return res
 
     def _is_korean(self, text: str) -> bool:
-        return any("\uac00" <= ch <= "\ud7a3" for ch in text)
+        return is_korean_text(text)
 
     def transform(
         self, attempt: garak.attempt.Attempt
