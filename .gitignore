@@ -173,3 +173,10 @@ runs/
 logs/
 .DS_Store
 
+#custom
+.xdg*
+.venv*
+.github
+.garak_xdg
+_runs
+*swp
