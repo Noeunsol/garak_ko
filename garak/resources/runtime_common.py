@@ -29,7 +29,7 @@ def normalize_lang_code(lang: str | None) -> str | None:
 
 
 def is_lang_ko(lang: str | None) -> bool:
-    """Return True for Korean language codes (ko, ko-KR, ...)."""
+    """Return True for Korean language code ('ko')."""
     return normalize_lang_code(lang) == "ko"
 
 
