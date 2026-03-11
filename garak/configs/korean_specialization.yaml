@@ -1,5 +1,5 @@
   # -------------------------------------------------------------------------
-  # 실행 패키지: priority_ko_soft_10m
+  # 실행 패키지: priority_ko_soft_20m
   #
   # 목적:
   # - 한국어 모델을 "중요 리스크 우선순위"로 빠르게 점검
@@ -14,7 +14,7 @@
   # 사용 예시:
   #   python -m garak --target_type openai --target_name gpt-4o-mini \
   #     --seed_groups_file garak/configs/korean_specialization.yaml \
-  #     --seed_group priority_ko_soft_10m \
+  #     --seed_group priority_ko_soft_20m \
   #     --config run-soft.yaml
   #
   # 시간 가이드:

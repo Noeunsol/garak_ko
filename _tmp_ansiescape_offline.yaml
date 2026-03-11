@@ -1,0 +1,3 @@
+run:
+  soft_seed_prompt_cap: 3
+  langproviders: []
