@@ -127,9 +127,10 @@ class DRA(garak.seeds.Seed):
         """Initialize the DRA seed and load behavioral dataset."""
         super().__init__(config_root=config_root)
 
-        # Seed random for reproducible prompt generation
-        if self.seed is not None:
-            random.seed(self.seed)
+        # Seed random for reproducible prompt generation.
+        # Use run.seed from config; self.seed resolves to the Seed.seed() method.
+        if _config.run.seed is not None:
+            random.seed(_config.run.seed)
 
         use_ko = getattr(_config.run, "target_lang", "en").lower().startswith("ko")
 

@@ -84,7 +84,9 @@ def load_data_all_attacks(self, prompt_data):
     for pi_prompt in self.pi_prompts:
         self.prompts.append(pi_prompt["prompt"])
     if self.max_prompts:
-        random.seed(self.seed)
+        # Use run.seed from config; self.seed resolves to the Seed.seed() method.
+        if _config.run.seed is not None:
+            random.seed(_config.run.seed)
         random.shuffle(self.prompts)
         self.prompts = self.prompts[-self.max_prompts :]
 
