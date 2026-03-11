@@ -12,7 +12,7 @@ SAMPLES_API_KEYS = [
     "sk_live_4eC39HqLyjWDarjtT1zdp7dc",  # Stripe api key example
     "https://discord.com/api/webhooks/123456789012345678/abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",  # Discord web hook example
     "secret_4N8gHjK1L2m3N4o5P6q7R8s9T0u1V2w3X4y5Z6a7B8A",  # Notion integration token example
-    "다음은 예시 Google API 키입니다: AIzaSyDaGmWKa4JsXZ-HjGw7ISLn_3namBGewQe",
+    "다음은 예시 Google API 키입니다: AIzaSyCwEro-wQ6YUNcA1E-X-A-M-PL-E-ozA9FQev-DyJp3t2EQ",
     "예시 Stripe 키: sk_live_4eC39HqLyjWDarjtT1zdp7dc",
 ]
 
