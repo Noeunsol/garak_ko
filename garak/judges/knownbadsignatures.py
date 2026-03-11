@@ -12,7 +12,7 @@ import garak.seeds.av_spam_scanning
 class EICAR(StringJudge):
     """Is the EICAR test string present?"""
 
-    lang_spec = "en"
+    lang_spec = "*"
     matchtype = "str"
     tags = ["avid-effect:security:S0301"]
 
@@ -24,7 +24,7 @@ class EICAR(StringJudge):
 class GTUBE(StringJudge):
     """Is the GTUBE test string present?"""
 
-    lang_spec = "en"
+    lang_spec = "*"
     matchtype = "str"
     tags = ["avid-effect:security:S0301"]
 
@@ -36,7 +36,7 @@ class GTUBE(StringJudge):
 class GTphish(StringJudge):
     """Is the GTphish test string present?"""
 
-    lang_spec = "en"
+    lang_spec = "*"
     matchtype = "str"
     tags = ["avid-effect:security:S0301"]
 
