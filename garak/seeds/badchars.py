@@ -16,7 +16,8 @@ import garak.payloads
 import garak.seeds
 from garak import _config
 from garak.data import path as data_path
-from garak.exception import GarakException, PluginConfigurationError
+from garak.exception import PayloadFailure, PluginConfigurationError
+from garak.resources.runtime_common import get_target_lang, normalize_lang_code
 
 
 ASCII_PRINTABLE = tuple(chr(i) for i in range(0x20, 0x7F))
@@ -29,6 +30,11 @@ BIDI_CONTROLS = {
     "RLI": "\u2067",
     "PDI": "\u2069",
 }
+
+LOCALIZED_HOMOGLYPH_FILES = {
+    "ko": "intentional_ko.txt",
+}
+DEFAULT_HOMOGLYPH_FILE = "intentional.txt"
 
 
 @dataclass(frozen=True)
@@ -75,38 +81,59 @@ def _render_swaps(elements: Sequence) -> str:
     return "".join(rendered)
 
 
-def _load_homoglyph_map() -> dict[str, List[str]]:
-    """Parse intentional.txt into a source -> targets dictionary."""
+def _parse_homoglyph_map(intent_path) -> dict[str, List[str]]:
+    """Parse a Unicode intentional confusables file into source -> targets."""
 
     mapping: dict[str, set[str]] = {}
-    intent_path = data_path / "badchars" / "intentional.txt"
-    try:
-        with open(intent_path, "r", encoding="utf-8") as infile:
-            for raw_line in infile:
-                line = raw_line.strip()
-                if not line or line.startswith("#"):
-                    continue
-                left, remainder = line.split(";", maxsplit=1)
-                remainder = remainder.split("#", maxsplit=1)[0].strip()
-                if not remainder:
-                    continue
-                codepoints = remainder.split()
-                if not codepoints:
-                    continue
-                source = chr(int(left.strip(), 16))
-                target = "".join(chr(int(cp, 16)) for cp in codepoints)
-                if source == target:
-                    continue
-                mapping.setdefault(source, set()).add(target)
-    except FileNotFoundError as exc:
-        msg = (
-            "Unable to load intentional.txt for homoglyph perturbations. "
-            "Get data from - https://www.unicode.org/Public/security/latest/intentional.txt"
-        )
-        logging.error(msg)
-        raise PluginConfigurationError(msg) from exc
+    with open(intent_path, "r", encoding="utf-8") as infile:
+        for raw_line in infile:
+            line = raw_line.strip()
+            if not line or line.startswith("#"):
+                continue
+            left, remainder = line.split(";", maxsplit=1)
+            remainder = remainder.split("#", maxsplit=1)[0].strip()
+            if not remainder:
+                continue
+            codepoints = remainder.split()
+            if not codepoints:
+                continue
+            source = chr(int(left.strip(), 16))
+            target = "".join(chr(int(cp, 16)) for cp in codepoints)
+            if source == target:
+                continue
+            mapping.setdefault(source, set()).add(target)
 
     return {key: sorted(values) for key, values in mapping.items()}
+
+
+def _homoglyph_file_candidates(lang: str) -> list:
+    """Return localized-first candidates for intentional confusable map files."""
+    candidates = []
+    localized_file = LOCALIZED_HOMOGLYPH_FILES.get(lang)
+    if localized_file:
+        candidates.append(data_path / "badchars" / localized_file)
+    candidates.append(data_path / "badchars" / DEFAULT_HOMOGLYPH_FILE)
+    # Preserve order while removing duplicates.
+    return list(dict.fromkeys(candidates))
+
+
+def _load_homoglyph_map(lang: str) -> dict[str, List[str]]:
+    """Load confusable map for seed language, falling back to default data."""
+    last_error = None
+    for intent_path in _homoglyph_file_candidates(lang):
+        try:
+            return _parse_homoglyph_map(intent_path)
+        except FileNotFoundError as exc:
+            last_error = exc
+            continue
+
+    msg = (
+        "Unable to load intentional confusable maps for homoglyph perturbations. "
+        "Expected one of: "
+        + ", ".join(str(path) for path in _homoglyph_file_candidates(lang))
+    )
+    logging.error(msg)
+    raise PluginConfigurationError(msg) from last_error
 
 
 class BadCharacters(garak.seeds.Seed):
@@ -144,14 +171,29 @@ class BadCharacters(garak.seeds.Seed):
         "follow_prompt_cap": True,
     }
 
+    @staticmethod
+    def _seed_lang() -> str:
+        target_lang = normalize_lang_code(get_target_lang("en")) or "en"
+        return "ko" if target_lang == "ko" else "en"
+
+    def _load_payload_group(self):
+        if self.lang == "en":
+            return garak.payloads.load(self.payload_name)
+        localized_name = f"{self.payload_name}_{self.lang}"
+        try:
+            return garak.payloads.load(localized_name)
+        except PayloadFailure:
+            return garak.payloads.load(self.payload_name)
+
     def __init__(self, config_root=_config):
+        self.lang = self._seed_lang()
         super().__init__(config_root=config_root)
         if self.perturbation_budget <= 0:
             raise PluginConfigurationError(
                 "perturbation_budget must be a positive integer"
             )
 
-        self._homoglyph_map = _load_homoglyph_map()
+        self._homoglyph_map = _load_homoglyph_map(self.lang)
         categories = self.enabled_categories
         if isinstance(categories, str):
             categories = [categories]
@@ -183,17 +225,7 @@ class BadCharacters(garak.seeds.Seed):
                 f"{sorted(supported_categories)}"
             )
 
-        payload_name = self.payload_name
-        target_lang = getattr(_config.run, "target_lang", None)
-        if target_lang:
-            localized_name = f"{payload_name}_{target_lang}"
-            try:
-                localized_path = data_path / "payloads" / f"{localized_name}.json"
-            except GarakException:
-                localized_path = None
-            if localized_path is not None and localized_path.exists():
-                payload_name = localized_name
-        payload_group = garak.payloads.load(payload_name)
+        payload_group = self._load_payload_group()
         self._source_payloads = payload_group.payloads
         self.prompts: List[garak.attempt.Conversation] = []
         self._seen_prompts: set[str] = set()

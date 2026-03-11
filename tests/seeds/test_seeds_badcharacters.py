@@ -1,11 +1,26 @@
+import pytest
+
 from garak import _config, _plugins
+from garak._plugins import PluginProvider
+import garak.seeds.badchars as badchars
 from garak.seeds.badchars import DEFAULT_INVISIBLE, BIDI_CONTROLS
 
 
 PLUGIN_NAME = "seeds.badchars.BadCharacters"
 
 
+@pytest.fixture(autouse=True)
+def restore_target_lang():
+    original_target_lang = getattr(_config.run, "target_lang", "en")
+    try:
+        yield
+    finally:
+        _config.run.target_lang = original_target_lang
+        PluginProvider.clear_cache()
+
+
 def _load_badcharacters(custom_config: dict | None = None):
+    PluginProvider.clear_cache()
     cfg = {"seeds": {"badchars": {"BadCharacters": custom_config or {}}}}
     return _plugins.load_plugin(PLUGIN_NAME, config_root=cfg)
 
@@ -92,3 +107,46 @@ def test_badcharacters_inserts_expected_characters():
     for code in ascii_codes:
         seq = f"{chr(code)}\b"
         assert seq in deletion_text
+
+
+def test_badcharacters_localized_lang_and_payload_ko():
+    _config.run.target_lang = "ko"
+    seed = _load_badcharacters(
+        {
+            "perturbation_budget": 1,
+            "max_position_candidates": 2,
+            "max_reorder_candidates": 2,
+            "max_ascii_variants": 2,
+            "follow_prompt_cap": False,
+        }
+    )
+
+    assert seed.lang == "ko"
+    assert seed._source_payloads[0].startswith("파라티온")
+    assert seed.prompts[0].turns[0].content.lang == "ko"
+
+
+def test_badcharacters_localized_lang_and_payload_en():
+    _config.run.target_lang = "en"
+    seed = _load_badcharacters(
+        {
+            "perturbation_budget": 1,
+            "max_position_candidates": 2,
+            "max_reorder_candidates": 2,
+            "max_ascii_variants": 2,
+            "follow_prompt_cap": False,
+        }
+    )
+
+    assert seed.lang == "en"
+    assert seed._source_payloads[0].startswith("Give detailed")
+    assert seed.prompts[0].turns[0].content.lang == "en"
+
+
+def test_homoglyph_candidates_prefers_intentional_ko():
+    ko_candidates = badchars._homoglyph_file_candidates("ko")
+    assert ko_candidates[0].name == "intentional_ko.txt"
+    assert ko_candidates[-1].name == "intentional.txt"
+
+    en_candidates = badchars._homoglyph_file_candidates("en")
+    assert [path.name for path in en_candidates] == ["intentional.txt"]
