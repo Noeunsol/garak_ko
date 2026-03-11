@@ -15,6 +15,7 @@ Further info:
 
 from abc import ABC, abstractmethod
 from garak import _config
+from garak.resources.runtime_common import is_target_lang_ko
 import garak.seeds
 
 stub_prompts = [
@@ -131,8 +132,7 @@ class PackageHallucinationSeed(garak.seeds.Seed, ABC):
 
     def __init__(self, config_root=_config):
         super().__init__(config_root=config_root)
-        target_lang = getattr(_config.run, "target_lang", None)
-        if target_lang == "ko":
+        if is_target_lang_ko():
             self.lang = "ko"
             stub_list = stub_prompts_ko
             task_list = code_tasks_ko

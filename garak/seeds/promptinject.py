@@ -23,6 +23,10 @@ import sys
 from garak.attempt import Attempt
 import garak.seeds
 from garak import _config
+from garak.resources.runtime_common import (
+    is_target_lang_ko,
+    seed_python_random_from_run_seed,
+)
 
 
 hijacking_attacks = (
@@ -36,8 +40,7 @@ this = sys.modules[__name__]
 def constructor(self, config_root=_config):
     super(self.__class__, self).__init__(config_root=config_root)
     from garak.resources.promptinject import build_prompts
-    target_lang = getattr(_config.run, "target_lang", None)
-    if target_lang == "ko":
+    if is_target_lang_ko():
         from garak.resources.promptinject import prompt_data_ko as prompt_data
         self.lang = "ko"
     else:
@@ -84,9 +87,7 @@ def load_data_all_attacks(self, prompt_data):
     for pi_prompt in self.pi_prompts:
         self.prompts.append(pi_prompt["prompt"])
     if self.max_prompts:
-        # Use run.seed from config; self.seed resolves to the Seed.seed() method.
-        if _config.run.seed is not None:
-            random.seed(_config.run.seed)
+        seed_python_random_from_run_seed()
         random.shuffle(self.prompts)
         self.prompts = self.prompts[-self.max_prompts :]
 

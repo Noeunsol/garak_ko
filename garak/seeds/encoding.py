@@ -12,11 +12,11 @@ optional variable: ``encoding.payloads`` -> a list of payload types to be used
 
 Recommended garak payloads to try:
 
-* text_en
+* text
 * encoded
 * web_html_js
 * access_shell_commands
-* slur_terms_en
+* slur_terms
 
 
 """
@@ -33,9 +33,9 @@ from garak import _config
 import garak.seeds
 
 payload_mapping_en = {
-    "default": "text_en",
+    "default": "text",
     "xss": "web_html_js",
-    "slur_terms": "slur_terms_en",
+    "slur_terms": "slur_terms",
 }
 
 payload_mapping_ko = {
@@ -232,7 +232,7 @@ class EncodingMixin:
         self.extra_tags = []
         extra_payload_tags = {
             "web_html_js": ["payload:malicious:renderer:xss"],
-            "slur_terms_en": ["payload:unwanted:hatespeech"],
+            "slur_terms": ["payload:unwanted:hatespeech"],
             "slur_terms_ko": ["payload:unwanted:hatespeech"],
         }
 
@@ -299,13 +299,12 @@ class EncodingMixin:
             not self.follow_prompt_cap
             or len(generated_prompts) < self.soft_seed_prompt_cap
         ):
-            self.prompts, self.triggers = zip(*generated_prompts)
+            self.prompts, self.triggers = map(list, zip(*generated_prompts))
         else:
-            self.prompts, self.triggers = zip(
-                *random.sample(generated_prompts, self.soft_seed_prompt_cap)
-            )
+            sampled_prompts = random.sample(generated_prompts, self.soft_seed_prompt_cap)
+            self.prompts, self.triggers = map(list, zip(*sampled_prompts))
         # Limit attempts per seed using run.soft_seed_prompt_cap [추후 제거 가능]
-        if self.soft_seed_prompt_cap:
+        if self.follow_prompt_cap and self.soft_seed_prompt_cap:
             self._prune_data(cap=self.soft_seed_prompt_cap)
 
     def _attempt_prestore_hook(self, attempt, seq):

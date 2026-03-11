@@ -23,6 +23,7 @@ from typing import Iterable, List
 from garak import _config
 from garak.exception import GarakException
 from garak.data import path as data_path
+from garak.resources.runtime_common import get_target_lang, is_target_lang_ko
 import garak.seeds
 
 
@@ -64,8 +65,7 @@ class FITD(garak.seeds.IterativeSeed):
         self.refusal_judge = None
 
         super().__init__(config_root=config_root)
-        target_lang = getattr(_config.run, "target_lang", None)
-        if target_lang == "ko":
+        if is_target_lang_ko():
             self.lang = "ko"
         self._load_red_team_prompt_templates()
         if self.lang != self.langprovider.target_lang:
@@ -75,17 +75,21 @@ class FITD(garak.seeds.IterativeSeed):
             )
 
     def _load_red_team_prompt_templates(self):
-        target_lang = getattr(_config.run, "target_lang", None)
+        target_lang = get_target_lang()
         prompts_file = data_path / "fitd" / "prompt_template_increase_safety.txt"
         if target_lang == "ko":
-            localized = prompts_file.with_suffix(f".ko{prompts_file.suffix}")
+            localized = prompts_file.with_name(
+                f"{prompts_file.stem}_ko{prompts_file.suffix}"
+            )
             if localized.exists():
                 prompts_file = localized
         with open(prompts_file, "r", encoding="utf-8") as f:
             self.prompt_template_increase_safety = f.read()
         prompts_file = data_path / "fitd" / "prompt_template_get_level_query.txt"
         if target_lang == "ko":
-            localized = prompts_file.with_suffix(f".ko{prompts_file.suffix}")
+            localized = prompts_file.with_name(
+                f"{prompts_file.stem}_ko{prompts_file.suffix}"
+            )
             if localized.exists():
                 prompts_file = localized
         with open(prompts_file, "r", encoding="utf-8") as f:
@@ -94,14 +98,18 @@ class FITD(garak.seeds.IterativeSeed):
             data_path / "fitd" / "prompt_template_slippery_slope_paraphrase.txt"
         )
         if target_lang == "ko":
-            localized = prompts_file.with_suffix(f".ko{prompts_file.suffix}")
+            localized = prompts_file.with_name(
+                f"{prompts_file.stem}_ko{prompts_file.suffix}"
+            )
             if localized.exists():
                 prompts_file = localized
         with open(prompts_file, "r", encoding="utf-8") as f:
             self.prompt_template_slippery_slope_paraphrase = f.read()
         prompts_file = data_path / "fitd" / "prompt_template_realign.txt"
         if target_lang == "ko":
-            localized = prompts_file.with_suffix(f".ko{prompts_file.suffix}")
+            localized = prompts_file.with_name(
+                f"{prompts_file.stem}_ko{prompts_file.suffix}"
+            )
             if localized.exists():
                 prompts_file = localized
         with open(prompts_file, "r", encoding="utf-8") as f:
@@ -111,14 +119,18 @@ class FITD(garak.seeds.IterativeSeed):
         )
         prompts_file = data_path / "fitd" / "prompt_template_eval.txt"
         if target_lang == "ko":
-            localized = prompts_file.with_suffix(f".ko{prompts_file.suffix}")
+            localized = prompts_file.with_name(
+                f"{prompts_file.stem}_ko{prompts_file.suffix}"
+            )
             if localized.exists():
                 prompts_file = localized
         with open(prompts_file, "r", encoding="utf-8") as f:
             self.prompt_template_eval = f.read()
         prompts_file = data_path / "fitd" / "prompt_template_response_aligned.txt"
         if target_lang == "ko":
-            localized = prompts_file.with_suffix(f".ko{prompts_file.suffix}")
+            localized = prompts_file.with_name(
+                f"{prompts_file.stem}_ko{prompts_file.suffix}"
+            )
             if localized.exists():
                 prompts_file = localized
         with open(prompts_file, "r", encoding="utf-8") as f:
@@ -126,8 +138,8 @@ class FITD(garak.seeds.IterativeSeed):
 
         sensitive_words_file = data_path / "fitd" / "sensitive_words.csv"
         if target_lang == "ko":
-            localized = sensitive_words_file.with_suffix(
-                f".ko{sensitive_words_file.suffix}"
+            localized = sensitive_words_file.with_name(
+                f"{sensitive_words_file.stem}_ko{sensitive_words_file.suffix}"
             )
             if localized.exists():
                 sensitive_words_file = localized

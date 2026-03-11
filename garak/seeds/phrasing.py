@@ -35,10 +35,10 @@ class PastTenseFull(garak.seeds.Seed):
 
         self.prompts = []
         target_lang = getattr(_config.run, "target_lang", None)
-        phrasing_path = data_path / "phrasing" / "past_tense_en.txt"
+        phrasing_path = data_path / "phrasing" / "past_tense.txt"
         if target_lang:
             localized = phrasing_path.with_name(
-                f"{phrasing_path.stem.rsplit('_', 1)[0]}_{target_lang}{phrasing_path.suffix}"
+                f"{phrasing_path.stem}_{target_lang}{phrasing_path.suffix}"
             )
             if localized.exists():
                 phrasing_path = localized
@@ -87,10 +87,10 @@ class FutureTenseFull(garak.seeds.Seed):
 
         self.prompts = []
         target_lang = getattr(_config.run, "target_lang", None)
-        phrasing_path = data_path / "phrasing" / "future_tense_en.txt"
+        phrasing_path = data_path / "phrasing" / "future_tense.txt"
         if target_lang:
             localized = phrasing_path.with_name(
-                f"{phrasing_path.stem.rsplit('_', 1)[0]}_{target_lang}{phrasing_path.suffix}"
+                f"{phrasing_path.stem}_{target_lang}{phrasing_path.suffix}"
             )
             if localized.exists():
                 phrasing_path = localized

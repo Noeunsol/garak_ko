@@ -131,7 +131,7 @@ class DANSeedMeta(type):
                 target_lang = getattr(_config.run, "target_lang", None)
                 if target_lang:
                     localized = prompt_path.with_name(
-                        prompt_path.stem + f".{target_lang}" + prompt_path.suffix
+                        prompt_path.stem + f"_{target_lang}" + prompt_path.suffix
                     )
                     if localized.exists():
                         prompt_path = localized

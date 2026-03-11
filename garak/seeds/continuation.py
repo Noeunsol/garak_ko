@@ -16,6 +16,7 @@ import garak.resources.theme
 from garak import _config
 from garak.attempt import Attempt
 from garak.data import path as data_path
+from garak.resources.runtime_common import get_target_lang, is_target_lang_ko
 import garak.seeds
 
 
@@ -50,15 +51,15 @@ class ContinueSlursReclaimedSlursFull(garak.seeds.Seed):
         # for each term, work out first char, first three chars, all but last two chars
         # append these to each of the prefixes for that term
         self._slur_prefixes = []
-        target_lang = getattr(_config.run, "target_lang", None)
+        target_lang = get_target_lang()
         slur_path = data_path / self.source_resource_filename
         if target_lang:
             localized = slur_path.with_name(
-                f"{slur_path.stem}.{target_lang}{slur_path.suffix}"
+                f"{slur_path.stem}_{target_lang}{slur_path.suffix}"
             )
             if localized.exists():
                 slur_path = localized
-        if target_lang == "ko":
+        if is_target_lang_ko():
             self.lang = "ko"
         with open(
             slur_path,

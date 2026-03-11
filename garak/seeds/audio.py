@@ -15,6 +15,7 @@ from garak import _config
 from garak.attempt import Attempt, Message
 import garak.seeds
 from garak.exception import GarakException
+from garak.resources.runtime_common import is_target_lang_ko
 
 
 class AudioAchillesHeel(garak.seeds.Seed):
@@ -44,7 +45,7 @@ class AudioAchillesHeel(garak.seeds.Seed):
     def __init__(self, config_root=_config):
         super().__init__(config_root=config_root)
 
-        if getattr(_config.run, "target_lang", None) == "ko":
+        if is_target_lang_ko():
             self.lang = "ko"
             self.text_prompt = self._text_prompt_ko
 

@@ -173,9 +173,12 @@ def _load_surge_list():
         p = _safe_data_path(f"profanity_{lang}.csv")
         if p is not None:
             candidates.append(p)
-    p_en = _safe_data_path("profanity_en.csv")
-    if p_en is not None:
-        candidates.append(p_en)
+    p_default = _safe_data_path("profanity.csv")
+    if p_default is not None:
+        candidates.append(p_default)
+    p_legacy = _safe_data_path("profanity_en.csv")
+    if p_legacy is not None:
+        candidates.append(p_legacy)
 
     chosen = None
     for p in candidates:
@@ -194,7 +197,7 @@ def _load_surge_list():
                 loaded[row["category_2"]].append(row["text"])
             if row["category_3"]:
                 loaded[row["category_3"]].append(row["text"])
-    return loaded, chosen.name != "profanity_en.csv", chosen
+    return loaded, chosen.name != "profanity.csv", chosen
 
 
 surge_list, surge_localized, surge_path = _load_surge_list()
@@ -547,15 +550,18 @@ def _load_ldnoobw_terms():
     lang = _target_lang()
     candidates = []
     if lang:
-        p = _safe_data_path(f"ldnoobw-{lang}.txt")
-        if p is not None:
-            candidates.append(p)
         p = _safe_data_path(f"ldnoobw_{lang}.txt")
         if p is not None:
             candidates.append(p)
-    p_en = _safe_data_path("ldnoobw-en.txt")
-    if p_en is not None:
-        candidates.append(p_en)
+        p = _safe_data_path(f"ldnoobw-{lang}.txt")
+        if p is not None:
+            candidates.append(p)
+    p_default = _safe_data_path("ldnoobw.txt")
+    if p_default is not None:
+        candidates.append(p_default)
+    p_legacy = _safe_data_path("ldnoobw-en.txt")
+    if p_legacy is not None:
+        candidates.append(p_legacy)
 
     chosen = None
     for p in candidates:
@@ -570,7 +576,7 @@ def _load_ldnoobw_terms():
         for line in wordlist:
             if line.strip():
                 terms.append(line.strip())
-    return terms, chosen.name != "ldnoobw-en.txt", chosen
+    return terms, chosen.name != "ldnoobw.txt", chosen
 
 
 class LDNOOBW(ENBacktranslatingStringJudge):
@@ -613,7 +619,7 @@ class SlursReclaimedSlurs(StringJudge):
         target_lang = getattr(_config.run, "target_lang", None)
         slur_path = data_path / "slurprompts.jsonl"
         if target_lang == "ko":
-            localized = slur_path.with_name(f"slurprompts.{target_lang}.jsonl")
+            localized = slur_path.with_name(f"slurprompts_{target_lang}.jsonl")
             if localized.exists():
                 slur_path = localized
         with open(slur_path, "r", encoding="utf-8") as slurfile:

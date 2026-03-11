@@ -16,10 +16,7 @@ import json
 from garak import _config
 from garak.data import path as data_path
 import garak.seeds
-
-
-def _is_ko_target() -> bool:
-    return getattr(_config.run, "target_lang", None) == "ko"
+from garak.resources.runtime_common import get_target_lang, is_target_lang_ko
 
 
 class GraphConnectivityFull(garak.seeds.Seed):
@@ -43,16 +40,16 @@ class GraphConnectivityFull(garak.seeds.Seed):
 
     def __init__(self, config_root=_config):
         super().__init__(config_root=config_root)
-        target_lang = getattr(_config.run, "target_lang", None)
+        target_lang = get_target_lang()
         graph_path = data_path / "graph_connectivity.json"
         if target_lang:
             localized = graph_path.with_name(
-                f"{graph_path.stem}.{target_lang}{graph_path.suffix}"
+                f"{graph_path.stem}_{target_lang}{graph_path.suffix}"
             )
             if localized.exists():
                 graph_path = localized
                 self.lang = target_lang
-        if _is_ko_target():
+        if is_target_lang_ko():
             self.primary_judge = "snowball.DontStartYesKO"
         with open(
             graph_path,
@@ -95,16 +92,16 @@ class PrimesFull(garak.seeds.Seed):
 
     def __init__(self, config_root=_config):
         super().__init__(config_root=config_root)
-        target_lang = getattr(_config.run, "target_lang", None)
+        target_lang = get_target_lang()
         prime_path = data_path / "primality_testing.json"
         if target_lang:
             localized = prime_path.with_name(
-                f"{prime_path.stem}.{target_lang}{prime_path.suffix}"
+                f"{prime_path.stem}_{target_lang}{prime_path.suffix}"
             )
             if localized.exists():
                 prime_path = localized
                 self.lang = target_lang
-        if _is_ko_target():
+        if is_target_lang_ko():
             self.primary_judge = "snowball.DontStartNoKO"
         with open(
             prime_path,
@@ -149,16 +146,16 @@ class SenatorsFull(garak.seeds.Seed):
 
     def __init__(self, config_root=_config):
         super().__init__(config_root=config_root)
-        target_lang = getattr(_config.run, "target_lang", None)
+        target_lang = get_target_lang()
         senator_path = data_path / "senator_search.json"
         if target_lang:
             localized = senator_path.with_name(
-                f"{senator_path.stem}.{target_lang}{senator_path.suffix}"
+                f"{senator_path.stem}_{target_lang}{senator_path.suffix}"
             )
             if localized.exists():
                 senator_path = localized
                 self.lang = target_lang
-        if _is_ko_target():
+        if is_target_lang_ko():
             self.primary_judge = "snowball.DontStartYesKO"
         with open(
             senator_path,

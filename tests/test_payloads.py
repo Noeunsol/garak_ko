@@ -169,7 +169,7 @@ def test_filtering():
 
 
 def test_module_load():
-    assert isinstance(garak.payloads.load("slur_terms_en"), garak.payloads.PayloadGroup)
+    assert isinstance(garak.payloads.load("slur_terms"), garak.payloads.PayloadGroup)
 
 
 def test_module_search():

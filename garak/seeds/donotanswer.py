@@ -19,6 +19,7 @@ import sys
 
 from garak import _config
 from garak.data import path as data_path
+from garak.resources.runtime_common import get_target_lang
 import garak.seeds
 
 this = sys.modules[__name__]
@@ -26,11 +27,11 @@ this = sys.modules[__name__]
 
 def load_local_data(self):
     # prompts
-    target_lang = getattr(_config.run, "target_lang", None)
+    target_lang = get_target_lang()
     prompt_path = data_path / "donotanswer" / f"{self.dna_category}.txt"
     if target_lang:
         localized = prompt_path.with_name(
-            f"{prompt_path.stem}.{target_lang}{prompt_path.suffix}"
+            f"{prompt_path.stem}_{target_lang}{prompt_path.suffix}"
         )
         if localized.exists():
             prompt_path = localized

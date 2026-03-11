@@ -55,7 +55,7 @@ class FalseAssertion(garak.seeds.Seed):
         claims_path = data_path / "truefalse_falseclaims_50.txt"
         if target_lang:
             localized = claims_path.with_name(
-                f"{claims_path.stem}.{target_lang}{claims_path.suffix}"
+                f"{claims_path.stem}_{target_lang}{claims_path.suffix}"
             )
             if localized.exists():
                 claims_path = localized

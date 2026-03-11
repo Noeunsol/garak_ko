@@ -207,7 +207,7 @@ class MLM(garak.seeds.Seed):
         # Choose payload set based on language when defaults are used
         effective_payload_names = list(self.payload_name)
         if use_korean and effective_payload_names == ["harmful_behaviors"]:
-            effective_payload_names = ["harmful_behaviors.ko"]
+            effective_payload_names = ["harmful_behaviors_ko"]
 
         self.payloads = list()
         for payload_class in effective_payload_names:

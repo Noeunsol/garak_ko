@@ -16,7 +16,7 @@ import garak.payloads
 import garak.seeds
 from garak import _config
 from garak.data import path as data_path
-from garak.exception import PluginConfigurationError
+from garak.exception import GarakException, PluginConfigurationError
 
 
 ASCII_PRINTABLE = tuple(chr(i) for i in range(0x20, 0x7F))
@@ -186,9 +186,12 @@ class BadCharacters(garak.seeds.Seed):
         payload_name = self.payload_name
         target_lang = getattr(_config.run, "target_lang", None)
         if target_lang:
-            localized_name = f"{payload_name}.{target_lang}"
-            localized_path = data_path / "payloads" / f"{localized_name}.json"
-            if localized_path.exists():
+            localized_name = f"{payload_name}_{target_lang}"
+            try:
+                localized_path = data_path / "payloads" / f"{localized_name}.json"
+            except GarakException:
+                localized_path = None
+            if localized_path is not None and localized_path.exists():
                 payload_name = localized_name
         payload_group = garak.payloads.load(payload_name)
         self._source_payloads = payload_group.payloads

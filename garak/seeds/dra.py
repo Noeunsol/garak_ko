@@ -44,6 +44,10 @@ import garak.seeds
 from garak import _config
 import garak.payloads
 from garak.data import path as data_path
+from garak.resources.runtime_common import (
+    is_target_lang_ko,
+    seed_python_random_from_run_seed,
+)
 
 TOOL_LIST = [
     "lots of money",
@@ -128,16 +132,13 @@ class DRA(garak.seeds.Seed):
         super().__init__(config_root=config_root)
 
         # Seed random for reproducible prompt generation.
-        # Use run.seed from config; self.seed resolves to the Seed.seed() method.
-        if _config.run.seed is not None:
-            random.seed(_config.run.seed)
-
-        use_ko = getattr(_config.run, "target_lang", "en").lower().startswith("ko")
+        seed_python_random_from_run_seed()
+        use_ko = is_target_lang_ko()
 
         # Load moderation data
         mod_file = (
-            data_path / "dra" / "moderation_cache.ko.json"
-            if use_ko and (data_path / "dra" / "moderation_cache.ko.json").exists()
+            data_path / "dra" / "moderation_cache_ko.json"
+            if use_ko and (data_path / "dra" / "moderation_cache_ko.json").exists()
             else data_path / "dra" / "moderation_cache.json"
         )
         with open(mod_file, encoding="utf-8") as f:
@@ -145,8 +146,8 @@ class DRA(garak.seeds.Seed):
 
         # Load letter map
         letter_file = (
-            data_path / "dra" / "letter_map.ko.json"
-            if use_ko and (data_path / "dra" / "letter_map.ko.json").exists()
+            data_path / "dra" / "letter_map_ko.json"
+            if use_ko and (data_path / "dra" / "letter_map_ko.json").exists()
             else data_path / "dra" / "letter_map.json"
         )
         with open(letter_file, encoding="utf-8") as f:
@@ -154,16 +155,20 @@ class DRA(garak.seeds.Seed):
 
         # Load templates (locale-aware)
         tmpl_file = (
-            data_path / "dra" / "prompt_templates.ko.txt"
-            if use_ko and (data_path / "dra" / "prompt_templates.ko.txt").exists()
+            data_path / "dra" / "prompt_templates_ko.txt"
+            if use_ko and (data_path / "dra" / "prompt_templates_ko.txt").exists()
             else data_path / "dra" / "prompt_templates.txt"
         )
         with open(tmpl_file, encoding="utf-8") as f:
             self.all_templates = [line.strip() for line in f.readlines() if line.strip()]
 
         # Load behaviors from payload
-        ko_payload_path = data_path / "payloads" / "harmful_behaviors.ko.json"
-        payload_name = "harmful_behaviors.ko" if use_ko and ko_payload_path.exists() else self.payload_name
+        ko_payload_path = data_path / "payloads" / "harmful_behaviors_ko.json"
+        payload_name = (
+            "harmful_behaviors_ko"
+            if use_ko and ko_payload_path.exists()
+            else self.payload_name
+        )
         self.all_behaviors = garak.payloads.load(payload_name).payloads
 
         # Generate prompts for each behavior in the dataset
@@ -253,7 +258,7 @@ class DRA(garak.seeds.Seed):
                         word_guide += f"`{token[idx:]}` "
         # [2] tool guide
         # naively choose some
-        use_ko = getattr(_config.run, "target_lang", "en").lower().startswith("ko")
+        use_ko = is_target_lang_ko()
         tool_pool = TOOL_LIST_KO if use_ko else TOOL_LIST
         pick_n = min(2, len(tool_pool))
         tools = random.sample(tool_pool, pick_n)
@@ -322,6 +327,8 @@ class DRAAdvanced(DRA):
 
     def _check_moderation(self, token) -> bool:
         """Check if a token is harmful using detoxify if needed."""
+        if token in self.moderation_cache:
+            return bool(self.moderation_cache[token])
 
         # If not in cache, try to use detoxify
         if self.detoxify_model is None:
@@ -357,7 +364,7 @@ class DRAAdvanced(DRA):
         prompts = []
 
         # Locale-aware custom sentence
-        use_ko = getattr(_config.run, "target_lang", "en").lower().startswith("ko")
+        use_ko = is_target_lang_ko()
         if use_ko and "custom_sentence_ko" in self.DEFAULT_PARAMS:
             self.custom_sentence = self.custom_sentence_ko
 

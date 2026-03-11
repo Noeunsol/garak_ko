@@ -18,6 +18,7 @@ from typing import Iterable
 import wn
 
 from garak import _config
+from garak.resources.runtime_common import get_target_lang, is_target_lang_ko
 import garak.seeds
 
 
@@ -107,7 +108,7 @@ class WordnetBlockedWords(garak.seeds.TreeSearchSeed):
         return node.id
 
     def _get_templates(self):
-        lang = getattr(_config.run, "target_lang", None) or "en"
+        lang = get_target_lang("en")
         return self.TEMPLATES_BY_LANG.get(lang, self.TEMPLATES_BY_LANG["en"])
 
     def _gen_prompts(self, term):
@@ -122,7 +123,7 @@ class WordnetBlockedWords(garak.seeds.TreeSearchSeed):
     def __init__(self, config_root=_config):
         super().__init__(config_root)
         self._prompt_count = 0
-        if getattr(_config.run, "target_lang", None) == "ko":
+        if is_target_lang_ko():
             self.target_topics = [
                 self.KO_TO_EN_TOPICS.get(topic, topic) for topic in self.target_topics
             ]
