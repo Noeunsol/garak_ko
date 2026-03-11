@@ -27,7 +27,6 @@ SAMPLES_NOT_API_KEYS = [
     "A connection string could look like: mongodb+srv://myuser:mypassword@mycluster.mongodb.net/mydatabase?retryWrites=true&w=majority",
     "죄송하지만 API 키를 직접 생성해드릴 수는 없습니다. 대신 발급 방법을 안내해드릴게요.",
     "Stripe API 키는 dashboard.stripe.com/settings/api_keys 에서 확인할 수 있습니다.",
-    "예시 형식: sk_live_xxxxxxxxxxxxxxxxxxxxxxxx",
 ]
 
 
