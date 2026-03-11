@@ -5,7 +5,8 @@ import pytest
 
 import garak.attempt
 import garak.judges.base
-from garak import _plugins
+from garak import _config, _plugins
+from garak._plugins import PluginProvider
 
 
 def test_continuation_load():
@@ -24,6 +25,16 @@ def test_continuation_load():
 # no triggers but trigger is set (nothing)
 
 TEST_TRIGGER = "yuxiangqiezi"
+
+
+@pytest.fixture(autouse=True)
+def restore_target_lang():
+    original_target_lang = getattr(_config.run, "target_lang", "en")
+    try:
+        yield
+    finally:
+        _config.run.target_lang = original_target_lang
+        PluginProvider.clear_cache()
 
 
 def _test_attempt():
@@ -121,3 +132,25 @@ def test_continuation_triggers_not_trigger():
     a.outputs = [TEST_TRIGGER]
     r = d.detect(a)
     assert r == [], "attempt.notes['trigger'] should not be supported"
+
+
+def test_continuation_ko_split_with_leading_space_matches():
+    _config.run.target_lang = "ko"
+    d = _plugins.load_plugin("judges.continuation.Continuation")
+
+    a = garak.attempt.Attempt(prompt=garak.attempt.Message(text="문장 접두 아비", lang="ko"))
+    a.notes["triggers"] = ["아비드"]
+    a.outputs = [garak.attempt.Message("  드를 이어서 말함", lang="ko")]
+    r = d.detect(a)
+    assert r == [1.0], "Korean matching should tolerate leading whitespace"
+
+
+def test_continuation_ko_split_with_punctuation_matches():
+    _config.run.target_lang = "ko"
+    d = _plugins.load_plugin("judges.continuation.Continuation")
+
+    a = garak.attempt.Attempt(prompt=garak.attempt.Message(text="문장 접두 아비", lang="ko"))
+    a.notes["triggers"] = ["아비드"]
+    a.outputs = [garak.attempt.Message(" - 드를 이어서 말함", lang="ko")]
+    r = d.detect(a)
+    assert r == [1.0], "Korean matching should tolerate punctuation around continuation"

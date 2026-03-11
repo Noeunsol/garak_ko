@@ -16,7 +16,8 @@ import garak.resources.theme
 from garak import _config
 from garak.attempt import Attempt
 from garak.data import path as data_path
-from garak.resources.runtime_common import get_target_lang, is_target_lang_ko
+from garak.exception import PluginConfigurationError
+from garak.resources.runtime_common import is_target_lang_ko
 import garak.seeds
 
 
@@ -45,48 +46,69 @@ class ContinueSlursReclaimedSlursFull(garak.seeds.Seed):
 
     follow_prompt_cap = False
 
-    def __init__(self, config_root=_config):
-        super().__init__(config_root=config_root)
-        # go through the list
-        # for each term, work out first char, first three chars, all but last two chars
-        # append these to each of the prefixes for that term
-        self._slur_prefixes = []
-        target_lang = get_target_lang()
-        slur_path = data_path / self.source_resource_filename
-        if target_lang:
-            localized = slur_path.with_name(
-                f"{slur_path.stem}_{target_lang}{slur_path.suffix}"
+    @staticmethod
+    def _seed_lang() -> str:
+        return "ko" if is_target_lang_ko() else "en"
+
+    def _resource_candidates(self) -> list:
+        source_path = data_path / self.source_resource_filename
+        candidates = []
+        if self.lang != "en" and not source_path.stem.endswith(f"_{self.lang}"):
+            candidates.append(
+                source_path.with_name(f"{source_path.stem}_{self.lang}{source_path.suffix}")
             )
-            if localized.exists():
-                slur_path = localized
-        if is_target_lang_ko():
-            self.lang = "ko"
-        with open(
-            slur_path,
-            "r",
-            encoding="utf-8",
-        ) as slurfile:
+        candidates.append(source_path)
+        # Keep order stable while removing duplicates.
+        return list(dict.fromkeys(candidates))
+
+    def _resolve_resource_path(self):
+        for candidate in self._resource_candidates():
+            if candidate.exists():
+                return candidate
+        msg = (
+            "Unable to locate continuation source data. Expected one of: "
+            + ", ".join(str(path) for path in self._resource_candidates())
+        )
+        raise PluginConfigurationError(msg)
+
+    @staticmethod
+    def _load_slur_prefixes(slur_path) -> list[tuple[str, str]]:
+        slur_prefixes = []
+        with open(slur_path, "r", encoding="utf-8") as slurfile:
             for line in slurfile:
                 line = line.strip()
                 if not line:
                     continue
                 entry = json.loads(line)
-                self._slur_prefixes.append((entry["term"], entry["prefix"]))
+                slur_prefixes.append((entry["term"], entry["prefix"]))
+        return slur_prefixes
+
+    def __init__(self, config_root=_config):
+        self.lang = self._seed_lang()
+        super().__init__(config_root=config_root)
+        self._source_resource_path = self._resolve_resource_path()
+        self._slur_prefixes = self._load_slur_prefixes(self._source_resource_path)
 
         self.prompts = []
         self.triggers = []
+        seen_prompts = set()
         for term, prefix in self._slur_prefixes:
-            term_variants = set(["", term[0]])  # blank, first letter
+            # Candidate prompt variants are ordered to preserve reproducibility.
+            term_variants = [""]
+            if term:
+                term_variants.append(term[0])  # first letter
             if len(term) > 2:
-                term_variants.add(term[:2].strip())  # first two letters
-            term_variants.add(term[: int(len(term) / 2)].strip())  # first half of term
+                term_variants.append(term[:2].strip())  # first two letters
+            if term:
+                term_variants.append(term[: int(len(term) / 2)].strip())  # first half
 
-            for term_variant in term_variants:
-                # would use a set but order is important
+            for term_variant in dict.fromkeys(term_variants):
                 candidate_prompt = prefix + term_variant
-                if candidate_prompt not in self.prompts:
-                    self.prompts.append(candidate_prompt)
-                    self.triggers.append(term)
+                if candidate_prompt in seen_prompts:
+                    continue
+                seen_prompts.add(candidate_prompt)
+                self.prompts.append(candidate_prompt)
+                self.triggers.append(term)
 
         if self.follow_prompt_cap:
             self._prune_data(self.soft_seed_prompt_cap)
