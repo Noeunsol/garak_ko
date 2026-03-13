@@ -10,7 +10,7 @@ The dataset consists of prompts to which language models are often trained not t
 The DNA tests are somewhat opinionated and don't represent universal norms (nothing does), so use with care.
 
 Further info:
-* ttps://github.com/Libr-AI/do-not-answer
+* https://github.com/Libr-AI/do-not-answer
 * https://arxiv.org/abs/2308.13387
 
 """
@@ -23,31 +23,6 @@ from garak.resources.runtime_common import get_target_lang
 import garak.seeds
 
 this = sys.modules[__name__]
-
-
-def load_local_data(self):
-    # prompts
-    target_lang = get_target_lang()
-    prompt_path = data_path / "donotanswer" / f"{self.dna_category}.txt"
-    if target_lang:
-        localized = prompt_path.with_name(
-            f"{prompt_path.stem}_{target_lang}{prompt_path.suffix}"
-        )
-        if localized.exists():
-            prompt_path = localized
-            self.lang = target_lang
-
-    with open(prompt_path, encoding="utf=8") as f:
-        self.prompts = f.read().strip().split("\n")
-
-    # Limit attempts per seed using run.soft_seed_prompt_cap [추후 제외 가능] 
-    if self.soft_seed_prompt_cap:
-        self._prune_data(cap=self.soft_seed_prompt_cap)
-
-
-def local_constructor(self, config_root=_config):
-    super(self.__class__, self).__init__(config_root=config_root)
-    self.load_data()
 
 
 DNA_SEED_TAGS = {
@@ -77,35 +52,55 @@ DNA_SEED_TAGS = {
     ],
 }
 
-for seed_class in list(DNA_SEED_TAGS.keys()):
-    failure_name = seed_class.replace("_", " ")
-    classname = seed_class.title().replace("_", "")
-    goal = f"get model to respond as {failure_name}"
-    descr = f"Implementation of {seed_class} seeds in DoNotAnswer_Prompts"
-    doc = f"Do Not Answer seed\n\nA curated list of questions to which LLMs should not respond back, specifically testing {failure_name}"
+class _DnaBase(garak.seeds.Seed):
+    lang = "en"
+    primary_judge = "mitigation.MitigationBypass"
+    uri = "https://arxiv.org/abs/2308.13387"
+    prompts = []
+    active = False  # strong content norms not applicable in many scenarios
+    tier = garak.seeds.Tier.UNLISTED
+    dna_category: str
 
-    # define class
+    def _load_prompts(self) -> None:
+        target_lang = get_target_lang()
+        prompt_path = data_path / "donotanswer" / f"{self.dna_category}.txt"
+        if target_lang:
+            localized = prompt_path.with_name(
+                f"{prompt_path.stem}_{target_lang}{prompt_path.suffix}"
+            )
+            if localized.exists():
+                prompt_path = localized
+                self.lang = target_lang
 
+        with open(prompt_path, encoding="utf-8") as f:
+            self.prompts = f.read().strip().split("\n")
+
+        if self.soft_seed_prompt_cap:
+            self._prune_data(cap=self.soft_seed_prompt_cap)
+
+    def __init__(self, config_root=_config):
+        super().__init__(config_root=config_root)
+        self._load_prompts()
+
+
+for _seed_class, _tags in DNA_SEED_TAGS.items():
+    _failure_name = _seed_class.replace("_", " ")
+    _classname = _seed_class.title().replace("_", "")
     setattr(
         this,
-        classname,
+        _classname,
         type(
-            classname,
-            (garak.seeds.Seed,),
+            _classname,
+            (_DnaBase,),
             {
-                "__init__": local_constructor,
-                "__doc__": doc,
-                "uri": "https://arxiv.org/abs/2308.13387",
-                "lang": "en",
-                "description": descr,
-                "primary_judge": "mitigation.MitigationBypass",
-                "prompts": [],
-                "load_data": load_local_data,
-                "goal": goal,
-                "dna_category": seed_class,
-                "tags": DNA_SEED_TAGS[seed_class],
-                "active": False,  # strong content norms not applicable in many scenarios
-                "tier": garak.seeds.Tier.UNLISTED,
+                "__doc__": (
+                    f"Do Not Answer seed\n\nA curated list of questions to which LLMs should not "
+                    f"respond back, specifically testing {_failure_name}"
+                ),
+                "description": f"Implementation of {_seed_class} seeds in DoNotAnswer_Prompts",
+                "goal": f"get model to respond as {_failure_name}",
+                "dna_category": _seed_class,
+                "tags": _tags,
             },
         ),
     )
