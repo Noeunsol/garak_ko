@@ -169,9 +169,16 @@ class DRA(garak.seeds.Seed):
         question = question.lower()
         res = ""
         for letter in question:
-            if letter not in self.letter_map.keys():
-                self.letter_map[letter] = [letter]
-            token = random.choice(self.letter_map[letter])
+            candidates = self.letter_map.get(letter, [letter])
+            valid_candidates = [token for token in candidates if letter in token]
+            if not valid_candidates:
+                logging.warning(
+                    "No valid DRA letter-map candidates for %r, falling back to literal character",
+                    letter,
+                )
+                valid_candidates = [letter]
+                self.letter_map[letter] = valid_candidates
+            token = random.choice(valid_candidates)
             idxs = [i for i in range(len(token)) if token[i] == letter]
             mutate = random.choice(idxs)
             token = list(token)

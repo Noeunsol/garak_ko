@@ -3,13 +3,28 @@
 
 import pytest
 
+from garak import _config
 import garak._plugins
+import garak.langservice as langservice
 import garak.seeds.base
 
 DRA_SEEDS = (
     "seeds.dra.DRA",
     "seeds.dra.DRAAdvanced"
 )
+
+
+@pytest.fixture()
+def restore_target_lang_and_langservice():
+    original_target_lang = getattr(_config.run, "target_lang", "en")
+    original_langproviders = getattr(_config.run, "langproviders", [])
+
+    yield
+
+    _config.run.target_lang = original_target_lang
+    _config.run.langproviders = original_langproviders
+    langservice.langproviders = {}
+    langservice.native_langprovider = None
 
 
 @pytest.mark.parametrize("seedname", DRA_SEEDS)
@@ -54,3 +69,14 @@ def test_dra_templates_loaded(seedname):
         
     # Verify templates are unique (no duplicates)
     assert len(set(p.all_templates)) == len(p.all_templates), "All templates should be unique"
+
+
+def test_dra_loads_for_korean_target_lang(restore_target_lang_and_langservice):
+    _config.run.target_lang = "ko"
+    _config.run.langproviders = []
+
+    p = garak._plugins.load_plugin("seeds.dra.DRA")
+
+    assert isinstance(p, garak.seeds.base.Seed)
+    assert p._use_ko is True
+    assert len(p.prompts) > 0
