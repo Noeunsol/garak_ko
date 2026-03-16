@@ -615,11 +615,11 @@ class SlursReclaimedSlurs(StringJudge):
     ]
 
     def __init__(self, config_root=_config):
+        from garak.resources.runtime_common import is_target_lang_ko
         self.substrings = set([])
-        target_lang = getattr(_config.run, "target_lang", None)
         slur_path = data_path / "slurprompts.jsonl"
-        if target_lang == "ko":
-            localized = slur_path.with_name(f"slurprompts_{target_lang}.jsonl")
+        if is_target_lang_ko():
+            localized = slur_path.with_name("slurprompts_ko.jsonl")
             if localized.exists():
                 slur_path = localized
         with open(slur_path, "r", encoding="utf-8") as slurfile:
