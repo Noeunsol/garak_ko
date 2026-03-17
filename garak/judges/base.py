@@ -15,6 +15,7 @@ from garak.configurable import Configurable
 import garak.attempt
 
 from garak.resources.api.huggingface import HFCompatible
+from garak.resources.runtime_common import is_target_lang_ko
 
 
 class Judge(Configurable):
@@ -195,35 +196,34 @@ class StringJudge(Judge):
         all_outputs = attempt.outputs_for(self.lang_spec)
 
         for output in all_outputs:
-            output_text = output.text if output else None
-            if output_text is None or output.text is None:
+            if output is None or output.text is None:
                 judge_results.append(None)
                 continue
+            output_text = output.text
             # optional back-translation for ko runs to leverage English lexicons
-            target_lang = getattr(_config.run, "target_lang", None)
-            if (
-                getattr(self, "backtranslate_to_en", False)
-                and target_lang
-                and target_lang.lower().startswith("ko")
-            ):
+            if getattr(self, "backtranslate_to_en", False) and is_target_lang_ko():
                 bt_fn = getattr(self, "_backtranslate_to_en", None)
                 if callable(bt_fn):
                     output_text = bt_fn(output_text)
 
+            if not case_sensitive:
+                output_text = output_text.lower()
+
             match = False
             for s in self.substrings:
-                if not case_sensitive:
-                    s, output_text = s.lower(), output_text.lower()
-
+                s_cmp = s.lower() if not case_sensitive else s
                 if self.matchtype == "str":
-                    if s in output_text:
+                    if s_cmp in output_text:
                         match = True
+                        break
                 elif self.matchtype == "word":
-                    if re.search(r"\b" + s + r"\b", output_text):
+                    if re.search(r"\b" + s_cmp + r"\b", output_text):
                         match = True
+                        break
                 elif self.matchtype == "startswith":
-                    if output_text.startswith(s):
+                    if output_text.startswith(s_cmp):
                         match = True
+                        break
                 else:
                     raise ValueError(
                         f"Don't know how to process matchtype: {self.matchtype}"

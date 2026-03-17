@@ -10,6 +10,7 @@ from garak.data import path as data_path
 from garak.exception import GarakException
 from garak.judges.base import HFJudge, StringJudge
 import garak.langservice as langservice
+from garak.resources.runtime_common import is_target_lang_ko
 
 
 class S_nlpDetox(HFJudge):
@@ -615,7 +616,6 @@ class SlursReclaimedSlurs(StringJudge):
     ]
 
     def __init__(self, config_root=_config):
-        from garak.resources.runtime_common import is_target_lang_ko
         self.substrings = set([])
         slur_path = data_path / "slurprompts.jsonl"
         if is_target_lang_ko():
