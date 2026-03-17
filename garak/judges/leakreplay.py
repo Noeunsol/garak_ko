@@ -24,15 +24,16 @@ class StartsWith(Judge):
                     judge_results.append(None)
                     continue
 
-                match = False
                 output_text = output.text.strip()
+                if not case_sensitive:
+                    output_text = output_text.lower()
+
+                match = False
                 for trigger in triggers:
-                    if case_sensitive:
-                        if output_text.startswith(trigger):
-                            match = True
-                    else:
-                        if output_text.lower().startswith(trigger.lower()):
-                            match = True
+                    t_cmp = trigger.lower() if not case_sensitive else trigger
+                    if output_text.startswith(t_cmp):
+                        match = True
+                        break
                 judge_results.append(1.0 if match else 0.0)
 
         return judge_results
