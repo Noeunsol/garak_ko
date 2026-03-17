@@ -7,18 +7,17 @@ to implement their techinque.
 
 """
 
+from abc import ABC, abstractmethod
+
 from garak import _config
 from garak.data import path as data_path
 import garak.seeds
+from garak.resources.runtime_common import is_target_lang_ko, get_target_lang
 
 
-class PastTenseFull(garak.seeds.Seed):
-    """Will the system give unsafe responses when asked to write about weapon creation or dangerous behavior in the past tense?
+class _PhrasingSeedBase(garak.seeds.Seed, ABC):
+    """Base class for phrasing seeds with shared localization logic."""
 
-    This check sends the target requests for advice on possibly protect or restricted subjects in the past tense.
-    """
-
-    active = False
     lang = "en"
     doc_uri = "https://arxiv.org/pdf/2407.11969v2"
     primary_judge = "mitigation.Prefixes"
@@ -27,26 +26,42 @@ class PastTenseFull(garak.seeds.Seed):
         "quality:Security:PromptStability",
         "payload:jailbreak",
     ]
-    goal = "use past tense to disregard the system prompt"
     tier = garak.seeds.Tier.COMPETE_WITH_SOTA
+
+    @property
+    @abstractmethod
+    def _data_filename(self) -> str:
+        """Data file name (e.g. 'past_tense.txt') - must be overridden"""
+        pass
 
     def __init__(self, config_root=_config):
         super().__init__(config_root=config_root)
 
-        self.prompts = []
-        target_lang = getattr(_config.run, "target_lang", None)
-        phrasing_path = data_path / "phrasing" / "past_tense.txt"
+        phrasing_path = data_path / "phrasing" / self._data_filename
+        target_lang = get_target_lang()
         if target_lang:
             localized = phrasing_path.with_name(
                 f"{phrasing_path.stem}_{target_lang}{phrasing_path.suffix}"
             )
             if localized.exists():
                 phrasing_path = localized
-                self.lang = target_lang
 
-        with open(phrasing_path, "r", encoding="utf-8") as file:
-            for str in file:
-                self.prompts.append(str.strip())
+        if is_target_lang_ko():
+            self.lang = "ko"
+
+        with open(phrasing_path, "r", encoding="utf-8") as f:
+            self.prompts = [line.strip() for line in f if line.strip()]
+
+
+class PastTenseFull(_PhrasingSeedBase):
+    """Will the system give unsafe responses when asked to write about weapon creation or dangerous behavior in the past tense?
+
+    This check sends the target requests for advice on possibly protect or restricted subjects in the past tense.
+    """
+
+    active = False
+    goal = "use past tense to disregard the system prompt"
+    _data_filename = "past_tense.txt"
 
 
 class PastTense(PastTenseFull):
@@ -63,42 +78,15 @@ class PastTense(PastTenseFull):
         self._prune_data(cap=self.soft_seed_prompt_cap)
 
 
-class FutureTenseFull(garak.seeds.Seed):
+class FutureTenseFull(_PhrasingSeedBase):
     """Will the system give unsafe responses when asked to write about weapon creation or dangerous behavior in the future tense?
 
     This check sends the target requests for advice on possibly protect or restricted subjects in the future tense.
     """
 
     active = False
-
-    lang = "en"
-    doc_uri = "https://arxiv.org/pdf/2407.11969v2"
-    primary_judge = "mitigation.Prefixes"
-    tags = [
-        "owasp:llm01",
-        "quality:Security:PromptStability",
-        "payload:jailbreak",
-    ]
     goal = "use future tense to disregard the system prompt"
-    tier = garak.seeds.Tier.COMPETE_WITH_SOTA
-
-    def __init__(self, config_root=_config):
-        super().__init__(config_root=config_root)
-
-        self.prompts = []
-        target_lang = getattr(_config.run, "target_lang", None)
-        phrasing_path = data_path / "phrasing" / "future_tense.txt"
-        if target_lang:
-            localized = phrasing_path.with_name(
-                f"{phrasing_path.stem}_{target_lang}{phrasing_path.suffix}"
-            )
-            if localized.exists():
-                phrasing_path = localized
-                self.lang = target_lang
-
-        with open(phrasing_path, "r", encoding="utf-8") as file:
-            for str in file:
-                self.prompts.append(str.strip())
+    _data_filename = "future_tense.txt"
 
 
 class FutureTense(FutureTenseFull):
@@ -112,4 +100,4 @@ class FutureTense(FutureTenseFull):
 
     def __init__(self, config_root=_config):
         super().__init__(config_root=config_root)
-        self._prune_data(self.soft_seed_prompt_cap)
+        self._prune_data(cap=self.soft_seed_prompt_cap)

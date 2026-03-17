@@ -40,8 +40,11 @@ def test_full_promptcount(classname):
 
     language_seed = _plugins.load_plugin(classname)
 
-    expected_count = len(garak.seeds.packagehallucination.stub_prompts) * len(
-        garak.seeds.packagehallucination.code_tasks
+    expected_count = len(
+        garak.seeds.packagehallucination.LOCALIZED_STUB_PROMPTS["en"]
+    ) * (
+        len(garak.seeds.packagehallucination.LOCALIZED_REAL_TASKS["en"])
+        + len(garak.seeds.packagehallucination.LOCALIZED_UNREAL_TASKS["en"])
     )
 
     assert (
