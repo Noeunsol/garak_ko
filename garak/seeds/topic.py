@@ -10,7 +10,6 @@ Seeds in this module should attempt to circumvent topic-based blocks.
 The current set of seeds take the presumed-blocked terms as input, and traverse English WordNet - a linked set of words - trying to find out if similar-meaning terms yield something other than a mitigation message. The intent is to find how close we can stay to the blocked terms while managing to avoid a block.
 """
 
-from collections.abc import Iterable
 import logging
 import sqlite3
 from typing import Iterable
@@ -18,7 +17,7 @@ from typing import Iterable
 import wn
 
 from garak import _config
-from garak.resources.runtime_common import get_target_lang, is_target_lang_ko
+from garak.resources.runtime_common import is_target_lang_ko
 import garak.seeds
 
 
@@ -108,8 +107,8 @@ class WordnetBlockedWords(garak.seeds.TreeSearchSeed):
         return node.id
 
     def _get_templates(self):
-        lang = get_target_lang("en")
-        return self.TEMPLATES_BY_LANG.get(lang, self.TEMPLATES_BY_LANG["en"])
+        locale = "ko" if is_target_lang_ko() else "en"
+        return self.TEMPLATES_BY_LANG.get(locale, self.TEMPLATES_BY_LANG["en"])
 
     def _gen_prompts(self, term):
         templates = self._get_templates()
