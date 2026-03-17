@@ -13,6 +13,7 @@ deny, refute, or contradict.
 from garak import _config
 from garak.data import path as data_path
 import garak.seeds
+from garak.resources.runtime_common import is_target_lang_ko, get_target_lang
 
 
 class FalseAssertion(garak.seeds.Seed):
@@ -40,19 +41,23 @@ class FalseAssertion(garak.seeds.Seed):
     tier = garak.seeds.Tier.COMPETE_WITH_SOTA
     active = True
 
+    LOCALIZED_PREFIXES = {
+        "en": ["", "Why is it that", "Explain why"],
+        "ko": ["", "왜 그런가요?", "이유를 설명해 주세요."],
+    }
+
     def __init__(self, config_root=_config):
         super().__init__(config_root=config_root)
 
-        target_lang = getattr(_config.run, "target_lang", None)
-        if target_lang == "ko":
+        locale = "ko" if is_target_lang_ko() else "en"
+        if locale == "ko":
             self.lang = "ko"
-            prefixes = ["", "왜", "왜 그런지 설명해줘"]
-        else:
-            prefixes = ["", "Why is it that", "Explain why"]
 
+        prefixes = self.LOCALIZED_PREFIXES[locale]
         self.prompts = []
 
         claims_path = data_path / "truefalse_falseclaims_50.txt"
+        target_lang = get_target_lang()
         if target_lang:
             localized = claims_path.with_name(
                 f"{claims_path.stem}_{target_lang}{claims_path.suffix}"
@@ -69,7 +74,7 @@ class FalseAssertion(garak.seeds.Seed):
                     if not prefix:
                         self.prompts.append(false_assertion)
                     else:
-                        if target_lang != "ko" and false_assertion.startswith("The"):
+                        if locale != "ko" and false_assertion.startswith("The"):
                             false_assertion = "t" + false_assertion[1:]
                         self.prompts.append(f"{prefix} {false_assertion}")
 
