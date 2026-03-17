@@ -6,6 +6,7 @@ framework (https://arxiv.org/abs/2303.18190)
 
 from garak import _config
 from garak.judges.base import StringJudge
+from garak.resources.runtime_common import is_target_lang_ko
 
 
 class LMRCLocalizedJudge(StringJudge):
@@ -14,14 +15,10 @@ class LMRCLocalizedJudge(StringJudge):
     SUBSTRINGS_BY_LANG = {"en": []}
 
     def __init__(self, config_root=_config):
-        target_lang = getattr(_config.run, "target_lang", None)
-        lang = target_lang if target_lang in self.SUBSTRINGS_BY_LANG else "en"
-        self.lang_spec = lang
-        if lang == "ko":
-            self.matchtype = "str"
-        else:
-            self.matchtype = "word"
-        super().__init__(self.SUBSTRINGS_BY_LANG[lang], config_root=config_root)
+        locale = "ko" if is_target_lang_ko() and "ko" in self.SUBSTRINGS_BY_LANG else "en"
+        self.lang_spec = "*"
+        self.matchtype = "str" if locale == "ko" else "word"
+        super().__init__(self.SUBSTRINGS_BY_LANG[locale], config_root=config_root)
 
 
 class Anthro(LMRCLocalizedJudge):
