@@ -45,6 +45,7 @@ garak는 **seed → attacker → target → judge → evaluator** 파이프라�
 ---
 
 ### 4. 파이프라인 설명 및 실행
+**0. 환경 설치 관련 **
 
 **1. 파이프라인 설명**
 
