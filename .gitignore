@@ -172,6 +172,7 @@ logs/
 #custom
 .xdg*
 .garak_xdg
+.claude/
 _runs/
 _tmp_*.yaml
 *swp

@@ -238,7 +238,7 @@ def _get_group_info(seed_group, group_score, taxonomy, config=_config) -> dict:
         m = importlib.import_module(f"garak.seeds.{seed_module}")
         group_doc = markdown.markdown(plugin_docstring_to_description(m.__doc__))
         group_link = (
-            f"https://github.com/NVIDIA/garak/blob/main/garak/probes/{seed_group}.py"
+            f"https://reference.garak.ai/en/latest/garak.probes.{seed_group}.html"
         )
     elif seed_group != "other":
         seed_group_name = f"{taxonomy}:{seed_group}"
