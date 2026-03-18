@@ -1,10 +1,10 @@
 [build-system]
-requires = ["flit_core >=3.11,<4"]
-build-backend = "flit_core.buildapi"
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "garak-ko"
-version = "0.14.0.ko1"
+version = "0.14.0.post1"
 authors = [
   { name = "SelectStar" },
 ]
@@ -100,17 +100,16 @@ dependencies = [
 [project.scripts]
 garak = "garak.__main__:main"
 
-[tool.flit.module]
-name = "garak"
+[tool.setuptools.packages.find]
+where = ["src"]
 
-[tool.flit.sdist]
-include = [
-  "*.md",
-  "*.txt",
-  "garak/analyze/templates/*",
-  "garak/configs/*",
-  "garak/resources/*.json",
-  "garak/resources/*.yaml",
+[tool.setuptools.package-data]
+garak = [
+  "analyze/templates/*",
+  "configs/*",
+  "resources/*.json",
+  "resources/*.yaml",
+  "data/**/*",
 ]
 
 [tool.black]
@@ -125,5 +124,5 @@ filterwarnings = [
 ]
 
 [tool.coverage.run]
-source = ["./garak"]
+source = ["./src/garak"]
 omit = ["tests/*"]

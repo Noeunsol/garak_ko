@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+import sys
+from pathlib import Path
+
+# src/ 하위의 garak 패키지를 import할 수 있도록 경로 추가
+sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
+
 import argparse
 from garak.cli import main as garak_main
 
