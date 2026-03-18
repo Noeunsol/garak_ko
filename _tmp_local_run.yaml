@@ -1,7 +1,0 @@
-run:
-  target_lang: en
-  generations: 1
-  soft_seed_prompt_cap: 1
-  langproviders: []
-plugins:
-  seed_spec: test.Blank

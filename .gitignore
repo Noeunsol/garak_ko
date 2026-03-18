@@ -68,11 +68,7 @@ instance/
 # Scrapy stuff:
 .scrapy
 
-# Sphinx documentation
-docs/_build/
-docs/source/_build
-docs/source/html
-docs/source/calibration.json
+# Sphinx documentation (삭제됨)
 
 # PyBuilder
 .pybuilder/
@@ -175,8 +171,7 @@ logs/
 
 #custom
 .xdg*
-.venv*
-.github
 .garak_xdg
-_runs
+_runs/
+_tmp_*.yaml
 *swp
