@@ -122,7 +122,7 @@ def test_badcharacters_localized_lang_and_payload_ko():
     )
 
     assert seed.lang == "ko"
-    assert seed._source_payloads[0].startswith("파라티온")
+    assert seed._source_payloads[0].startswith("살충제 파라티온")
     assert seed.prompts[0].turns[0].content.lang == "ko"
 
 

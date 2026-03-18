@@ -26,6 +26,7 @@ import garak._plugins
 from garak.data import path as data_path
 import garak.analyze
 import garak.analyze.calibration
+from garak.resources.runtime_common import is_target_lang_ko
 
 
 if not _config.loaded:
@@ -237,7 +238,7 @@ def _get_group_info(seed_group, group_score, taxonomy, config=_config) -> dict:
         m = importlib.import_module(f"garak.seeds.{seed_module}")
         group_doc = markdown.markdown(plugin_docstring_to_description(m.__doc__))
         group_link = (
-            f"https://reference.garak.ai/en/latest/garak.seeds.{seed_group}.html"
+            f"https://github.com/NVIDIA/garak/blob/main/garak/probes/{seed_group}.py"
         )
     elif seed_group != "other":
         seed_group_name = f"{taxonomy}:{seed_group}"
@@ -287,6 +288,18 @@ def _get_judges_info(cursor, seed_group, seed_class) -> List[tuple]:
     return res.fetchall()
 
 
+def _get_ui_lang() -> str:
+    """현재 target_lang에 따라 UI 언어를 반환"""
+    return "ko" if is_target_lang_ko() else "en"
+
+
+def _get_localized_comments():
+    """언어에 맞는 ABSOLUTE/RELATIVE COMMENT dict 반환"""
+    if is_target_lang_ko():
+        return garak.analyze.ABSOLUTE_COMMENT_KO, garak.analyze.RELATIVE_COMMENT_KO
+    return garak.analyze.ABSOLUTE_COMMENT, garak.analyze.RELATIVE_COMMENT
+
+
 def _get_seed_judge_details(
     seed_module, seed_class, judge, absolute_score, calibration, seed_tier
 ) -> dict:
@@ -327,15 +340,17 @@ def _get_seed_judge_details(
     else:
         judge_defcon = relative_defcon
 
+    abs_comments, rel_comments = _get_localized_comments()
+
     return {
         "judge_name": judge,
         "judge_descr": html.escape(judge_description),
         "absolute_score": absolute_score,
         "absolute_defcon": absolute_defcon,
-        "absolute_comment": garak.analyze.ABSOLUTE_COMMENT[absolute_defcon],
+        "absolute_comment": abs_comments[absolute_defcon],
         "relative_score": relative_score,
         "relative_defcon": relative_defcon,
-        "relative_comment": relative_comment,
+        "relative_comment": relative_comment if relative_comment is None else rel_comments.get(relative_defcon, relative_comment),
         "judge_defcon": judge_defcon,
         "calibration_used": calibration_used,
     }
@@ -451,6 +466,7 @@ def build_html(digest: dict, config=_config):
     # taxonomy = config.reporting.taxonomy
     # group_aggregation_function = config.reporting.group_aggregation_function
 
+    ui = garak.analyze.LOCALIZED_UI[_get_ui_lang()]
     html_report_content = ""
 
     header_content = digest["meta"]
@@ -458,6 +474,7 @@ def build_html(digest: dict, config=_config):
         header_content["setup"], sort_dicts=True, width=60
     )
     header_content["now"] = datetime.datetime.now().isoformat()
+    header_content["ui"] = ui
     html_report_content += header_template.render(header_content)
 
     group_names = digest["eval"].keys()
@@ -469,6 +486,7 @@ def build_html(digest: dict, config=_config):
         ]
         group_info["show_top_group_score"] = config.reporting.show_top_group_score
 
+        group_info["ui"] = ui
         html_report_content += group_template.render(group_info)
 
         if group_info["score"] < 1.0 or config.reporting.show_100_pass_modules:
@@ -476,6 +494,7 @@ def build_html(digest: dict, config=_config):
                 if seed_name == "_summary":
                     continue
                 seed_info = digest["eval"][seed_group][seed_name]["_summary"]
+                seed_info["ui"] = ui
                 html_report_content += seed_template.render(seed_info)
 
                 judge_names = digest["eval"][seed_group][seed_name].keys()
@@ -491,6 +510,7 @@ def build_html(digest: dict, config=_config):
                         seed_judge_result["absolute_score"] < 1.0
                         or config.reporting.show_100_pass_modules
                     ):
+                        seed_judge_result["ui"] = ui
                         html_report_content += judge_template.render(
                             seed_judge_result
                         )
@@ -498,9 +518,11 @@ def build_html(digest: dict, config=_config):
         html_report_content += end_module.render()
 
     if digest["meta"]["calibration_used"]:
-        html_report_content += about_z_template.render(digest["meta"]["calibration"])
+        calibration_info = digest["meta"]["calibration"]
+        calibration_info["ui"] = ui
+        html_report_content += about_z_template.render(calibration_info)
 
-    html_report_content += footer_template.render()
+    html_report_content += footer_template.render(ui=ui)
 
     return html_report_content
 
