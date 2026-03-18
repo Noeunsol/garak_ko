@@ -4,9 +4,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 """
-count the number of characters sent and received based on prompts, outputs, and generations
+count the number of characters and tokens sent and received based on prompts, outputs, and generations
 
-should probably be upgraded to estimate token counts, too
+자모 분해 방식으로 토큰을 계산합니다:
+- 영어: 글자 수 = 토큰 수 (a→1, hello→5)
+- 한국어: 초성+중성+종성 분해 수 (ㄱ→1, 안→3, 안녕→6)
+
+한/영 동일 의미의 텍스트가 동등한 정보량으로 측정됩니다.
 
 usage
 
@@ -20,10 +24,41 @@ import argparse
 import garak
 
 
+def _to_text(o):
+    """attempt/output 객체에서 텍스트를 추출"""
+    if isinstance(o, str):
+        return o
+    if isinstance(o, dict):
+        for k in ("text", "content", "response"):
+            v = o.get(k)
+            if isinstance(v, str):
+                return v
+    return str(o)
+
+
+def _count_jamo(text: str) -> int:
+    """영어는 글자 수, 한국어는 자모 분해 수로 토큰 계산"""
+    count = 0
+    for ch in text:
+        if "\uAC00" <= ch <= "\uD7A3":
+            # 한글 음절 → 초성+중성(+종성) 분해
+            final = (ord(ch) - 0xAC00) % 28
+            count += 3 if final else 2
+        elif "\u3131" <= ch <= "\u3163":
+            count += 1  # 단독 자모
+        elif ch.isspace():
+            continue
+        else:
+            count += 1  # 영어/숫자/기타
+    return count
+
+
 def count_tokens(report_path: str) -> None:
     calls = 0
-    input_length = 0
-    output_length = 0
+    input_chars = 0
+    output_chars = 0
+    input_tokens = 0
+    output_tokens = 0
     generations = 10
 
     with open(report_path, encoding="utf-8") as reportfile:
@@ -36,29 +71,27 @@ def count_tokens(report_path: str) -> None:
                 generations = r["run.generations"]
                 continue
             if "status" in r and r["status"] == 2:
-                input_length += len(r["prompt"]) * generations
+                prompt_text = _to_text(r.get("prompt", ""))
+                input_chars += len(prompt_text) * generations
+                input_tokens += _count_jamo(prompt_text) * generations
                 calls += generations
+
                 outputs = r.get("outputs", [])
                 if isinstance(outputs, list):
-                    def _to_text(o):
-                        if isinstance(o, str):
-                            return o
-                        if isinstance(o, dict):
-                            # common keys seen in target outputs
-                            for k in ("text", "content", "response"):
-                                v = o.get(k)
-                                if isinstance(v, str):
-                                    return v
-                        return str(o)
-
                     output_text = "".join(_to_text(o) for o in outputs)
                 else:
                     output_text = str(outputs)
-                output_length += len(output_text)
+                output_chars += len(output_text)
+                output_tokens += _count_jamo(output_text)
+
+    total_chars = input_chars + output_chars
+    total_tokens = input_tokens + output_tokens
 
     print(f"Calls: {calls}")
-    print(f"Input chars: {input_length}")
-    print(f"Output chars: {output_length}")
+    print(f"{'':>9s} {'chars':>10s} {'tokens':>10s}")
+    print(f"{'Input':>9s} {input_chars:>10,} {input_tokens:>10,}")
+    print(f"{'Output':>9s} {output_chars:>10,} {output_tokens:>10,}")
+    print(f"{'Total':>9s} {total_chars:>10,} {total_tokens:>10,}")
 
 
 def main(argv=None) -> None:
