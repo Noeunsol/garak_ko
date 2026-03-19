@@ -74,8 +74,8 @@ garak_ko는 한국어 평가에 최적화된 2가지 seed group 패키지를 제
 
 | seed group | 목적 | 포함 seed | 예상 시간 |
 |-----------|------|----------|----------|
-| `priority_ko_soft_20m` | 중요 리스크 우선 점검 | TAP(자동 탈옥), suffix(접미사 우회), latentinjection(잠복 명령), promptinject(프롬프트 하이재킹), atkgen(독성 유도), lmrc(혐오 표현), malwaregen(악성코드) | ~20분 |
-| `quick_variety_smoke_ko` | 빠른 스모크 테스트 | dan(탈옥), grandma(역할극), encoding(인코딩 우회), continuation(이어쓰기), phrasing(표현 변형), divergence(반복 발산), snowball(누적 추론), ansiescape(포맷 교란), doctor(위험 우회) | ~20분 |
+| `priority_ko_soft_20m` | 중요 리스크 우선 점검 | TAP(자동 탈옥), suffix(접미사 우회), latentinjection(잠복 명령), promptinject(프롬프트 하이재킹), atkgen(독성 유도), lmrc(혐오 표현), malwaregen(악성코드) | 약 20분 |
+| `quick_variety_smoke_ko` | 빠른 스모크 테스트 | dan(탈옥), grandma(역할극), encoding(인코딩 우회), continuation(이어쓰기), phrasing(표현 변형), divergence(반복 발산), snowball(누적 추론), ansiescape(포맷 교란), doctor(위험 우회) | 약 5분 |
 
 두 패키지 모두 `target_lang: ko`, `generations: 1`이 고정되어 있어 별도 언어 설정 없이 바로 한국어 평가를 실행할 수 있습니다.
 
@@ -100,17 +100,44 @@ garak_ko는 한국어 평가에 최적화된 2가지 seed group 패키지를 제
 
 **0. 환경 설치**
 
+garak_ko는 Linux 및 macOS 환경에서 개발·테스트되었습니다. Python `>=3.10` (권장: 3.11)이 필요합니다.
+
+**소스에서 설치 (권장)**
+
+garak_ko는 자체 의존성이 많으므로, 전용 Conda 환경에 설치하는 것을 권장합니다:
+
 ```bash
-# conda 환경 생성 및 활성화
+# 1) conda 환경 생성 및 활성화
 conda create -n garak_ko python=3.11 -y
 conda activate garak_ko
 
-# 의존성 설치
-pip install -r requirements.txt
+# 2) 레포지토리 클론
+git clone https://github.com/selectstar-ai/garak_ko.git
+cd garak_ko
 
-# Jupyter 커널 등록 (notebook 사용 시)
+# 3) editable 모드로 설치 (필수 — 미실행 시 'No module named garak' 발생)
+pip install -e .
+
+# 4) Jupyter 커널 등록 (notebook 사용 시)
 pip install ipykernel
 python -m ipykernel install --user --name garak_ko --display-name "garak_ko"
+```
+
+> **주의**: `src/` 구조로 되어 있어 `pip install -e .` (editable install)이 **필수**입니다.
+> `pip install -r requirements.txt`만으로는 `python -m garak` 실행 시 모듈을 찾지 못합니다.
+
+**설치 확인**
+
+> **주의**: 반드시 `conda activate garak_ko` 후 실행하세요. 시스템 Python(`python3`)이 아닌 conda 환경의 `python`을 사용해야 합니다.
+
+```bash
+conda activate garak_ko
+
+# garak 모듈 로드 확인
+python -m garak --help
+
+# seed group 목록 확인
+python -m garak --list_seed_groups --seed_groups_file src/garak/configs/korean_specialization.yaml
 ```
 
 **1. 파이프라인 설명**
