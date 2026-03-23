@@ -236,9 +236,9 @@ class Puppetry(garak.seeds.Seed):
 
     def __init__(self, config_root=_config):
         super().__init__(config_root=config_root)
+        self.prompts = self._localized_parts()["prompts"]
         if self.soft_seed_prompt_cap:
             self._prune_data(self.soft_seed_prompt_cap, prune_triggers=True)
-        self.prompts = self._localized_parts()["prompts"]
 
 
 class Bypass(garak.seeds.Seed):
