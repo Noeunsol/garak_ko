@@ -39,7 +39,7 @@ class LRLAttacker(Attacker):
     ENV_VAR = "OPENAI_API_KEY"
     doc_uri = "https://arxiv.org/abs/2310.02446"
     DEFAULT_PARAMS = Attacker.DEFAULT_PARAMS | {
-        "model_name": "gpt-4o-mini",
+        "model_name": "gpt-4.1-mini",
         "temperature": 0.3,
     }
 

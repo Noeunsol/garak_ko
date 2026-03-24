@@ -61,6 +61,7 @@ chat_models = (
     "gpt-4o-realtime-preview",  # links to latest version
     "gpt-4o-realtime-preview-2024-12-17",
     "gpt-4o-realtime-preview-2024-10-01",
+    "gpt-4.1-mini",
     "o1-mini",  # links to latest version
     "o1-mini-2024-09-12",
     "o1-preview",  # links to latest version
@@ -117,6 +118,7 @@ context_lengths = {
     "gpt-4o-2024-08-06": 128000,
     "gpt-4o-mini": 16384,
     "gpt-4o-mini-2024-07-18": 16384,
+    "gpt-4.1-mini": 1047576,
     "o1-mini": 65536,
     "o1-mini-2024-09-12": 65536,
     "o1-preview": 32768,

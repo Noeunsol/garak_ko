@@ -29,7 +29,7 @@ class PegasusT5(Attacker, HFCompatible):
         "temperature": 1.5,
         # translation bridge for non-English inputs
         "enable_translation_bridge": True,
-        "translation_model_name": "gpt-4o-mini",
+        "translation_model_name": "gpt-4.1-mini",
         "translation_temperature": 0.3,
     }
     lang = None  # allow all languages; non-en can route through bridge
@@ -142,7 +142,7 @@ class OpenAIParaphrase(Attacker):
 
     ENV_VAR = "OPENAI_API_KEY"
     DEFAULT_PARAMS = Attacker.DEFAULT_PARAMS | {
-        "model_name": "gpt-4o-mini",
+        "model_name": "gpt-4.1-mini",
         "temperature": 0.7,
         "num_return_sequences": 3,
     }
@@ -202,7 +202,7 @@ class Fast(Attacker, HFCompatible):
         "hf_args": {"device": "cpu", "torch_dtype": "float32"},
         # translation bridge for non-English inputs
         "enable_translation_bridge": True,
-        "translation_model_name": "gpt-4o-mini",
+        "translation_model_name": "gpt-4.1-mini",
         "translation_temperature": 0.3,
     }
     lang = None  # allow all; non-en can be routed through translation bridge
