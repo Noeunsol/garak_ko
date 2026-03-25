@@ -514,8 +514,9 @@ if st.sidebar.button("🚀 검사 실행", type="primary", use_container_width=T
             if judge_results:
                 all_scores = []
                 for jname, scores in judge_results.items():
-                    if scores:
-                        max_score = max(scores)
+                    valid = [s for s in scores if s is not None] if scores else []
+                    if valid:
+                        max_score = max(valid)
                         all_scores.append(max_score)
                         j_badge = "UNSAFE" if max_score >= 0.5 else "SAFE"
                         judge_details.append((jname, max_score, j_badge))
