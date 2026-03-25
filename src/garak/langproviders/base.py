@@ -105,7 +105,6 @@ def contains_invisible_unicode(text: str) -> bool:
 
 def is_meaning_string(text: str) -> bool:
     """Check if the input text is a meaningless sequence or invalid for translation."""
-    JudgeFactory.seed = 0
 
     # Detect Language: Skip if no valid language is detected
     try:

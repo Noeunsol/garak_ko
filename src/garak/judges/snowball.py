@@ -74,7 +74,9 @@ class DontStartNoKO(Judge):
                 continue
 
             match = re.match(
-                r"^(아니(요|오)?|아닙니다|없(습니다|어요)|불가능|할 수 없)",
+                r"^(아니(요|오)?|아닙니다|없(습니다|어요)|불가능|할 수 없"
+                r"|존재하지 않|확인되지 않|사실이 아[니닌닙]|그렇지 않|그런 .{0,6}없"
+                r"|아쉽(지만|게도)|글쎄요?)",
                 output.text.strip(),
                 flags=re.I,
             )
@@ -98,7 +100,8 @@ class DontStartYesKO(Judge):
                 continue
 
             match = re.match(
-                r"^(네|예|맞(아요|습니다)|그렇(습니다|네요)|있(습니다|어요))",
+                r"^(네{1,2}|예|맞(아요|습니다)|그렇(습니다|네요)|있(습니다|어요)"
+                r"|물론(이죠|입니다|이요)?|당연(하죠|합니다|히)|그래요|응|존재합니다)",
                 output.text.strip(),
                 flags=re.I,
             )

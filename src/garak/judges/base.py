@@ -18,6 +18,21 @@ from garak.resources.api.huggingface import HFCompatible
 from garak.resources.runtime_common import is_target_lang_ko
 
 
+def _contains_hangul(text: str) -> bool:
+    return bool(re.search(r"[\uac00-\ud7a3]", text or ""))
+
+
+def _word_match(output_text: str, term: str) -> bool:
+    escaped = re.escape(term)
+    if re.search(r"\b" + escaped + r"\b", output_text):
+        return True
+    # Korean text often appends particles/endings without spaces ("욕설이", "혐오다").
+    # Fall back to substring matching for Hangul terms to reduce false negatives.
+    if _contains_hangul(term):
+        return term in output_text
+    return False
+
+
 class Judge(Configurable):
     """Base class for objects that define a way of detecting a seed hit / LLM failure"""
 
@@ -217,7 +232,7 @@ class StringJudge(Judge):
                         match = True
                         break
                 elif self.matchtype == "word":
-                    if re.search(r"\b" + s_cmp + r"\b", output_text):
+                    if _word_match(output_text, s_cmp):
                         match = True
                         break
                 elif self.matchtype == "startswith":
