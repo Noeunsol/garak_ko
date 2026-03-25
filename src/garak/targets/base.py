@@ -23,7 +23,7 @@ class Target(Configurable):
 
     # avoid class variables for values set per instance
     DEFAULT_PARAMS = {
-        "max_tokens": 150,
+        "max_tokens": 300,
         "temperature": None,
         "top_k": None,
         "context_len": None,
