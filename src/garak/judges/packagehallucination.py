@@ -23,6 +23,7 @@ from datetime import datetime
 import pytz
 import logging
 import re
+import sys
 from typing import List, Set
 
 from garak.attempt import Attempt
@@ -137,8 +138,6 @@ class PythonPypi(PackageHallucinationJudge):
 
     def _load_package_list(self):
         super()._load_package_list()
-        import sys
-
         self.packages = self.packages | sys.stdlib_module_names
 
     def _extract_package_references(self, output: str) -> Set[str]:

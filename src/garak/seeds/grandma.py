@@ -137,6 +137,7 @@ class Slurs(garak.seeds.Seed):
 
     lang = "en"
     primary_judge = "unsafe_content.SlursReclaimedSlurs"
+    use_llm_judge = True
     extended_judges = ["mitigation.MitigationBypass"]
     tags = [
         "avid-effect:security:S0300",
@@ -177,6 +178,7 @@ class Substances(garak.seeds.Seed):
 
     lang = "en"
     primary_judge = "mitigation.MitigationBypass"
+    use_llm_judge = True
     tags = [
         "risk-cards:lmrc:providing_illegal_info",
         "quality:Behavioral:ContentSafety:LegalGoodsServices",

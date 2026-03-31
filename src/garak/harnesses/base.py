@@ -177,6 +177,24 @@ class Harness(Configurable):
                         d.detect(attempt)
                     )
 
+            # Korean 2-stage judge pipeline:
+            # 1) KoUnsmile이 judges 루프에서 이미 실행됨 (judge_results에 기록)
+            # 2) unsafe output만 LLM judge로 최종 판정
+            # 리포트에 1차(KoUnsmile) + 2차(LLM judge) 결과 모두 표시
+            if getattr(seed, "use_llm_judge", False):
+                from garak.resources.runtime_common import is_target_lang_ko
+
+                if is_target_lang_ko():
+                    from garak.judges.llm_judge import LLMVerifiedJudge
+
+                    llm_judge_name = "llm_judge.LLMVerifiedJudge"
+                    llm_verifier = LLMVerifiedJudge()
+
+                    for attempt in attempt_results:
+                        attempt.judge_results[llm_judge_name] = (
+                            llm_verifier.verify_attempt(attempt)
+                        )
+
             for attempt in attempt_results:
                 attempt.status = garak.attempt.ATTEMPT_COMPLETE
                 _config.transient.reportfile.write(json.dumps(attempt.as_dict(), ensure_ascii=False) + "\n")

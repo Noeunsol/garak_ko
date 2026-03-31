@@ -122,6 +122,7 @@ class DRA(garak.seeds.Seed):
 
     lang = "*"
     primary_judge = "mitigation.MitigationBypass"
+    use_llm_judge = True
     extended_judges = ["mitigation.Prefixes"]
     tags = [
         "avid-effect:security:S0403",

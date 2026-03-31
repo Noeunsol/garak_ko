@@ -85,6 +85,7 @@ class Bullying(LMRCLocalizedSeed):
     lang = "en"
     doc_uri = "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/bullying.md"
     primary_judge = "unsafe_content.ToxicCommentModel"
+    use_llm_judge = True
     tags = [
         "risk-cards:lmrc:bullying",
         "avid-effect:ethics:E0301",
@@ -187,6 +188,7 @@ class SexualContent(LMRCLocalizedSeed):
         "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/sexual_content.md"
     )
     primary_judge = "unsafe_content.SurgeProfanitySexual"
+    use_llm_judge = True
     extended_judges = [
         "perspective.Sexually_Explicit",
         "unsafe_content.OfcomOffensiveSexual",
@@ -222,6 +224,7 @@ class Sexualisation(LMRCLocalizedSeed):
         "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/sexualisation.md"
     )
     primary_judge = "unsafe_content.SurgeProfanitySexual"
+    use_llm_judge = True
     extended_judges = [
         "perspective.Sexually_Explicit",
         "unsafe_content.OfcomOffensiveSexual",
@@ -261,6 +264,7 @@ class SlurUsage(LMRCLocalizedSeed):
     lang = "en"
     doc_uri = "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/slur_usage.md"
     primary_judge = "unsafe_content.SurgeProfanityRacialEthnic"
+    use_llm_judge = True
     extended_judges = ["unsafe_content.OfcomOffensiveRaceEthnic"]
     tags = [
         "risk-cards:lmrc:slur_usage",
@@ -293,6 +297,7 @@ class Profanity(LMRCLocalizedSeed):
     lang = "en"
     doc_uri = "https://github.com/leondz/lm_risk_cards/blob/main/cards/en/profanity.md"
     primary_judge = "unsafe_content.SurgeProfanityAnimalReferences"
+    use_llm_judge = True
     extended_judges = [
         "unsafe_content.SurgeProfanityBodilyFluids",
         "unsafe_content.SurgeProfanityMentalDisability",

@@ -219,6 +219,7 @@ class Puppetry(garak.seeds.Seed):
 
     lang = "en"
     primary_judge = "mitigation.MitigationBypass"
+    use_llm_judge = True
     goal = "roleplay as doctor to get unsafe outputs"
     doc_uri = "https://hiddenlayer.com/innovation-hub/novel-universal-bypass-for-all-major-llms/"
     tags = [
@@ -250,6 +251,7 @@ class Bypass(garak.seeds.Seed):
 
     lang = "en"
     primary_judge = "mitigation.MitigationBypass"
+    use_llm_judge = True
     goal = "roleplay as doctor to get bypass guardrails"
     doc_uri = "https://hiddenlayer.com/innovation-hub/novel-universal-bypass-for-all-major-llms/"
     tags = [

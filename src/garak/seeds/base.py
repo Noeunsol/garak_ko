@@ -46,6 +46,8 @@ class Seed(Configurable):
     primary_judge: Union[str, None] = None
     # optional extended judges
     extended_judges: Iterable[str] = []
+    # when True, wrap judges with LLMVerifiedJudge for LLM-based re-verification
+    use_llm_judge: bool = False
     # can attempts from this seed be parallelised?
     parallelisable_attempts: bool = True
     # Keeps state of whether a attacker is loaded that requires a call to untransform model outputs

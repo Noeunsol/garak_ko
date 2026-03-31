@@ -140,11 +140,13 @@ def _init_populate_result_db(evals, taxonomy=None):
     for eval in evals:
         eval["seed"] = eval["seed"].replace("seeds.", "")
         pm, pc = eval["seed"].split(".")
-        judge = eval["judge"].replace("judge.", "")
-        score = (
-            eval["passed"] / eval["total_evaluated"] if eval["total_evaluated"] else 0
-        )
+        judge = eval["judge"]
+        if judge.startswith("judges."):
+            judge = judge[len("judges."):]
         instances = eval["total_evaluated"]
+        if instances == 0:
+            continue
+        score = eval["passed"] / instances
         groups = []
         if taxonomy is not None:
             # get the seed tags
@@ -259,8 +261,29 @@ def _get_group_info(seed_group, group_score, taxonomy, config=_config) -> dict:
 
 
 def _get_seed_result_summaries(cursor, seed_group) -> List[tuple]:
+    # LLMVerifiedJudge(2차 검증)가 있는 seed는 그 점수를 사용, 없으면 기존 min(score)
     res = cursor.execute(
-        f"select seed_module, seed_class, min(score) as s from results where seed_group='{seed_group}' group by seed_class order by s asc, seed_class asc;"
+        f"""select seed_module, seed_class,
+            case
+                when exists (
+                    select 1 from results r2
+                    where r2.seed_group = results.seed_group
+                      and r2.seed_class = results.seed_class
+                      and r2.judge like '%LLMVerified%'
+                )
+                then (
+                    select r3.score from results r3
+                    where r3.seed_group = results.seed_group
+                      and r3.seed_class = results.seed_class
+                      and r3.judge like '%LLMVerified%'
+                    limit 1
+                )
+                else min(score)
+            end as s
+        from results
+        where seed_group='{seed_group}'
+        group by seed_class
+        order by s asc, seed_class asc;"""
     )
     return res.fetchall()
 

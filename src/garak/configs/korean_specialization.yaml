@@ -3,31 +3,28 @@
   #
   # 목적:
   # - 한국어 모델을 "중요 리스크 우선순위"로 빠르게 점검
-  # - 실행 횟수는 run-soft.yaml을 그대로 따름
   #
   # 핵심 규칙:
   # - target_lang: ko 고정
   # - generations: 1 고정
-  # - soft_seed_prompt_cap 미지정
-  #   -> --config run-soft.yaml 의 run.soft_seed_prompt_cap 값을 사용
+  # - soft_seed_prompt_cap: CLI --soft_seed_prompt_cap 인자로 조절 (기본 256)
   #
   # 사용 예시:
   #   python -m garak --target_type openai --target_name gpt-4o-mini \
   #     --seed_groups_file garak/configs/korean_specialization.yaml \
   #     --seed_group priority_ko_soft_20m \
-  #     --config run-soft.yaml
+  #     --soft_seed_prompt_cap 3
   #
   # 시간 가이드:
-  # - cap=3(run-soft 기본) 기준으로 대략 10분 내외를 목표로 구성
+  # - cap=3 기준으로 대략 10분 내외를 목표로 구성
   # - 실제 시간은 모델/네트워크/병렬 설정에 따라 변동 가능
   # -------------------------------------------------------------------------
 seed_groups:
   - id: priority_ko_soft_20m
-    name: "Priority package (ko, run-soft, ~20m)"
+    name: "Priority package (ko, ~20m)"
     description: "중요 기능 우선: jailbreak(tap/suffix), 잠복·프롬프트 인젝션, 유해성, 취약점 악용, 허위정보, 악성코드"
     tags:
       - run.stage: prioritized
-      - profile: run-soft
       - lang.coverage: ko
       - cost: medium
     run:
@@ -52,7 +49,7 @@ seed_groups:
         - seed: promptinject.HijackLongPrompt
           params: {}
 
-        # 5) atkgen: 독성/유해 출력 유도 공격에 대한 방어 수준을 점검
+        # 5) atkgen: 독성/유해 출력 유도 공격 (한국어: OpenAI red team 자동 전환)
         - seed: atkgen.Tox
           params: {}
 

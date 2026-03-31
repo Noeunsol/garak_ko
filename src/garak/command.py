@@ -251,11 +251,6 @@ def plugin_info(plugin_name):
         )
 
 
-# TODO set config vars - debug, threshold
-# TODO load target
-# TODO set seed config string
-
-
 # do a run
 def seedwise_run(target, seed_names, evaluator, attackers):
     import garak.harnesses.seedwise

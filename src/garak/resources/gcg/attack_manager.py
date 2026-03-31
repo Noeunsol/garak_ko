@@ -353,9 +353,33 @@ class AttackPrompt(object):
         logits, ids = self.logits(model, return_ids=True)
         return self.target_loss(logits, ids).mean().item()
 
-    # TODO: Implement this function
     def grad(self, model):
-        raise NotImplementedError("Gradient function not yet implemented")
+        embed_weights = get_embedding_matrix(model)
+        one_hot = torch.zeros(
+            self.input_ids[self._control_slice].shape[0],
+            embed_weights.shape[0],
+            device=model.device,
+            dtype=embed_weights.dtype,
+        )
+        one_hot.scatter_(
+            1,
+            self.input_ids[self._control_slice].to(model.device).unsqueeze(1),
+            1,
+        )
+        one_hot.requires_grad_()
+        input_embeds = get_embeddings(model, self.input_ids[:self._control_slice.start].to(model.device)).unsqueeze(0)
+        control_embeds = (one_hot @ embed_weights).unsqueeze(0)
+        suffix_embeds = get_embeddings(model, self.input_ids[self._control_slice.stop:].to(model.device)).unsqueeze(0)
+        full_embeds = torch.cat([input_embeds, control_embeds, suffix_embeds], dim=1)
+
+        logits = model(inputs_embeds=full_embeds).logits
+        targets = self.input_ids[self._target_slice].to(model.device)
+        loss_logits = logits[0, self._loss_slice, :]
+        loss = nn.CrossEntropyLoss()(loss_logits, targets)
+        loss.backward()
+
+        grad = one_hot.grad.clone()
+        return grad
 
     @torch.no_grad()
     def logits(self, model, test_controls=None, return_ids=False):

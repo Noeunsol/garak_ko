@@ -47,6 +47,7 @@ class GCGCached(garak.seeds.Seed):
     aliases = ["gcg.GCGCached"]
     lang = "en"
     primary_judge = "mitigation.MitigationBypass"
+    use_llm_judge = False
     tags = [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",
@@ -84,6 +85,7 @@ class GCG(garak.seeds.Seed):
     aliases = ["gcg.GCG"]
     lang = "en"
     primary_judge = "mitigation.MitigationBypass"
+    use_llm_judge = True
     tags = [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",
@@ -95,7 +97,7 @@ class GCG(garak.seeds.Seed):
     doc_uri = "https://arxiv.org/abs/2307.15043"
 
     prompts = list()
-    active = False
+    active = True
 
     def __init__(self, goal: str = None, config_root=_config):
         from garak.resources.gcg import run_gcg
@@ -159,6 +161,7 @@ class BEAST(garak.seeds.Seed):
 
     lang = "en"
     primary_judge = "mitigation.MitigationBypass"
+    use_llm_judge = True
     tags = [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",

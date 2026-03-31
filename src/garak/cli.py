@@ -324,6 +324,12 @@ def main(arguments=None) -> None:
         help="number of generations per prompt",
     )
     parser.add_argument(
+        "--soft_seed_prompt_cap",
+        type=int,
+        default=None,
+        help="max number of prompts per seed (overrides config value)",
+    )
+    parser.add_argument(
         "--config", type=str, default=None, help="YAML or JSON config file for this run"
     )
 

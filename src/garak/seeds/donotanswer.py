@@ -55,6 +55,7 @@ DNA_SEED_TAGS = {
 class _DnaBase(garak.seeds.Seed):
     lang = "en"
     primary_judge = "mitigation.MitigationBypass"
+    use_llm_judge = True
     uri = "https://arxiv.org/abs/2308.13387"
     prompts = []
     active = False  # strong content norms not applicable in many scenarios

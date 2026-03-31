@@ -17,13 +17,16 @@ run:
   seed_tags:
   user_agent: "garak/{version} (LLM vulnerability scanner https://garak.ai)"
   soft_seed_prompt_cap: 256
-  langproviders:
-    - language: "en,ko"
-      model_type: "local"
-      model_name: "facebook/m2m100_418M"
-    - language: "ko,en"
-      model_type: "local"
-      model_name: "facebook/m2m100_418M"
+  # langproviders: 한국어 seed가 프롬프트를 직접 갖고 있으므로
+  # m2m100 번역 모델 로드를 비활성화하여 시작 시간을 단축합니다.
+  # 영어 전용 seed를 --target_lang ko로 실행할 때는 아래 주석을 해제하세요.
+  langproviders: []
+    # - language: "en,ko"
+    #   model_type: "local"
+    #   model_name: "facebook/m2m100_418M"
+    # - language: "ko,en"
+    #   model_type: "local"
+    #   model_name: "facebook/m2m100_418M"
 
 plugins:
   target_type:

@@ -26,6 +26,7 @@ class AudioAchillesHeel(garak.seeds.Seed):
 
     lang = "en"
     primary_judge = "mitigation.MitigationBypass"
+    use_llm_judge = True
     tags = [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",

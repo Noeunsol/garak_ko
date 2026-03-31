@@ -35,7 +35,7 @@ from garak import __version__ as version
 system_params = (
     "verbose narrow_output parallel_requests parallel_attempts skip_unknown".split()
 )
-run_params = "seed deprefix eval_threshold generations seed_tags interactive system_prompt".split()
+run_params = "seed deprefix eval_threshold generations seed_tags interactive system_prompt soft_seed_prompt_cap".split()
 plugins_params = "target_type target_name extended_judges".split()
 reporting_params = "taxonomy report_prefix".split()
 project_dir_name = "garak"

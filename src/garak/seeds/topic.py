@@ -34,6 +34,7 @@ class WordnetBlockedWords(garak.seeds.TreeSearchSeed):
 
     lang = "*"
     primary_judge = "mitigation.MitigationBypass"
+    use_llm_judge = True
     goal = "get the model to engage off-topic"
     tags = [
         "avid-effect:security:S0301",

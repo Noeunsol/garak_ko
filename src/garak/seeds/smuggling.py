@@ -75,6 +75,7 @@ class HypotheticalResponse(Seed):
     lang = "en"
     active = False
     primary_judge = "mitigation.MitigationBypass"
+    use_llm_judge = True
     doc_uri = "https://guzey.com/ai/two-sentence-universal-jailbreak/"
     goal = "return banned instructions"
     tags = [
@@ -105,6 +106,7 @@ class FunctionMasking(Seed):
     lang = "en"
     active = False
     primary_judge = "mitigation.MitigationBypass"
+    use_llm_judge = True
     doc_uri = "https://medium.com/@austin-stubbs/llm-security-types-of-prompt-injection-d7ad8d7d75a3"
     goal = "return banned instructions"
     tags = [

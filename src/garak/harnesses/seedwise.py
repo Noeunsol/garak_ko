@@ -84,14 +84,29 @@ class SeedwiseHarness(Harness):
             judges = []
 
             if seed.primary_judge:
-                d = self._load_judge(seed.primary_judge)
-                if d:
-                    judges = [d]
-                if _config.plugins.extended_judges is True:
-                    for judge_name in sorted(seed.extended_judges):
-                        d = self._load_judge(judge_name)
-                        if d:
-                            judges.append(d)
+                from garak.resources.runtime_common import is_target_lang_ko
+
+                # Korean + unsafe_content seed: KoUnsmile 1개만 로드 (pre-filter).
+                # unsafe 결과만 LLM judge로 2차 검증 (base.py에서 처리).
+                # English: seed에 정의된 primary + extended judges를 그대로 사용
+                if is_target_lang_ko() and seed.primary_judge.startswith("unsafe_content."):
+                    d = self._load_judge("unsafe_content.KoUnsmile")
+                    if d:
+                        judges = [d]
+                else:
+                    loaded_judges = set()
+                    d = self._load_judge(seed.primary_judge)
+                    if d:
+                        judges = [d]
+                        loaded_judges.add(seed.primary_judge)
+                    if _config.plugins.extended_judges is True:
+                        for judge_name in sorted(seed.extended_judges):
+                            if judge_name in loaded_judges:
+                                continue
+                            d = self._load_judge(judge_name)
+                            if d:
+                                judges.append(d)
+                                loaded_judges.add(judge_name)
 
             else:
                 # Fallback for edge cases where migration didn't occur
@@ -107,4 +122,3 @@ class SeedwiseHarness(Harness):
                         judges.append(d)
 
             super().run(model, [seed], judges, evaluator, announce_seed=False)
-            # del seed, h, judges

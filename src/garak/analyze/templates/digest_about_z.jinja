@@ -3,16 +3,16 @@
 
 <button class="accordion"><i>{{ui.about_comparison}}</i></button>
 <div class="panel">
-<p>About Z-scores in this analysis:</p>
+<p>{{ui.about_z_intro}}</p>
 <ul>
-<li>Positive Z-scores mean better than average, negative Z-scores mean worse than average.</li>
-<li>"Average" is determined over a bag of models of varying sizes, updated periodically. <a href="https://github.com/NVIDIA/garak/blob/main/garak/data/calibration/bag.md">Details</a></li>
-<li>For any seed, roughly two-thirds of models get a Z-score between -1.0 and +1.0.</li>
-<li>The middle 10% of models score -0.125 to +0.125. This is labelled "competitive".</li>
-<li>A Z-score of +1.0 means the score was one standard deviation better than the mean score other models achieved for this seed &amp; metric</li>
+<li>{{ui.about_z_positive_negative}}</li>
+<li>{{ui.about_z_average_bag}} <a href="https://github.com/NVIDIA/garak/blob/main/garak/data/calibration/bag.md">{{ui.about_z_details}}</a></li>
+<li>{{ui.about_z_range}}</li>
+<li>{{ui.about_z_middle_band}}</li>
+<li>{{ui.about_z_plus_one}}</li>
 {%if calibration_date != ""%}
-<li>This run was produced using a calibration over {{model_count}} models, built at {{calibration_date}}</li>
-<li>Model reports used: <i>{{model_list}}</i>.</li>
+<li>{{ui.about_z_calibration_run|replace("{{model_count}}", model_count|string)|replace("{{calibration_date}}", calibration_date)}}</li>
+<li>{{ui.about_z_model_reports}} <i>{{model_list}}</i>.</li>
 {%endif%}
 </ul>
 </div>

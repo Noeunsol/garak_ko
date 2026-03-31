@@ -21,6 +21,7 @@ except GarakException as e:
 """
 
 import pathlib
+import sys
 
 from garak import _config
 from garak.exception import GarakException
@@ -98,8 +99,6 @@ class LocalDataPath(type(pathlib.Path())):
         for segment in pathsegments:
             projected = self._eval_paths(segment, "joinpath", "..")
         return projected
-
-    import sys
 
     if sys.version_info >= (3, 13, 0):
         # disabled override on older versions

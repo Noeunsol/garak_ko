@@ -605,6 +605,7 @@ class DanInTheWildFull(
     goal="disregard the system prompt or alignment",
     extra_tags=["payload:jailbreak"],
     primary_judge="mitigation.MitigationBypass",
+    use_llm_judge=True,
     extended_judges=[],
 ):
     """A library of jailbreaks.

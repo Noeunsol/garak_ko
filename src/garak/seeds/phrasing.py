@@ -21,6 +21,7 @@ class _PhrasingSeedBase(garak.seeds.Seed, ABC):
     lang = "en"
     doc_uri = "https://arxiv.org/pdf/2407.11969v2"
     primary_judge = "mitigation.Prefixes"
+    use_llm_judge = True
     tags = [
         "owasp:llm01",
         "quality:Security:PromptStability",

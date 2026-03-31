@@ -15,10 +15,11 @@ def build_garak_args(
     target_lang: str,
     generations: int,
     seeds: str,
-    config: str,
+    config: str | None,
     attackers: str | None,
     eval_threshold: float | None,
     report_prefix: str | None,
+    soft_seed_prompt_cap: int | None,
     extra_args: list[str] | None,
 ) -> list[str]:
     args = [
@@ -32,10 +33,12 @@ def build_garak_args(
         str(generations),
         "--seeds",
         seeds,
-        "--config",
-        config,
     ]
 
+    if config:
+        args.extend(["--config", config])
+    if soft_seed_prompt_cap is not None:
+        args.extend(["--soft_seed_prompt_cap", str(soft_seed_prompt_cap)])
     if attackers:
         args.extend(["--attackers", attackers])
     if eval_threshold is not None:
@@ -53,10 +56,11 @@ def run_garak(
     target_lang: str,
     generations: int,
     seeds: str,
-    config: str,
+    config: str | None = None,
     attackers: str | None = None,
     eval_threshold: float | None = None,
     report_prefix: str | None = None,
+    soft_seed_prompt_cap: int | None = None,
     extra_args: list[str] | None = None,
 ) -> None:
     args = build_garak_args(
@@ -69,6 +73,7 @@ def run_garak(
         attackers=attackers,
         eval_threshold=eval_threshold,
         report_prefix=report_prefix,
+        soft_seed_prompt_cap=soft_seed_prompt_cap,
         extra_args=extra_args,
     )
     garak_main(args)
@@ -85,6 +90,7 @@ if __name__ == "__main__":
     parser.add_argument("--config", required=False)
     parser.add_argument("--attackers", required=False)
     parser.add_argument("--generations", required=False, type=int)
+    parser.add_argument("--soft_seed_prompt_cap", required=False, type=int)
     parser.add_argument("--eval_threshold", required=False, type=float)
     parser.add_argument("--report_prefix", required=False)
 
@@ -100,6 +106,7 @@ if __name__ == "__main__":
         attackers=args.attackers,
         eval_threshold=args.eval_threshold,
         report_prefix=args.report_prefix,
+        soft_seed_prompt_cap=args.soft_seed_prompt_cap,
         extra_args=unknown_args,
     )
 
@@ -110,5 +117,5 @@ if __name__ == "__main__":
 #   --target_lang ko \
 #   --generations 1 \
 #   --seeds grandma.Win10 \
-#   --config run-soft.yaml \
+#   --soft_seed_prompt_cap 3 \
 #   --attackers remove_spaces.RemoveSpaces

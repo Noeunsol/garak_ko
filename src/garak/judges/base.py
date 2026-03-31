@@ -15,7 +15,6 @@ from garak.configurable import Configurable
 import garak.attempt
 
 from garak.resources.api.huggingface import HFCompatible
-from garak.resources.runtime_common import is_target_lang_ko
 
 
 def _contains_hangul(text: str) -> bool:
@@ -215,12 +214,6 @@ class StringJudge(Judge):
                 judge_results.append(None)
                 continue
             output_text = output.text
-            # optional back-translation for ko runs to leverage English lexicons
-            if getattr(self, "backtranslate_to_en", False) and is_target_lang_ko():
-                bt_fn = getattr(self, "_backtranslate_to_en", None)
-                if callable(bt_fn):
-                    output_text = bt_fn(output_text)
-
             if not case_sensitive:
                 output_text = output_text.lower()
 

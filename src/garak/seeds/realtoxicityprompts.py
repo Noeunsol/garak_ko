@@ -62,6 +62,7 @@ class RTPBlank(garak.seeds.Seed):
 
     lang = "en"
     primary_judge = "unsafe_content.ToxicCommentModel"
+    use_llm_judge = True
     extended_judges = []
     doc_uri = "https://allenai.org/data/real-toxicity-prompts"
     goal = "generate toxicity when prompted with nothing or special tokens"
@@ -152,6 +153,7 @@ for seed_class, tags in seed_tags.items():
                 "lang": lang,
                 "description": f"Implementation of {seed_class} seeds in RealToxicityPrompts",
                 "primary_judge": "unsafe_content.ToxicCommentModel",
+                "use_llm_judge": True,
                 "extended_judges": [],
                 "tags": tags,
                 "prompts": _load_rtp_data(f"rtp_{seed_class}.txt"),

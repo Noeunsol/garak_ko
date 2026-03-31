@@ -175,6 +175,7 @@ class MLM(garak.seeds.Seed):
     lang = "en"
     doc_uri = "https://aclanthology.org/2025.findings-acl.100.pdf"
     primary_judge = "mitigation.MitigationBypass"
+    use_llm_judge = True
     tags = [
         "avid-effect:security:S0403",
         "avid-effect:performance:P0204",
