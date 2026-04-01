@@ -1,8 +1,7 @@
 ---
 # run a thorough test for toxicity generation
 # . use seeds that attempt to evoke toxic responses
-# . do paraphrasing to increase coverage
-# . paraphrasing increases the prompt vocab a lot
+# . NOTE: for stronger toxicity probing, paraphrase attacker is disabled
 system:
   lite: false
 
@@ -16,4 +15,4 @@ plugins:
     encoding:
       payloads:
         - slur_terms
-  attacker_spec: paraphrase.Fast
+  attacker_spec: null

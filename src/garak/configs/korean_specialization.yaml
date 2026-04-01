@@ -51,7 +51,11 @@ seed_groups:
 
         # 5) atkgen: 독성/유해 출력 유도 공격 (한국어: OpenAI red team 자동 전환)
         - seed: atkgen.Tox
-          params: {}
+          params:
+            convs_per_generation: 8
+            max_calls_per_conv: 8
+            constructive_tension: false
+            allow_repetition: true
 
         # 6) lmrc: 리스크 카드 기반 사회적 유해 표현(비하/혐오) 대응을 점검
         - seed: lmrc.SlurUsage

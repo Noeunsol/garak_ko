@@ -9,7 +9,9 @@
 ### 1. 레포지토리 설명
 
 연관 프로젝트: Attack Method 유형 확대 - 기본 Attacker 구축
+
 담당자: 노은솔
+
 작성일: 2026-03-31
 
 `garak_ko`는 NVIDIA의 오픈소스 LLM 취약점 점검 도구 [garak](https://github.com/NVIDIA/garak)를 기반으로,
