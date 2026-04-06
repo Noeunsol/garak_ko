@@ -133,8 +133,14 @@ conda activate garak_ko
 git clone https://github.com/selectstar-ai/garak_ko.git
 cd garak_ko
 
-# 3) editable 모드로 설치 (필수 — 미실행 시 'No module named garak' 발생)
+# 3) 설치
+# 방법 A (권장): pyproject.toml 기준 설치
 pip install -e .
+
+# 방법 B: requirements.txt 기준 설치 후 editable 설치
+# (현재 requirements.txt와 pyproject.toml 의존성은 동기화되어 있음)
+# pip install -r requirements.txt
+# pip install -e .
 
 # 4) Jupyter 커널 등록 (notebook 사용 시)
 pip install ipykernel
@@ -142,7 +148,7 @@ python -m ipykernel install --user --name garak_ko --display-name "garak_ko"
 ```
 
 > **주의**: `src/` 구조로 되어 있어 `pip install -e .` (editable install)이 **필수**입니다.
-> `pip install -r requirements.txt`만으로는 `python -m garak` 실행 시 모듈을 찾지 못합니다.
+> `pip install -r requirements.txt`만 실행하면 `python -m garak`에서 모듈 경로를 찾지 못할 수 있습니다.
 
 **설치 확인**
 
@@ -205,13 +211,18 @@ python main.py \
   --generations 1 \
   --seeds dan.Dan_11_0 \
   --soft_seed_prompt_cap 3
+
+# Streamlit UI 실행
+streamlit run app.py
 ```
 
 **3. 결과 분석**
 
 ```bash
 # HTML 리포트 열기
-open /Users/selectstar/.local/share/garak/garak_runs/garak.<uuid>.report.html
+open ~/.local/share/garak/garak_runs/garak.<uuid>.report.html
+# Linux는 xdg-open 사용:
+# xdg-open ~/.local/share/garak/garak_runs/garak.<uuid>.report.html
 
 # 토큰 사용량 확인 (자모 분해 기반)
 python -m garak.analyze.count_tokens <report.jsonl 경로>
@@ -259,29 +270,50 @@ python -m garak.analyze.aggregate_reports -o merged.jsonl report1.jsonl report2.
 
 Python `>=3.10` (권장: 3.11)
 
-핵심 라이브러리:
+주요 의존성(발췌):
 
-```
+```bash
 # 핵심
 torch>=2.6.0
 transformers>=4.51.3,<4.57.0
+datasets>=3.0.0,<4.0
 huggingface_hub>=0.21.0
+numpy>=2.0.0
+pandas>=2.0.0
 
 # 한국어 지원
 kiwipiepy>=0.19.0
 
 # LLM targets
 openai>=1.45.0,<2
+cohere>=5.16.0
+replicate>=0.8.3
+mistralai==1.5.2
 litellm>=1.68.1
 ollama>=0.4.7
+nemollm>=0.3.0
+boto3>=1.28.0
 
 # NLP / 텍스트 처리
 nltk>=3.9.1
 langdetect==1.0.9
 tiktoken>=0.7.0
+ftfy>=6.3.1
+wn==0.9.5
+
+# 웹 / HTTP
+requests>=2.28.0
+httpx>=0.24.0
+aiohttp>=3.9.0
+backoff>=2.1.1
 
 # Web UI
-streamlit
+streamlit>=1.30.0
+
+# 설정 / 검증
+PyYAML>=6.0
+pytz>=2024.1
+jsonschema>=4.0.0
 ```
 
 전체 의존성은 `pyproject.toml` 및 `requirements.txt` 참고.
