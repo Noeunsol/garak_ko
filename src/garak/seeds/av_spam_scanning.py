@@ -90,6 +90,7 @@ class EICAR(_AVSpamSeedBase):
     code. This seed test if models will provide output that should be stopped
     by a virus scanner. Only applicable to models expected to do antivirus scanning."""
 
+    active = True
     aliases = ["knownbadsignatures.EICAR"]
     doc_uri = "https://en.wikipedia.org/wiki/EICAR_test_file"
     primary_judge = "knownbadsignatures.EICAR"
@@ -113,6 +114,7 @@ class GTUBE(_AVSpamSeedBase):
     Does the model generate content that should be stopped by a spam filter? If there's
     a spam filter in place, this should catch the GTUBE signature."""
 
+    active = True
     aliases = ["knownbadsignatures.GTUBE"]
     doc_uri = "https://en.wikipedia.org/wiki/GTUBE"
     primary_judge = "knownbadsignatures.GTUBE"
@@ -137,6 +139,7 @@ class GTphish(_AVSpamSeedBase):
     A phishing scanner should catch the GTphish code and hopefully block this content.
     If there's no scanner in place, the GTphish code is more likely to come through."""
 
+    active = True
     aliases = ["knownbadsignatures.GTphish"]
     doc_uri = "https://www.cisco.com/c/en/us/support/docs/security/email-security-appliance/213465-testing-outbreak-filter-url-rewriting.html"
     primary_judge = "knownbadsignatures.GTphish"

@@ -74,15 +74,39 @@ def load_seed_list():
     pc = json.loads(cache_file.read_text(encoding="utf-8"))
     raw_seeds = sorted(pc.get("seeds", {}).keys())
 
+    # 베이스/테스트용 더미 클래스
+    skip = {"base.Seed", "base.IterativeSeed", "base.TreeSearchSeed", "test.Blank", "test.Test"}
+
+    # OpenAI target에서 실행 불가하거나 외부 의존성으로 사용 불가한 seed
+    # - audio.*: 오디오 입력 전용 (HF 모달리티)
+    # - ansiescape.AnsiRawTokenizerHF: HuggingFace tokenizer 직접 접근 필요
+    # - fileformats.HF_Files: HuggingFace repo 파일 정적 검사 전용
+    # - fitd.FITD: NVIDIA NIM API key + HarmBench 데이터 필요, multi-turn 폭발 위험
+    # - suffix.GCG / suffix.BEAST: 화이트박스 그래디언트/로짓 접근 필요 (OpenAI 불가)
+    # - tap.TAP / tap.PAIR: 외부 공격자/평가자 LLM(vicuna-13b 등) + 트리 탐색 폭발
+    # - visual_jailbreak.*: 비전 모달리티 전용
+    skip_categories = {"audio", "visual_jailbreak", "fitd"}
+    skip_classes = {
+        "ansiescape.AnsiRawTokenizerHF",
+        "fileformats.HF_Files",
+        "suffix.GCG",
+        "suffix.BEAST",
+        "tap.TAP",
+        "tap.PAIR",
+    }
+
     all_seeds = []
     grouped = {}
-    skip = {"base.Seed", "base.IterativeSeed", "base.TreeSearchSeed", "test.Blank", "test.Test"}
     for s in raw_seeds:
         name = s.replace("seeds.", "")
         if name in skip:
             continue
-        all_seeds.append(name)
         category = name.split(".")[0]
+        if category in skip_categories:
+            continue
+        if name in skip_classes:
+            continue
+        all_seeds.append(name)
         grouped.setdefault(category, []).append(name)
     return all_seeds, grouped
 
